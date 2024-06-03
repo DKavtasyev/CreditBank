@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: calculator
+
+server:
+  port: 8081
+
+app:
+  rest:
+    prefix: /calculator
+
+logging:
+  level:
+    root: warn
+    ru.neostudy.neoflex.calculator: debug
+
+base_rate: 0.12
