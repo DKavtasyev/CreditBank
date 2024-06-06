@@ -1,11 +1,16 @@
 package ru.neostudy.neoflex.calculator.service;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import ru.neostudy.neoflex.calculator.constants.EmploymentStatus;
-import ru.neostudy.neoflex.calculator.constants.Gender;
-import ru.neostudy.neoflex.calculator.constants.MaritalStatus;
-import ru.neostudy.neoflex.calculator.constants.Position;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.webservices.server.WebServiceServerTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.neostudy.neoflex.calculator.constants.*;
 import ru.neostudy.neoflex.calculator.dto.CreditDto;
 import ru.neostudy.neoflex.calculator.dto.LoanOfferDto;
 import ru.neostudy.neoflex.calculator.dto.LoanStatementRequestDto;
@@ -21,10 +26,18 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application.yaml")
 public class CalculatorServiceTest
 {
+	
 	@Spy
 	private static CalculatorService service;
+	private static PercentConstants constants = new PercentConstants();
+	private static MonthlyPaymentCalculatorService monthlyPaymentCalculatorService = new MonthlyPaymentCalculatorService();
+	private static PersonalRateCalculatorService personalRateCalculatorService = new PersonalRateCalculatorService(constants);
+	
 	private static LoanStatementRequestDto loanStatementRequest;
 	private ScoringDataDto scoringData;
 	private static final BigDecimal RATE = new BigDecimal("0.12");
@@ -37,7 +50,7 @@ public class CalculatorServiceTest
 	@BeforeAll
 	static void initCalculatorService() throws NoSuchFieldException, IllegalAccessException
 	{
-		service = new CalculatorService();
+		service = new CalculatorService(monthlyPaymentCalculatorService, personalRateCalculatorService, constants);
 		Field baseRate = CalculatorService.class.getDeclaredField("BASE_RATE");
 		baseRate.setAccessible(true);
 		baseRate.set(service, RATE);

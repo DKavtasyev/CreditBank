@@ -12,6 +12,62 @@ app:
 logging:
   level:
     root: warn
+    # noinspection SpellCheckingInspection
     ru.neostudy.neoflex.calculator: debug
 
 base_rate: 0.12
+
+credit:
+  insurance: 1.05
+  # noinspection SpellCheckingInspection
+  prescoring:
+    amount:
+      min: 30000
+    term:
+      min: 6
+
+  scoring:
+    rates:
+      insurance_enabled: -0.03
+      salary_client: -0.01
+      employment_status:
+        self_employed: 0.01
+        business_owner: 0.02
+      position:
+        middle_manager: -0.02
+        top_manager: -0.03
+      marital_status:
+        married: -0.03
+        divorced: 0.01
+      gender:
+        woman:
+          age:
+            from: 32
+            to: 60
+          rate: -0.03
+        man:
+          age:
+            from: 30
+            to: 55
+          rate: -0.03
+        non_binary:
+          rate: 0.07
+
+    refusal:
+      ratio_of_amount_to_salary: 25
+      age:
+        min: 20
+        max: 65
+      work_experience:
+        total:
+          min: 18
+        current:
+          min: 3
+
+
+
+
+
+
+
+
