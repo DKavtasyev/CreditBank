@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# Менять нельзя - упадут тесты
+rate:
+  base-rate: 0.12

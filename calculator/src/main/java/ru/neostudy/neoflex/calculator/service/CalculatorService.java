@@ -1,11 +1,11 @@
 package ru.neostudy.neoflex.calculator.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-import ru.neostudy.neoflex.calculator.constants.PercentConstants;
+import ru.neostudy.neoflex.calculator.config.CreditConfig;
+import ru.neostudy.neoflex.calculator.config.RateConfig;
 import ru.neostudy.neoflex.calculator.dto.*;
 import ru.neostudy.neoflex.calculator.exception.LoanRefusalException;
 
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static ru.neostudy.neoflex.calculator.constants.PercentConstants.*;
 
 @Log4j2
 @Service
@@ -26,9 +25,23 @@ public class CalculatorService
 {
 	private final MonthlyPaymentCalculatorService monthlyPaymentCalculatorService;
 	private final PersonalRateCalculatorService personalRateCalculatorService;
-	private final PercentConstants constants;
+	private final SchedulePaymentsCalculatorService schedulePaymentsCalculatorService;
+	private final RateConfig rateConfig;
+	private final CreditConfig creditConfig;
 	
-	private BigDecimal BASE_RATE = constants.BASE_RATE;
+	private BigDecimal BASE_RATE;
+	private BigDecimal INSURANCE_PERCENT;
+	private BigDecimal INSURANCE_ENABLED;
+	private BigDecimal SALARY_CLIENT;
+	
+	@PostConstruct
+	private void init()
+	{
+		BASE_RATE = new BigDecimal(rateConfig.getBaseRate());
+		INSURANCE_PERCENT = new BigDecimal(creditConfig.getInsurancePercent());
+		INSURANCE_ENABLED = new BigDecimal(rateConfig.getInsuranceEnabled());
+		SALARY_CLIENT = new BigDecimal(rateConfig.getSalaryClient());
+	}
 	
 	public List<LoanOfferDto> preScore(LoanStatementRequestDto loanStatementRequest)
 	{
@@ -43,11 +56,11 @@ public class CalculatorService
 			
 			if (isInsuranceEnabled)
 			{
-				amount = amount.multiply(constants.INSURANCE_PERCENT);
-				rate = rate.add(constants.INSURANCE_ENABLED);
+				amount = amount.multiply(INSURANCE_PERCENT);
+				rate = rate.add(INSURANCE_ENABLED);
 			}
 			if (isSalaryClient)
-				rate = rate.add(constants.SALARY_CLIENT);
+				rate = rate.add(SALARY_CLIENT);
 			
 			BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(amount, loanStatementRequest.getTerm(), rate);
 			log.info("Monthly payment has been calculated. Value = " + monthlyPayment.doubleValue());
@@ -69,13 +82,16 @@ public class CalculatorService
 	
 	public CreditDto score(ScoringDataDto scoringData) throws LoanRefusalException
 	{
+		if (scoringData.getIsInsuranceEnabled())
+			scoringData.setAmount(scoringData.getAmount().multiply(INSURANCE_PERCENT));
+		
 		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, BASE_RATE);
-		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getIsInsuranceEnabled() ? scoringData.getAmount().multiply(constants.INSURANCE_PERCENT) : scoringData.getAmount(), scoringData.getTerm(), rate);
+		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
 		List<PaymentScheduleElementDto> scheduleOfPayments = new ArrayList<>();
 		BigDecimal dailyRate = rate.divide(BigDecimal.valueOf(365), 16, RoundingMode.HALF_EVEN);
 		
 		LocalDate firstPaymentDate = LocalDate.now().plusMonths(1);
-		BigDecimal firstInterestPayment = countInterestPayment(scoringData.getAmount(), dailyRate, (int) ChronoUnit.DAYS.between(LocalDate.now(), firstPaymentDate));
+		BigDecimal firstInterestPayment = schedulePaymentsCalculatorService.countInterestPayment(scoringData.getAmount(), dailyRate, (int) ChronoUnit.DAYS.between(LocalDate.now(), firstPaymentDate));
 		BigDecimal firstDebtPayment = monthlyPayment.subtract(firstInterestPayment);
 		BigDecimal firstRemainingDebt = scoringData.getAmount().subtract(firstDebtPayment);
 		
@@ -89,7 +105,7 @@ public class CalculatorService
 		
 		scheduleOfPayments.add(firstPaymentScheduleElement);
 		
-		countPayment(firstPaymentScheduleElement, scheduleOfPayments, dailyRate);
+		schedulePaymentsCalculatorService.countPayment(firstPaymentScheduleElement, scheduleOfPayments, dailyRate);
 		
 		return new CreditDto()
 				.setAmount(scoringData.getAmount())
@@ -101,41 +117,4 @@ public class CalculatorService
 				.setIsSalaryClient(scoringData.getIsSalaryClient())
 				.setPaymentSchedule(scheduleOfPayments);
 	}
-	
-	private void countPayment(PaymentScheduleElementDto previousScheduleElement, List<PaymentScheduleElementDto> scheduleOfPayments, BigDecimal dailyRate)
-	{
-		BigDecimal monthlyPayment = previousScheduleElement.getTotalPayment();
-		BigDecimal previousRemainingDebt = previousScheduleElement.getRemainingDebt();
-		
-		if (previousRemainingDebt.add(previousScheduleElement.getInterestPayment()).compareTo(monthlyPayment) <= 0)
-		{
-			previousScheduleElement.setTotalPayment(monthlyPayment.add(previousRemainingDebt));
-		}
-		else
-		{
-			LocalDate date = previousScheduleElement.getDate().plusMonths(1);
-			int numberOfDays = (int) ChronoUnit.DAYS.between(previousScheduleElement.getDate(), date);
-			BigDecimal interestPayment = countInterestPayment(previousRemainingDebt, dailyRate, numberOfDays);
-			BigDecimal debtPayment = monthlyPayment.subtract(interestPayment);
-			BigDecimal remainingDebt = previousRemainingDebt.subtract(debtPayment);
-			
-			PaymentScheduleElementDto paymentScheduleElement = new PaymentScheduleElementDto()
-					.setNumber(previousScheduleElement.getNumber() + 1)
-					.setDate(date)
-					.setTotalPayment(monthlyPayment)
-					.setInterestPayment(interestPayment)
-					.setDebtPayment(debtPayment)
-					.setRemainingDebt(remainingDebt);
-			scheduleOfPayments.add(paymentScheduleElement);
-			
-			countPayment(paymentScheduleElement, scheduleOfPayments, dailyRate);
-		}
-	}
-	
-	private BigDecimal countInterestPayment(BigDecimal remainingDebt, BigDecimal dailyRate, int numberOfDays)
-	{
-		return remainingDebt.multiply(dailyRate.multiply(BigDecimal.valueOf(numberOfDays))).setScale(16, RoundingMode.HALF_EVEN);
-	}
-	
-	
 }
