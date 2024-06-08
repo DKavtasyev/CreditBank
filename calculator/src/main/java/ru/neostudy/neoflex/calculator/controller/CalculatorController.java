@@ -1,5 +1,8 @@
 package ru.neostudy.neoflex.calculator.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,18 +22,25 @@ import java.util.List;
 /**
  * Калькулятор кредита с ежемесячной фиксированной процентной ставкой, с аннуитетным ежемесячным платежом, со страховкой
  * 5 % от суммы кредита при сниженной ставке на 3 %
- * */
+ */
 @Log4j2
 @RestController
 @RequestMapping(path = "${app.rest.prefix}")
 @RequiredArgsConstructor
+@Tag(
+		name = "Калькулятор",
+		description = "Предварительный и основной расчёт кредита")
 public class CalculatorController
 {
 	private final CalculatorService service;
 	
 	@PostMapping("/offers")
-	public ResponseEntity<List<LoanOfferDto>> calculationOfPossibleLoanTerms(@RequestBody @Valid LoanStatementRequestDto loanStatementRequest,
-																			 BindingResult bindingResult)
+	@Operation(
+			summary = "Предварительный расчёт предложений",
+			description = "По данным от пользователя предлагает четыре предложения займа в зависимости от опций: страховка, зарплатный клиент")
+	public ResponseEntity<List<LoanOfferDto>> calculationOfPossibleLoanTerms(
+			@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest,
+			BindingResult bindingResult)
 	{
 		if (bindingResult.hasErrors())
 		{
@@ -43,8 +53,12 @@ public class CalculatorController
 	}
 	
 	@PostMapping("/calc")
-	public ResponseEntity<CreditDto> fullCalculationOfLoanTerms(@RequestBody @Valid ScoringDataDto scoringData,
-																BindingResult bindingResult) throws Exception
+	@Operation(
+			summary = "Расчёт графика платежей",
+			description = "По данным от пользователя рассчитывает график платежей и сумму каждого платежа")
+	public ResponseEntity<CreditDto> fullCalculationOfLoanTerms(
+			@RequestBody @Valid @Parameter(description = "Пользовательсткие данные для расчёта кредита") ScoringDataDto scoringData,
+			BindingResult bindingResult) throws Exception
 	{
 		if (bindingResult.hasErrors())
 		{

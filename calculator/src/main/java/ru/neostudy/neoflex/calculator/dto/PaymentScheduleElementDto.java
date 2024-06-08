@@ -1,5 +1,6 @@
 package ru.neostudy.neoflex.calculator.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -13,12 +14,18 @@ import java.util.Objects;
 @Accessors(chain = true)
 public class PaymentScheduleElementDto
 {
-	private Integer number;					// Номер платежа
-	private LocalDate date;					// Дата платежа
-	private BigDecimal totalPayment;		// Сумма платежа
-	private BigDecimal interestPayment;		// Доля платежа в счёт процентов
-	private BigDecimal debtPayment;			// Доля платежа в счёт основного долга
-	private BigDecimal remainingDebt;		// Оставшаяся сумма долга
+	@Schema(description = "Номер платежа")
+	private Integer number;
+	@Schema(description = "Дата платежа")
+	private LocalDate date;
+	@Schema(description = "Сумма платежа")
+	private BigDecimal totalPayment;
+	@Schema(description = "Доля платежа в счёт уплаты процентов")
+	private BigDecimal interestPayment;
+	@Schema(description = "Доля платежа в счёт уплаты основного долга")
+	private BigDecimal debtPayment;
+	@Schema(description = "Оставшаяся сумма кредита")
+	private BigDecimal remainingDebt;
 	
 	@Override
 	public boolean equals(Object o)

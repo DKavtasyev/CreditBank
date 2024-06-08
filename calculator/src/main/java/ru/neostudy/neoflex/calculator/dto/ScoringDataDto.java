@@ -1,5 +1,6 @@
 package ru.neostudy.neoflex.calculator.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -12,66 +13,84 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@Schema(description = "Пользовательсткие данные для расчёта кредита")
 public class ScoringDataDto
 {
 	@NotNull
 	@DecimalMin(value = "30000")
-	BigDecimal amount;				// Предварительно одобренная сумма
+	@Schema(description = "Предварительно одобренная сумма", example = "1000000")
+	BigDecimal amount;
 	
 	@NotNull
 	@Min(value = 6)
-	Integer term;					// Предварительно одобренный срок кредитования
+	@Schema(description = "Предварительно одобренный срок кредитования", example = "12")
+	Integer term;
 	
 	@NotBlank
 	@Size(min = 2, max = 30)
-	String firstName;				// Имя
+	@Schema(description = "Имя", example = "Ivan")
+	String firstName;
 	
 	@NotBlank
 	@Size(min = 2, max = 30)
-	String lastName;				// Фамилия
+	@Schema(description = "Фамилия", example = "Ivanov")
+	String lastName;
 	
 	@Size(min = 2, max = 30)
-	String middleName;				// Отчество
+	@Schema(description = "Отчество", example = "Ivanovich")
+	String middleName;
 	
 	@NotNull
-	Gender gender;					// Пол
+	@Schema(description = "Пол", example = "MALE")
+	Gender gender;
 	
 	@NotNull
 	@CheckAge(value = 18)
-	LocalDate birthdate;			// День рождения
+	@Schema(description = "Дата рождения", example = "1995-02-15")
+	LocalDate birthdate;
 	
 	@NotNull
 	@Size(min = 4, max = 4)
-	@Pattern(regexp="^(0|[1-9][0-9]*)$")
+	@Pattern(regexp = "^(0|[1-9][0-9]*)$")
+	@Schema(description = "Серия паспорта", example = "1234")
 	String passportSeries;
 	
 	@NotNull
 	@Size(min = 6, max = 6)
-	@Pattern(regexp="^(0|[1-9][0-9]*)$")
-	String passportNumber;			// Номер паспорта
+	@Pattern(regexp = "^(0|[1-9][0-9]*)$")
+	@Schema(description = "Номер паспорта", example = "123456")
+	String passportNumber;
 	
 	@NotNull
-	LocalDate passportIssueDate;	// Дата выдачи паспорта
+	@Schema(description = "Дата выдачи паспорта", example = "2020-05-05")
+	LocalDate passportIssueDate;
 	
 	@NotBlank
-	String passportIssueBranch;		// Кем выдан
+	@Schema(description = "Кем выдан", example = "ГУ МВД ПО Г. МОСКВА")
+	String passportIssueBranch;
 	
 	@NotNull
-	MaritalStatus maritalStatus;	// Семейное положение
+	@Schema(description = "Семейное положение", example = "SINGLE")
+	MaritalStatus maritalStatus;
 	
 	@NotNull
-	Integer dependentAmount;		// Количество иждивенцев
+	@Schema(description = "Количество иждивенцев", example = "0")
+	Integer dependentAmount;
 	
 	@NotNull
-	EmploymentDto employment;		// Место работы
+	@Schema(description = "Информация о работе")
+	EmploymentDto employment;
 	
 	@NotBlank
-	@Pattern(regexp="^(0|[1-9][0-9]*)$")
-	String accountNumber;			// Номер пользователя
+	@Pattern(regexp = "^(0|[1-9][0-9]*)$")
+	@Schema(description = "Номер пользователя", example = "98723645982394178")
+	String accountNumber;
 	
 	@NotNull
-	Boolean isInsuranceEnabled;		// Страховка включена
+	@Schema(description = "Страховка включена", example = "false")
+	Boolean isInsuranceEnabled;
 	
 	@NotNull
-	Boolean isSalaryClient;			// Зарплатный клиент
+	@Schema(description = "Зарплатный клиент", example = "false")
+	Boolean isSalaryClient;
 }

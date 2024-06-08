@@ -1,5 +1,6 @@
 package ru.neostudy.neoflex.calculator.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -14,38 +15,47 @@ public class LoanStatementRequestDto
 {
 	@NotNull
 	@DecimalMin(value = "30000")
-	private BigDecimal amount;			// Запрашиваемая сумма
+	@Schema(description = "Запрашиваемая сумма", example = "1000000")
+	private BigDecimal amount;
 	
 	@NotNull
 	@Min(value = 6)
-	private Integer term;				// Запрашиваемый срок кредитования
+	@Schema(description = "Запрашиваемый срок кредитования", example = "12")
+	private Integer term;
 	
 	@NotBlank
 	@Size(min = 2, max = 30)
-	private String firstName;			// Имя
+	@Schema(description = "Имя", example = "Ivan")
+	private String firstName;
 	
 	@NotBlank
 	@Size(min = 2, max = 30)
-	private String lastName;			// Фамилия
+	@Schema(description = "Фамилия", example = "Ivanov")
+	private String lastName;
 	
 	@Size(min = 2, max = 30)
-	private String middleName;			// Отчество
+	@Schema(description = "Отчество", example = "Ivanovich")
+	private String middleName;
 	
 	@NotNull
 	@Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-	private String email;				// email
+	@Schema(description = "email", example = "ivan@mail.ru")
+	private String email;
 	
 	@NotNull
 	@CheckAge(value = 18)
-	private LocalDate birthDate;		// Дата рождения
+	@Schema(description = "Дата рождения", example = "1995-02-15")
+	private LocalDate birthDate;		//
 	
 	@NotNull
 	@Size(min = 4, max = 4)
 	@Pattern(regexp="^(0|[1-9][0-9]*)$")
-	private String passportSeries;		// Серия паспорта
+	@Schema(description = "Серия паспорта", example = "1234")
+	private String passportSeries;
 	
 	@NotNull
 	@Size(min = 6, max = 6)
 	@Pattern(regexp="^(0|[1-9][0-9]*)$")
-	private String passportNumber;		// Номер паспорта
+	@Schema(description = "Номер паспорта", example = "123456")
+	private String passportNumber;
 }

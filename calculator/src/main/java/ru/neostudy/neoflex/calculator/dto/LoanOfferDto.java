@@ -1,5 +1,6 @@
 package ru.neostudy.neoflex.calculator.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -12,14 +13,22 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class LoanOfferDto
 {
-	private UUID statementId;				// Идентификатор заявки
-	private BigDecimal requestedAmount;		// Запрашиваемая сумма
-	private BigDecimal totalAmount;			// Полная стоимость кредита ПСК
-	private Integer term;					// Срок кредитования
-	private BigDecimal monthlyPayment;		// Ежемесячный платёж
-	private BigDecimal rate;				// Процентная ставка
-	private Boolean isInsuranceEnabled;		// Страховка активна
-	private Boolean isSalaryClient;			// Зарплатный клиент
+	@Schema(description = "Идентификатор предложения")
+	private UUID statementId;
+	@Schema(description = "Запрашиваемая сумма")
+	private BigDecimal requestedAmount;
+	@Schema(description = "Полная стоимость кредита")
+	private BigDecimal totalAmount;
+	@Schema(description = "Срок кредитования")
+	private Integer term;
+	@Schema(description = "Ежемесячный платёж")
+	private BigDecimal monthlyPayment;
+	@Schema(description = "Процентная ставка")
+	private BigDecimal rate;
+	@Schema(description = "Страховка включена")
+	private Boolean isInsuranceEnabled;
+	@Schema(description = "Зарплатный клиент")
+	private Boolean isSalaryClient;
 	
 	@Override
 	public boolean equals(Object o)
