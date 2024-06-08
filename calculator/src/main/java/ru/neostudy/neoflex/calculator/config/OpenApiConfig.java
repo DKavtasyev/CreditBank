@@ -3,7 +3,6 @@ package ru.neostudy.neoflex.calculator.config;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 						Калькулятор кредита с ежемесячной фиксированной процентной ставкой,
 						с аннуитетным ежемесячным платежом, со страховкой
 						5 % от суммы кредита при сниженной ставке на 3 %
-                        """,
+						""",
 				contact = @Contact(url = "https://t.me/dkavtasyev", email = "dkavtasyev@gmail.com")
 		),
 		servers = {

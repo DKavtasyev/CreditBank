@@ -2,6 +2,7 @@ package ru.neostudy.neoflex.calculator.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,11 @@ public class CalculatorController
 	@PostMapping("/offers")
 	@Operation(
 			summary = "Предварительный расчёт предложений",
-			description = "По данным от пользователя предлагает четыре предложения займа в зависимости от опций: страховка, зарплатный клиент")
+			description = "По данным от пользователя предлагает четыре предложения займа в зависимости от опций: страховка, зарплатный клиент",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "400", description = "Bad request")
+			})
 	public ResponseEntity<List<LoanOfferDto>> calculationOfPossibleLoanTerms(
 			@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest,
 			BindingResult bindingResult)
@@ -55,7 +60,11 @@ public class CalculatorController
 	@PostMapping("/calc")
 	@Operation(
 			summary = "Расчёт графика платежей",
-			description = "По данным от пользователя рассчитывает график платежей и сумму каждого платежа")
+			description = "По данным от пользователя рассчитывает график платежей и сумму каждого платежа",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "400", description = "Bad request")
+			})
 	public ResponseEntity<CreditDto> fullCalculationOfLoanTerms(
 			@RequestBody @Valid @Parameter(description = "Пользовательсткие данные для расчёта кредита") ScoringDataDto scoringData,
 			BindingResult bindingResult) throws Exception
