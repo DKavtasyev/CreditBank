@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: deal
+  profiles:
+    active: default
+  datasource:
+    url: jdbc:postgresql://localhost:5432/credit_bank
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: 8082
+
+app:
+  rest:
+    prefix: /deal
+
+logging:
+  level:
+    root: info

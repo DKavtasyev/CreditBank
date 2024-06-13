@@ -15,8 +15,8 @@ import static ru.neostudy.neoflex.calculator.constants.EmploymentStatus.*;
 import static ru.neostudy.neoflex.calculator.constants.Gender.*;
 import static ru.neostudy.neoflex.calculator.constants.MaritalStatus.DIVORCED;
 import static ru.neostudy.neoflex.calculator.constants.MaritalStatus.MARRIED;
-import static ru.neostudy.neoflex.calculator.constants.Position.MIDDLE_MANAGER;
-import static ru.neostudy.neoflex.calculator.constants.Position.TOP_MANAGER;
+import static ru.neostudy.neoflex.calculator.constants.EmploymentPosition.MID_MANAGER;
+import static ru.neostudy.neoflex.calculator.constants.EmploymentPosition.TOP_MANAGER;
 
 @Service
 public class PersonalRateCalculatorService
@@ -79,7 +79,7 @@ public class PersonalRateCalculatorService
 			else if (employmentDto.getEmploymentStatus().equals(BUSINESS_OWNER))
 				rate = rate.add(BUSINESS_OWNER_POINTS);
 			
-			if (employmentDto.getPosition().equals(MIDDLE_MANAGER))
+			if (employmentDto.getPosition().equals(MID_MANAGER))
 				rate = rate.add(MIDDLE_MANAGER_POINTS);
 			else if (employmentDto.getPosition().equals(TOP_MANAGER))
 				rate = rate.add(TOP_MANAGER_POINTS);

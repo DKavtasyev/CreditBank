@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import ru.neostudy.neoflex.calculator.constants.EmploymentStatus;
-import ru.neostudy.neoflex.calculator.constants.Position;
+import ru.neostudy.neoflex.calculator.constants.EmploymentPosition;
 
 import java.math.BigDecimal;
 
@@ -30,8 +30,8 @@ public class EmploymentDto
 	BigDecimal salary;
 	
 	@NotNull
-	@Schema(description = "Карьерное положение", example = "SPECIALIST")
-	Position position;
+	@Schema(description = "Карьерное положение", example = "WORKER")
+	EmploymentPosition position;
 	
 	@NotNull
 	@Min(value = 0)

@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Log4j2
@@ -66,7 +65,6 @@ public class CalculatorService
 			log.info("Monthly payment has been calculated. Value = " + monthlyPayment.doubleValue());
 			
 			LoanOfferDto loanOffer = new LoanOfferDto()
-					.setStatementId(UUID.randomUUID())
 					.setRequestedAmount(loanStatementRequest.getAmount())
 					.setTotalAmount(monthlyPayment.multiply(BigDecimal.valueOf(loanStatementRequest.getTerm())))
 					.setTerm(loanStatementRequest.getTerm())

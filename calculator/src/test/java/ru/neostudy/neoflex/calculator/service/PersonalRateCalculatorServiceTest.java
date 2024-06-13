@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.neostudy.neoflex.calculator.constants.EmploymentStatus;
 import ru.neostudy.neoflex.calculator.constants.Gender;
 import ru.neostudy.neoflex.calculator.constants.MaritalStatus;
-import ru.neostudy.neoflex.calculator.constants.Position;
+import ru.neostudy.neoflex.calculator.constants.EmploymentPosition;
 import ru.neostudy.neoflex.calculator.dto.ScoringDataDto;
 import ru.neostudy.neoflex.calculator.exception.LoanRefusalException;
 import ru.neostudy.neoflex.calculator.util.DtoInitializer;
@@ -100,7 +100,7 @@ class PersonalRateCalculatorServiceTest
 	@Test
 	void score_whenMiddleManager_thenRateIsDecreasedByTwo() throws Exception
 	{
-		scoringData.getEmployment().setPosition(Position.MIDDLE_MANAGER);
+		scoringData.getEmployment().setPosition(EmploymentPosition.MID_MANAGER);
 		BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE);
 		assertThat(actualRate.compareTo(RATE.subtract(TWO_POINTS)) == 0).isTrue();
 	}
@@ -108,7 +108,7 @@ class PersonalRateCalculatorServiceTest
 	@Test
 	void score_whenTopManager_thenRateIsDecreasedByThree() throws Exception
 	{
-		scoringData.getEmployment().setPosition(Position.TOP_MANAGER);
+		scoringData.getEmployment().setPosition(EmploymentPosition.TOP_MANAGER);
 		BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE);
 		assertThat(actualRate.compareTo(RATE.subtract(THREE_POINTS)) == 0).isTrue();
 	}

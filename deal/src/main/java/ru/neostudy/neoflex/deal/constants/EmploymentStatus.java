@@ -1,4 +1,4 @@
-package ru.neostudy.neoflex.calculator.constants;
+package ru.neostudy.neoflex.deal.constants;
 
 public enum EmploymentStatus
 {

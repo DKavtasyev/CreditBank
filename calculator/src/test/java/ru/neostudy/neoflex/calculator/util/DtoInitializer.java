@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.neostudy.neoflex.calculator.constants.EmploymentStatus;
 import ru.neostudy.neoflex.calculator.constants.Gender;
 import ru.neostudy.neoflex.calculator.constants.MaritalStatus;
-import ru.neostudy.neoflex.calculator.constants.Position;
+import ru.neostudy.neoflex.calculator.constants.EmploymentPosition;
 import ru.neostudy.neoflex.calculator.dto.*;
 
 import java.math.BigDecimal;
@@ -82,10 +82,10 @@ public class DtoInitializer
 	public static ScoringDataDto initScoringData()
 	{
 		EmploymentDto employment = EmploymentDto.builder()
-				.employmentStatus(EmploymentStatus.EMPLOYEE)
+				.employmentStatus(EmploymentStatus.EMPLOYED)
 				.employmentINN("12345678")
 				.salary(BigDecimal.valueOf(150_000))
-				.position(Position.SPECIALIST)
+				.position(EmploymentPosition.WORKER)
 				.workExperienceTotal(60)
 				.workExperienceCurrent(24)
 				.build();

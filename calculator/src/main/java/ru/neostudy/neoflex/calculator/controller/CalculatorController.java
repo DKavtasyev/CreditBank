@@ -43,7 +43,7 @@ public class CalculatorController
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request")
 			})
-	public ResponseEntity<List<LoanOfferDto>> calculationOfPossibleLoanTerms(
+	public ResponseEntity<List<LoanOfferDto>> calculateLoanOffers(
 			@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest,
 			BindingResult bindingResult)
 	{
@@ -65,7 +65,7 @@ public class CalculatorController
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request")
 			})
-	public ResponseEntity<CreditDto> fullCalculationOfLoanTerms(
+	public ResponseEntity<CreditDto> calculateLoanTerms(
 			@RequestBody @Valid @Parameter(description = "Пользовательсткие данные для расчёта кредита") ScoringDataDto scoringData,
 			BindingResult bindingResult) throws Exception
 	{
