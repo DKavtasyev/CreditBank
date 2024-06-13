@@ -15,7 +15,7 @@ logging:
   level:
     root: warn
     # noinspection SpellCheckingInspection
-    ru.neostudy.neoflex.calculator: debug
+    ru.neoflex.neostudy.calculator: debug
 
 credit:
   insurance-percent: 1.05
