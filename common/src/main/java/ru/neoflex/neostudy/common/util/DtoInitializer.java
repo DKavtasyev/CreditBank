@@ -81,14 +81,7 @@ public class DtoInitializer
 	
 	public static ScoringDataDto initScoringData()
 	{
-		EmploymentDto employment = EmploymentDto.builder()
-				.employmentStatus(EmploymentStatus.EMPLOYED)
-				.employmentINN("12345678")
-				.salary(BigDecimal.valueOf(150_000))
-				.position(EmploymentPosition.WORKER)
-				.workExperienceTotal(60)
-				.workExperienceCurrent(24)
-				.build();
+		EmploymentDto employment = initEmploymentDto();
 		
 		return ScoringDataDto.builder()
 				.amount(BigDecimal.valueOf(1_000_000))
@@ -111,7 +104,19 @@ public class DtoInitializer
 				.build();
 	}
 	
-	public CreditDto initCredit()
+	public static EmploymentDto initEmploymentDto()
+	{
+		return EmploymentDto.builder()
+				.employmentStatus(EmploymentStatus.EMPLOYED)
+				.employmentINN("123456781234")
+				.salary(BigDecimal.valueOf(150_000))
+				.position(EmploymentPosition.WORKER)
+				.workExperienceTotal(60)
+				.workExperienceCurrent(24)
+				.build();
+	}
+	
+	public CreditDto initCreditDto()
 	{
 		PaymentScheduleElementDto paymentScheduleElementOne = new PaymentScheduleElementDto()
 				.setNumber(1)
@@ -179,5 +184,30 @@ public class DtoInitializer
 				.setIsInsuranceEnabled(false)
 				.setIsSalaryClient(false)
 				.setPaymentSchedule(scheduleOfPayments);
+	}
+	
+	public static LoanOfferDto initLoanOfferDto()
+	{
+		return new LoanOfferDto()
+				.setStatementId(UUID.randomUUID())
+				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
+				.setTotalAmount(new BigDecimal("1032327.2853558058770738"))
+				.setTerm(6)
+				.setMonthlyPayment(new BigDecimal("172054.5475593009795123"))
+				.setRate(new BigDecimal("0.11"))
+				.setIsInsuranceEnabled(false)
+				.setIsSalaryClient(true);
+	}
+	
+	public static FinishingRegistrationRequestDto initFinishingRegistrationRequest()
+	{
+		return new FinishingRegistrationRequestDto()
+				.setGender(Gender.MALE)
+				.setMaritalStatus(MaritalStatus.SINGLE)
+				.setDependentAmount(0)
+				.setPassportIssueDate(LocalDate.now().minusYears(5))
+				.setPassportIssueBranch("ГУ МВД ПО Г. МОСКВА")
+				.setEmployment(initEmploymentDto())
+				.setAccountNumber("1234151234");
 	}
 }

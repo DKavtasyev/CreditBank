@@ -81,7 +81,7 @@ public class CalculatorServiceTest
 		@Test
 		void score_whenValidScoringDataReceived_thenReturnCreditDto() throws Exception
 		{
-			CreditDto expectedCredit = DtoInitializer.initCredit();
+			CreditDto expectedCredit = DtoInitializer.initCreditDto();
 			when(personalRateCalculatorService.countPersonalRate(scoringData, RATE)).thenReturn(RATE);
 			when(monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), RATE)).thenReturn(new BigDecimal("172548.3667108814202625"));
 			when(schedulePaymentsCalculatorService.countInterestPayment(any(BigDecimal.class), any(BigDecimal.class), anyInt())).thenReturn(new BigDecimal("9863.0136986310000000"));

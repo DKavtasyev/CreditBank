@@ -2,6 +2,7 @@ package ru.neoflex.neostudy.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class FinishingRegistrationRequestDto
 	
 	@NotNull(message = "Информация о работе должна быть указана")
 	@Schema(description = "Информация о работе")
+	@Valid
 	private EmploymentDto employment;
 	
 	@NotNull(message = "Номер аккаунта должен быть указан")

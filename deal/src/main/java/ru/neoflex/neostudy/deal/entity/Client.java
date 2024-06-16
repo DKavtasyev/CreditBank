@@ -15,6 +15,7 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Employment;
 import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
@@ -69,4 +70,28 @@ public class Client
 	
 	@Column(name = "account_number")
 	private String accountNumber;
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (!(o instanceof Client client)) return false;
+		return Objects.equals(lastName, client.lastName)
+				&& Objects.equals(firstName, client.firstName)
+				&& Objects.equals(middleName, client.middleName)
+				&& Objects.equals(birthdate, client.birthdate)
+				&& Objects.equals(email, client.email)
+				&& gender == client.gender
+				&& maritalStatus == client.maritalStatus
+				&& Objects.equals(dependentAmount, client.dependentAmount)
+				&& Objects.equals(passport, client.passport)
+				&& Objects.equals(employment, client.employment)
+				&& Objects.equals(accountNumber, client.accountNumber);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(lastName, firstName, middleName, birthdate, email, gender, maritalStatus, dependentAmount, passport, employment, accountNumber);
+	}
 }

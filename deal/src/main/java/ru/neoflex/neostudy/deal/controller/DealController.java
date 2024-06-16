@@ -5,23 +5,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.deal.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.deal.exception.InvalidScoreParameters;
 import ru.neoflex.neostudy.deal.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
@@ -30,10 +24,9 @@ import ru.neoflex.neostudy.deal.service.ScoringService;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("${app.rest.prefix}")
 @RequiredArgsConstructor
-@Log4j2
 @Tag(
 		name = "Сделка",
 		description = "Управление данными сделки")
@@ -84,15 +77,8 @@ public class DealController
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
-	public ResponseEntity<Void> applyOffer(@RequestBody @Valid LoanOfferDto loanOffer,
-										   BindingResult bindingResult) throws StatementNotFoundException, InvalidPreScoreParameters
+	public ResponseEntity<Void> applyOffer(@RequestBody @Valid LoanOfferDto loanOffer) throws StatementNotFoundException
 	{
-		if (bindingResult.hasErrors())
-			throw new InvalidPreScoreParameters(bindingResult.getAllErrors().stream()				// TODO а зачем здесь валидация?..
-					.map(DefaultMessageSourceResolvable::getDefaultMessage)
-					.reduce((s1, s2) -> s1 + "; " + s2)
-					.orElse("Unknown errors"));
-		
 		dataService.updateStatement(loanOffer);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -108,15 +94,8 @@ public class DealController
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
 	public ResponseEntity<Void> calculateLoanParameters(@RequestBody @Valid FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-														@PathVariable("statementId") UUID statementId,
-														BindingResult bindingResult) throws StatementNotFoundException, InvalidScoreParameters
+														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException
 	{
-		if (bindingResult.hasErrors())
-			throw new InvalidScoreParameters(bindingResult.getAllErrors().stream()
-					.map(DefaultMessageSourceResolvable::getDefaultMessage)
-					.reduce((s1, s2) -> s1 + "; " + s2)
-					.orElse("Unknown errors"));
-		
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		return ResponseEntity.status(HttpStatus.OK).build();

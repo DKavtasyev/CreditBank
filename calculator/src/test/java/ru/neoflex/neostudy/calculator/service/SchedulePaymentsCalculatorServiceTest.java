@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SchedulePaymentsCalculatorServiceTest
 {
 	SchedulePaymentsCalculatorService schedulePaymentsCalculatorService = new SchedulePaymentsCalculatorService();
-	List<PaymentScheduleElementDto> expectedScheduleOfPayments = DtoInitializer.initCredit().getPaymentSchedule();
+	List<PaymentScheduleElementDto> expectedScheduleOfPayments = DtoInitializer.initCreditDto().getPaymentSchedule();
 	BigDecimal dailyRate = new BigDecimal("0.12").divide(BigDecimal.valueOf(365), 16, RoundingMode.HALF_EVEN);
 	
 	@Test

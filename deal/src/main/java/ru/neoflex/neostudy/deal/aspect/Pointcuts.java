@@ -10,6 +10,6 @@ public class Pointcuts
 	@Pointcut("execution(* ru.neoflex.neostudy.deal.requester.CalculatorRequester.request*(..))")
 	public void allCalculatorRequesterMethods(){}
 	
-	@Pointcut("execution(* ru.neostudy.neoflex.deal.repository.*.save(..))")
+	@Pointcut("execution(* ru.neoflex.neostudy.deal.repository.*.save(..))")
 	public void allSaveEntityMethods(){}
 }
