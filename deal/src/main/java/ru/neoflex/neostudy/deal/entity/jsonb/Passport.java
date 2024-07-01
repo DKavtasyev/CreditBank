@@ -12,8 +12,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
 
 @Data
 @Accessors(chain = true)
-public class Passport implements Serializable
-{
+public class Passport implements Serializable {
 	private UUID passportUuid;
 	private String series;
 	private String number;

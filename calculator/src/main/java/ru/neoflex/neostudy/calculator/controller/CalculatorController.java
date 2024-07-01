@@ -31,8 +31,7 @@ import java.util.List;
 @Tag(
 		name = "Калькулятор",
 		description = "Предварительный и основной расчёт кредита")
-public class CalculatorController
-{
+public class CalculatorController {
 	private final CalculatorService service;
 	
 	@PostMapping("/offers")
@@ -45,10 +44,8 @@ public class CalculatorController
 			})
 	public ResponseEntity<List<LoanOfferDto>> calculateLoanOffers(
 			@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest,
-			BindingResult bindingResult)
-	{
-		if (bindingResult.hasErrors())
-		{
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
 			log.warn("LoanStatement Data is invalid");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -67,10 +64,8 @@ public class CalculatorController
 			})
 	public ResponseEntity<CreditDto> calculateLoanTerms(
 			@RequestBody @Valid @Parameter(description = "Пользовательсткие данные для расчёта кредита") ScoringDataDto scoringData,
-			BindingResult bindingResult) throws Exception
-	{
-		if (bindingResult.hasErrors())
-		{
+			BindingResult bindingResult) throws Exception {
+		if (bindingResult.hasErrors()) {
 			log.warn("ScoringData is invalid");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -79,8 +74,7 @@ public class CalculatorController
 	}
 	
 	@ExceptionHandler(LoanRefusalException.class)
-	private ResponseEntity<String> refuseLoan()
-	{
+	private ResponseEntity<String> refuseLoan() {
 		log.info("Loan denied");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}

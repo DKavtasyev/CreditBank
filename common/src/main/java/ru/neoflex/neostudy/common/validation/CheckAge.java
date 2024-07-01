@@ -11,10 +11,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CheckAgeValidator.class)
-public @interface CheckAge
-{
+public @interface CheckAge {
 	int value();
+	
 	String message() default "The age must be over 18 years old";
+	
 	Class<?>[] groups() default {};
-	Class<? extends Payload> [] payload() default {};
+	
+	Class<? extends Payload>[] payload() default {};
 }

@@ -17,8 +17,7 @@ import static ru.neoflex.neostudy.common.constants.EmploymentStatus.*;
 import static ru.neoflex.neostudy.common.constants.MaritalStatus.*;
 
 @Service
-public class PersonalRateCalculatorService
-{
+public class PersonalRateCalculatorService {
 	private final RefusalConfig refusalConfig;
 	private final RefusalConfig.WorkExperience workExperience;
 	private final RateConfig.Woman womanConfig;
@@ -37,8 +36,7 @@ public class PersonalRateCalculatorService
 	private final BigDecimal INSURANCE_ENABLED;
 	private final BigDecimal SALARY_CLIENT;
 	
-	public PersonalRateCalculatorService(RefusalConfig refusalConfig, RateConfig rateConfig)
-	{
+	public PersonalRateCalculatorService(RefusalConfig refusalConfig, RateConfig rateConfig) {
 		this.refusalConfig = refusalConfig;
 		this.workExperience = refusalConfig.getWorkExperience();
 		this.womanConfig = rateConfig.getWoman();
@@ -58,8 +56,7 @@ public class PersonalRateCalculatorService
 		SALARY_CLIENT = new BigDecimal(rateConfig.getSalaryClient());
 	}
 	
-	BigDecimal countPersonalRate(ScoringDataDto scoringData, BigDecimal rate) throws LoanRefusalException
-	{
+	BigDecimal countPersonalRate(ScoringDataDto scoringData, BigDecimal rate) throws LoanRefusalException {
 		EmploymentDto employmentDto = scoringData.getEmployment();
 		int age = (int) ChronoUnit.YEARS.between(scoringData.getBirthdate(), LocalDate.now());
 		
@@ -68,36 +65,47 @@ public class PersonalRateCalculatorService
 		boolean inappropriateAmount = scoringData.getAmount().compareTo(employmentDto.getSalary().multiply(RATIO_OF_AMOUNT_TO_SALARY)) > 0;
 		boolean isUnemployed = employmentDto.getEmploymentStatus().equals(UNEMPLOYED);
 		
-		if (inappropriateWorkExperience || inappropriateAge || inappropriateAmount || isUnemployed)
+		if (inappropriateWorkExperience || inappropriateAge || inappropriateAmount || isUnemployed) {
 			throw new LoanRefusalException();
-		else
-		{
-			if (employmentDto.getEmploymentStatus().equals(SELF_EMPLOYED))
+		}
+		else {
+			if (employmentDto.getEmploymentStatus().equals(SELF_EMPLOYED)) {
 				rate = rate.add(SELF_EMPLOYED_POINTS);
-			else if (employmentDto.getEmploymentStatus().equals(BUSINESS_OWNER))
+			}
+			else if (employmentDto.getEmploymentStatus().equals(BUSINESS_OWNER)) {
 				rate = rate.add(BUSINESS_OWNER_POINTS);
+			}
 			
-			if (employmentDto.getPosition().equals(MID_MANAGER))
+			if (employmentDto.getPosition().equals(MID_MANAGER)) {
 				rate = rate.add(MIDDLE_MANAGER_POINTS);
-			else if (employmentDto.getPosition().equals(TOP_MANAGER))
+			}
+			else if (employmentDto.getPosition().equals(TOP_MANAGER)) {
 				rate = rate.add(TOP_MANAGER_POINTS);
+			}
 			
-			if (scoringData.getMaritalStatus().equals(MARRIED))
+			if (scoringData.getMaritalStatus().equals(MARRIED)) {
 				rate = rate.add(MARRIED_POINTS);
-			else if (scoringData.getMaritalStatus().equals(DIVORCED))
+			}
+			else if (scoringData.getMaritalStatus().equals(DIVORCED)) {
 				rate = rate.add(DIVORCED_POINTS);
+			}
 			
-			if ((scoringData.getGender().equals(Gender.FEMALE) && age > womanConfig.getAgeFrom() && age < womanConfig.getAgeTo()))
+			if ((scoringData.getGender().equals(Gender.FEMALE) && age > womanConfig.getAgeFrom() && age < womanConfig.getAgeTo())) {
 				rate = rate.add(WOMAN_POINTS);
-			else if (scoringData.getGender().equals(Gender.MALE) && age > manConfig.getAgeFrom() && age < manConfig.getAgeTo())
+			}
+			else if (scoringData.getGender().equals(Gender.MALE) && age > manConfig.getAgeFrom() && age < manConfig.getAgeTo()) {
 				rate = rate.add(MAN_POINTS);
-			else if (scoringData.getGender().equals(Gender.NON_BINARY))
+			}
+			else if (scoringData.getGender().equals(Gender.NON_BINARY)) {
 				rate = rate.add(NON_BINARY_POINTS);
+			}
 			
-			if (scoringData.getIsInsuranceEnabled())
+			if (scoringData.getIsInsuranceEnabled()) {
 				rate = rate.add(INSURANCE_ENABLED);
-			if (scoringData.getIsSalaryClient())
+			}
+			if (scoringData.getIsSalaryClient()) {
 				rate = rate.add(SALARY_CLIENT);
+			}
 		}
 		return rate.max(BigDecimal.ZERO);
 	}

@@ -13,11 +13,9 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 import java.util.UUID;
 
 @Component
-public class ScoringDataMapper
-{
+public class ScoringDataMapper {
 	
-	public ScoringDataDto formScoringDataDto(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement)
-	{
+	public ScoringDataDto formScoringDataDto(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) {
 		
 		EmploymentDto employmentDto = finishingRegistrationRequestDto.getEmployment();
 		Client client = statement.getClient();

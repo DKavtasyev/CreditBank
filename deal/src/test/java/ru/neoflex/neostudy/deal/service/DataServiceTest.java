@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DataServiceTest
-{
+class DataServiceTest {
 	@Mock
 	private ClientEntityService clientEntityServiceMock;
 	
@@ -41,8 +40,7 @@ class DataServiceTest
 	private final LoanOfferDto loanOffer = new LoanOfferDto();
 	
 	@BeforeEach
-	void init()
-	{
+	void init() {
 		loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
 		client = mapper.dtoToEntity(loanStatementRequestDto);
 		statement.setClient(client);
@@ -51,11 +49,9 @@ class DataServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода DataService:writeData()")
-	class TestingWriteDataMethod
-	{
+	class TestingWriteDataMethod {
 		@Test
-		void writeData() throws InvalidPassportDataException
-		{
+		void writeData() throws InvalidPassportDataException {
 			Optional<Client> optionalClient = Optional.of(client);
 			when(clientEntityServiceMock.findClientByPassport(loanStatementRequestDto)).thenReturn(optionalClient);
 			when(clientEntityServiceMock.checkAndSaveClient(loanStatementRequestDto, optionalClient)).thenReturn(client);
@@ -72,11 +68,9 @@ class DataServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода DataService:findStatement()")
-	class TestingFindStatementMethod
-	{
+	class TestingFindStatementMethod {
 		@Test
-		void findStatement_whenStatementExists_thenReturnStatement() throws StatementNotFoundException
-		{
+		void findStatement_whenStatementExists_thenReturnStatement() throws StatementNotFoundException {
 			UUID statementId = UUID.randomUUID();
 			statement.setStatementId(statementId);
 			Optional<Statement> optionalStatement = Optional.of(statement);
@@ -86,8 +80,7 @@ class DataServiceTest
 		}
 		
 		@Test
-		void findStatement_whenStatementNotExists_thenThrowStatementNotFoundException()
-		{
+		void findStatement_whenStatementNotExists_thenThrowStatementNotFoundException() {
 			UUID statementId = UUID.randomUUID();
 			Optional<Statement> optionalStatement = Optional.empty();
 			when(statementEntityServiceMock.findStatement(statementId)).thenReturn(optionalStatement);
@@ -97,11 +90,9 @@ class DataServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода DataService:updateStatement()")
-	class TestingUpdateStatementMethod
-	{
+	class TestingUpdateStatementMethod {
 		@Test
-		void updateStatement() throws StatementNotFoundException
-		{
+		void updateStatement() throws StatementNotFoundException {
 			UUID statementId = statement.getStatementId();
 			loanOffer.setStatementId(statementId);
 			Optional<Statement> optionalStatement = Optional.of(statement);

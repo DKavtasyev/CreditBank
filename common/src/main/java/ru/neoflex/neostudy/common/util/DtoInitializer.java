@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 @UtilityClass
-public class DtoInitializer
-{
-	public static LoanStatementRequestDto initLoanStatementRequest()
-	{
+public class DtoInitializer {
+	public static LoanStatementRequestDto initLoanStatementRequest() {
 		return LoanStatementRequestDto.builder()
 				.amount(BigDecimal.valueOf(1_000_000))
 				.term(6)
@@ -32,8 +30,7 @@ public class DtoInitializer
 				.build();
 	}
 	
-	public static List<LoanOfferDto> initOffers()
-	{
+	public static List<LoanOfferDto> initOffers() {
 		LoanOfferDto loanOfferOne = new LoanOfferDto()
 				.setStatementId(UUID.randomUUID())
 				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
@@ -79,8 +76,7 @@ public class DtoInitializer
 		return offers;
 	}
 	
-	public static ScoringDataDto initScoringData()
-	{
+	public static ScoringDataDto initScoringData() {
 		EmploymentDto employment = initEmploymentDto();
 		
 		return ScoringDataDto.builder()
@@ -104,8 +100,7 @@ public class DtoInitializer
 				.build();
 	}
 	
-	public static EmploymentDto initEmploymentDto()
-	{
+	public static EmploymentDto initEmploymentDto() {
 		return EmploymentDto.builder()
 				.employmentStatus(EmploymentStatus.EMPLOYED)
 				.employmentINN("123456781234")
@@ -116,8 +111,7 @@ public class DtoInitializer
 				.build();
 	}
 	
-	public CreditDto initCreditDto()
-	{
+	public CreditDto initCreditDto() {
 		PaymentScheduleElementDto paymentScheduleElementOne = new PaymentScheduleElementDto()
 				.setNumber(1)
 				.setDate(LocalDate.now().plusMonths(1))
@@ -186,8 +180,7 @@ public class DtoInitializer
 				.setPaymentSchedule(scheduleOfPayments);
 	}
 	
-	public static LoanOfferDto initLoanOfferDto()
-	{
+	public static LoanOfferDto initLoanOfferDto() {
 		return new LoanOfferDto()
 				.setStatementId(UUID.randomUUID())
 				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
@@ -199,8 +192,7 @@ public class DtoInitializer
 				.setIsSalaryClient(true);
 	}
 	
-	public static FinishingRegistrationRequestDto initFinishingRegistrationRequest()
-	{
+	public static FinishingRegistrationRequestDto initFinishingRegistrationRequest() {
 		return new FinishingRegistrationRequestDto()
 				.setGender(Gender.MALE)
 				.setMaritalStatus(MaritalStatus.SINGLE)

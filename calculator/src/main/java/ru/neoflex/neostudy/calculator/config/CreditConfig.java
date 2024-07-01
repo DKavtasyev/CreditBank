@@ -7,8 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "credit")
 @Getter
 @Setter
-public class CreditConfig
-{
+public class CreditConfig {
 	private String insurancePercent;
 	private String minAmount;
 	private String minTerm;

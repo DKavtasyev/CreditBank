@@ -17,19 +17,16 @@ import java.util.List;
 @Component
 @Aspect
 @Log4j2
-public class LoggingAspect
-{
+public class LoggingAspect {
 	@Before("ru.neoflex.neostudy.calculator.aspect.Pointcuts.allControllerMethods()")
-	public void beforeControllerCalculationMethods(JoinPoint joinPoint) throws IllegalAccessException
-	{
+	public void beforeControllerCalculationMethods(JoinPoint joinPoint) throws IllegalAccessException {
 		MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 		String methodName = methodSignature.getName();
 		Object[] arguments = joinPoint.getArgs();
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("Before method: ").append(methodName).append("; ");
 		
-		for (Field field : arguments[0].getClass().getDeclaredFields())
-		{
+		for (Field field : arguments[0].getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			stringBuilder.append(field.getName()).append(": ").append(field.get(arguments[0])).append("; ");
 			field.setAccessible(false);
@@ -39,10 +36,8 @@ public class LoggingAspect
 	
 	@AfterReturning(pointcut = "ru.neoflex.neostudy.calculator.aspect.Pointcuts.calculatorServicePreScoreMethod()",
 			returning = "offerList")
-	public void afterReturningResultOfPreScoreMethod(List<LoanOfferDto> offerList) throws IllegalAccessException
-	{
-		for (LoanOfferDto loanOffer : offerList)
-		{
+	public void afterReturningResultOfPreScoreMethod(List<LoanOfferDto> offerList) throws IllegalAccessException {
+		for (LoanOfferDto loanOffer : offerList) {
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("Method: preScore; LoanOffer calculated: (");
 			
@@ -54,10 +49,8 @@ public class LoggingAspect
 	
 	@AfterReturning(pointcut = "ru.neoflex.neostudy.calculator.aspect.Pointcuts.calculatorServiceScoreMethod()",
 			returning = "credit")
-	public void afterReturningResultOfScoreMethod(CreditDto credit) throws IllegalAccessException
-	{
-		for(PaymentScheduleElementDto paymentScheduleElement : credit.getPaymentSchedule())
-		{
+	public void afterReturningResultOfScoreMethod(CreditDto credit) throws IllegalAccessException {
+		for (PaymentScheduleElementDto paymentScheduleElement : credit.getPaymentSchedule()) {
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append(String.format("Method: score; PaymentScheduleElement № %d calculated: (", paymentScheduleElement.getNumber()));
 			
@@ -71,8 +64,7 @@ public class LoggingAspect
 		
 	}
 	
-	private static StringBuilder makeMessage(CreditDto credit)
-	{
+	private static StringBuilder makeMessage(CreditDto credit) {
 		StringBuilder commonStringBuilder = new StringBuilder();
 		commonStringBuilder.append("Method: score; CreditDto calculated: (");
 		commonStringBuilder.append(String.format("amount: %f; term: %d; monthlyPayment: %f; rate: %f; psk: %f; isInsuranceEnabled: %b; isSalaryClient: %b",
@@ -86,10 +78,8 @@ public class LoggingAspect
 		return commonStringBuilder;
 	}
 	
-	private void addFieldValues(Object o, StringBuilder stringBuilder) throws IllegalAccessException
-	{
-		for (Field field: o.getClass().getDeclaredFields())
-		{
+	private void addFieldValues(Object o, StringBuilder stringBuilder) throws IllegalAccessException {
+		for (Field field : o.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			stringBuilder.append(field.getName()).append(": ").append(field.get(o)).append("; ");
 			field.setAccessible(false);

@@ -24,8 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class StatementEntityServiceTest
-{
+class StatementEntityServiceTest {
 	@Mock
 	StatementRepository statementRepositoryMock;
 	
@@ -35,11 +34,9 @@ class StatementEntityServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода StatementEntityService:save()")
-	class TestingSaveMethod
-	{
+	class TestingSaveMethod {
 		@Test
-		void save()
-		{
+		void save() {
 			Statement statement = new Statement();
 			statementEntityService.save(statement);
 			verify(statementRepositoryMock, times(1)).save(statement);
@@ -48,11 +45,9 @@ class StatementEntityServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода StatementEntityService:findStatement()")
-	class TestingFindStatementMethod
-	{
+	class TestingFindStatementMethod {
 		@Test
-		void findStatement()
-		{
+		void findStatement() {
 			UUID statementId = UUID.randomUUID();
 			statementEntityService.findStatement(statementId);
 			verify(statementRepositoryMock, times(1)).findById(statementId);
@@ -61,12 +56,10 @@ class StatementEntityServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода StatementEntityService:setStatus()")
-	class TestingSetStatusMethod
-	{
+	class TestingSetStatusMethod {
 		@ParameterizedTest
 		@MethodSource("argsProvidedFactory")
-		void setStatus(ApplicationStatus status)
-		{
+		void setStatus(ApplicationStatus status) {
 			Statement statement = new Statement();
 			statementEntityService.setStatus(statement, status);
 			assertAll(() -> {
@@ -79,8 +72,7 @@ class StatementEntityServiceTest
 			});
 		}
 		
-		static Stream<ApplicationStatus> argsProvidedFactory()
-		{
+		static Stream<ApplicationStatus> argsProvidedFactory() {
 			return Arrays.stream(ApplicationStatus.values());
 		}
 	}

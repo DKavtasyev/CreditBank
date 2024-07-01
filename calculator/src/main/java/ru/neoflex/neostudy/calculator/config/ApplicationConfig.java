@@ -16,6 +16,5 @@ import org.springframework.context.annotation.Configuration;
 		CreditConfig.class,
 		RefusalConfig.class,
 		RefusalConfig.WorkExperience.class})
-public class ApplicationConfig
-{
+public class ApplicationConfig {
 }

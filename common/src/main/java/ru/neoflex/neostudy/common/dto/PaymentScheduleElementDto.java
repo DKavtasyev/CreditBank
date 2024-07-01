@@ -14,8 +14,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class PaymentScheduleElementDto
-{
+public class PaymentScheduleElementDto {
 	@Schema(description = "Номер платежа")
 	private Integer number;
 	@Schema(description = "Дата платежа")
@@ -31,10 +30,13 @@ public class PaymentScheduleElementDto
 	private BigDecimal remainingDebt;
 	
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (!(o instanceof PaymentScheduleElementDto that)) return false;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof PaymentScheduleElementDto that)) {
+			return false;
+		}
 		return Objects.equals(number, that.number)
 				&& Objects.equals(date, that.date)
 				&& totalPayment.compareTo(that.totalPayment) == 0
@@ -44,8 +46,7 @@ public class PaymentScheduleElementDto
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(number, date, totalPayment, interestPayment, debtPayment, remainingDebt);
 	}
 }

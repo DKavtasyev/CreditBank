@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ClientEntityServiceTest
-{
+class ClientEntityServiceTest {
 	@Mock
 	ClientRepository clientRepository;
 	
@@ -36,19 +35,16 @@ class ClientEntityServiceTest
 	
 	
 	@BeforeEach
-	void init()
-	{
+	void init() {
 		loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
 		expectedClient = EntityInitializer.initClient();
 	}
 	
 	@Nested
 	@DisplayName("Тестирование метода ClientEntityService:findClientByPassport()")
-	class TestingFindClientByPassportMethod
-	{
+	class TestingFindClientByPassportMethod {
 		@Test
-		void findClientByPassport_whenGivenLoanStatementRequestDto_thenReturnOptionalClient()
-		{
+		void findClientByPassport_whenGivenLoanStatementRequestDto_thenReturnOptionalClient() {
 			when(clientRepository.findClientByPassportSeriesAndPassportNumber(loanStatementRequestDto.getPassportSeries(), loanStatementRequestDto.getPassportNumber())).thenReturn(Optional.of(expectedClient));
 			Client actualClient = clientEntityService.findClientByPassport(loanStatementRequestDto).orElse(null);
 			assertAll(() -> {
@@ -62,39 +58,33 @@ class ClientEntityServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода ClientEntityService:checkAndSaveClient()")
-	class TestingCheckAndSaveClientMethod
-	{
+	class TestingCheckAndSaveClientMethod {
 		@Test
-		void checkAndSaveClient_whenClientIsPresentAndValid_thenReturnClient() throws InvalidPassportDataException
-		{
+		void checkAndSaveClient_whenClientIsPresentAndValid_thenReturnClient() throws InvalidPassportDataException {
 			Client actualClient = clientEntityService.checkAndSaveClient(loanStatementRequestDto, Optional.of(expectedClient));
 			assertThat(actualClient).isEqualTo(expectedClient);
 		}
 		
 		@Test
-		void checkAndSaveClient_whenClientIsPresentAndFirstNameInvalid_thenThrowInvalidPassportDataException()
-		{
+		void checkAndSaveClient_whenClientIsPresentAndFirstNameInvalid_thenThrowInvalidPassportDataException() {
 			expectedClient.setFirstName("Vasya");
 			assertThrows(InvalidPassportDataException.class, () -> clientEntityService.checkAndSaveClient(loanStatementRequestDto, Optional.of(expectedClient)), "Personal identification information is invalid");
 		}
 		
 		@Test
-		void checkAndSaveClient_whenClientIsPresentAndLastNameInvalid_thenThrowInvalidPassportDataException()
-		{
+		void checkAndSaveClient_whenClientIsPresentAndLastNameInvalid_thenThrowInvalidPassportDataException() {
 			expectedClient.setLastName("Petrov");
 			assertThrows(InvalidPassportDataException.class, () -> clientEntityService.checkAndSaveClient(loanStatementRequestDto, Optional.of(expectedClient)), "Personal identification information is invalid");
 		}
 		
 		@Test
-		void checkAndSaveClient_whenClientIsPresentAndMiddleNameInvalid_thenThrowInvalidPassportDataException()
-		{
+		void checkAndSaveClient_whenClientIsPresentAndMiddleNameInvalid_thenThrowInvalidPassportDataException() {
 			expectedClient.setMiddleName(expectedClient.getMiddleName() + "a");
 			assertThrows(InvalidPassportDataException.class, () -> clientEntityService.checkAndSaveClient(loanStatementRequestDto, Optional.of(expectedClient)), "Personal identification information is invalid");
 		}
 		
 		@Test
-		void checkAndSaveClient_whenClientIsPresentAndBirthdateInvalid_thenThrowInvalidPassportDataException()
-		{
+		void checkAndSaveClient_whenClientIsPresentAndBirthdateInvalid_thenThrowInvalidPassportDataException() {
 			expectedClient.setBirthdate(expectedClient.getBirthdate().minusDays(1));
 			assertThrows(InvalidPassportDataException.class, () -> clientEntityService.checkAndSaveClient(loanStatementRequestDto, Optional.of(expectedClient)), "Personal identification information is invalid");
 		}

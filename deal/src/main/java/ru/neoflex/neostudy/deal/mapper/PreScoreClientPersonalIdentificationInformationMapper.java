@@ -8,17 +8,15 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 import java.util.UUID;
 
 @Component
-public class PreScoreClientPersonalIdentificationInformationMapper implements Mapper<Client, LoanStatementRequestDto>
-{
+public class PreScoreClientPersonalIdentificationInformationMapper implements Mapper<Client, LoanStatementRequestDto> {
 	
 	@Override
-	public Client dtoToEntity(LoanStatementRequestDto loanStatementRequestDto)
-	{
+	public Client dtoToEntity(LoanStatementRequestDto loanStatementRequestDto) {
 		Passport passport = new Passport()
 				.setPassportUuid(UUID.randomUUID())
 				.setSeries(loanStatementRequestDto.getPassportSeries())
 				.setNumber(loanStatementRequestDto.getPassportNumber());
-				
+		
 		return new Client()
 				.setClientIdUuid(UUID.randomUUID())
 				.setLastName(loanStatementRequestDto.getLastName())

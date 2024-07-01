@@ -20,8 +20,7 @@ import java.util.List;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class CalculatorService
-{
+public class CalculatorService {
 	private final MonthlyPaymentCalculatorService monthlyPaymentCalculatorService;
 	private final PersonalRateCalculatorService personalRateCalculatorService;
 	private final SchedulePaymentsCalculatorService schedulePaymentsCalculatorService;
@@ -34,32 +33,29 @@ public class CalculatorService
 	private BigDecimal SALARY_CLIENT;
 	
 	@PostConstruct
-	private void init()
-	{
+	private void init() {
 		BASE_RATE = new BigDecimal(rateConfig.getBaseRate());
 		INSURANCE_PERCENT = new BigDecimal(creditConfig.getInsurancePercent());
 		INSURANCE_ENABLED = new BigDecimal(rateConfig.getInsuranceEnabled());
 		SALARY_CLIENT = new BigDecimal(rateConfig.getSalaryClient());
 	}
 	
-	public List<LoanOfferDto> preScore(LoanStatementRequestDto loanStatementRequest)
-	{
+	public List<LoanOfferDto> preScore(LoanStatementRequestDto loanStatementRequest) {
 		List<LoanOfferDto> offersList = new ArrayList<>();
 		
-		for (byte i = 0; i <= 3; i++)
-		{
+		for (byte i = 0; i <= 3; i++) {
 			BigDecimal rate = BASE_RATE;
 			BigDecimal amount = loanStatementRequest.getAmount();
 			boolean isInsuranceEnabled = i >> 1 > 0;
 			boolean isSalaryClient = (i & 1) > 0;
 			
-			if (isInsuranceEnabled)
-			{
+			if (isInsuranceEnabled) {
 				amount = amount.multiply(INSURANCE_PERCENT);
 				rate = rate.add(INSURANCE_ENABLED);
 			}
-			if (isSalaryClient)
+			if (isSalaryClient) {
 				rate = rate.add(SALARY_CLIENT);
+			}
 			
 			BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(amount, loanStatementRequest.getTerm(), rate);
 			log.info("Monthly payment has been calculated. Value = " + monthlyPayment.doubleValue());
@@ -72,16 +68,16 @@ public class CalculatorService
 					.setRate(rate)
 					.setIsInsuranceEnabled(isInsuranceEnabled)
 					.setIsSalaryClient(isSalaryClient);
-					
+			
 			offersList.add(loanOffer);
 		}
 		return offersList;
 	}
 	
-	public CreditDto score(ScoringDataDto scoringData) throws LoanRefusalException
-	{
-		if (scoringData.getIsInsuranceEnabled())
+	public CreditDto score(ScoringDataDto scoringData) throws LoanRefusalException {
+		if (scoringData.getIsInsuranceEnabled()) {
 			scoringData.setAmount(scoringData.getAmount().multiply(INSURANCE_PERCENT));
+		}
 		
 		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, BASE_RATE);
 		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate);

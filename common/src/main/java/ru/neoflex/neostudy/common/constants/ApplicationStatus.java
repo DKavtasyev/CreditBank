@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.common.constants;
 
-public enum ApplicationStatus
-{
+public enum ApplicationStatus {
 	PREAPPROVAL,
 	APPROVED,
 	CC_DENIED,

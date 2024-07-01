@@ -24,8 +24,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class Client
-{
+public class Client {
 	@Id
 	@Column(name = "client_id", nullable = false)
 	private UUID clientIdUuid;
@@ -72,10 +71,13 @@ public class Client
 	private String accountNumber;
 	
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (!(o instanceof Client client)) return false;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Client client)) {
+			return false;
+		}
 		return Objects.equals(lastName, client.lastName)
 				&& Objects.equals(firstName, client.firstName)
 				&& Objects.equals(middleName, client.middleName)
@@ -90,8 +92,7 @@ public class Client
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(lastName, firstName, middleName, birthdate, email, gender, maritalStatus, dependentAmount, passport, employment, accountNumber);
 	}
 }

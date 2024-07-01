@@ -27,8 +27,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTE
 @ToString
 @Table(schema = "public", name = "statement")
 @Accessors(chain = true)
-public class Statement
-{
+public class Statement {
 	@Id
 	@Column(name = "statement_id", nullable = false)
 	private UUID statementId;

@@ -20,8 +20,7 @@ import java.util.UUID;
 @Getter
 @Table(schema = "public", name = "credit")
 @Accessors(chain = true)
-public class Credit
-{
+public class Credit {
 	@Id
 	@Column(name = "credit_id", nullable = false)
 	private UUID creditId;

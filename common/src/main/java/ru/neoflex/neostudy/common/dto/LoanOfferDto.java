@@ -12,8 +12,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class LoanOfferDto
-{
+public class LoanOfferDto {
 	@Schema(description = "Идентификатор предложения")
 	private UUID statementId;
 	@Schema(description = "Запрашиваемая сумма", example = "1000000")
@@ -32,10 +31,13 @@ public class LoanOfferDto
 	private Boolean isSalaryClient;
 	
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (!(o instanceof LoanOfferDto that)) return false;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof LoanOfferDto that)) {
+			return false;
+		}
 		
 		return requestedAmount.compareTo(that.requestedAmount) == 0 &&
 				totalAmount.compareTo(that.totalAmount) == 0 &&
@@ -47,8 +49,7 @@ public class LoanOfferDto
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(requestedAmount, totalAmount, term, monthlyPayment, rate, isInsuranceEnabled, isSalaryClient);
 	}
 }

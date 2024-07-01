@@ -19,8 +19,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class CalculatorServiceTest
-{
+public class CalculatorServiceTest {
 	
 	@Autowired
 	private CalculatorService service;
@@ -38,17 +37,14 @@ public class CalculatorServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода CalculatorService:preScore()")
-	class TestingPreScore
-	{
+	class TestingPreScore {
 		@BeforeAll
-		static void initLoanStatementRequest()
-		{
+		static void initLoanStatementRequest() {
 			loanStatementRequest = DtoInitializer.initLoanStatementRequest();
 		}
 		
 		@Test
-		void preScore_whenLoanStatementRequestReceived_thenReturnFourLoanOffers()
-		{
+		void preScore_whenLoanStatementRequestReceived_thenReturnFourLoanOffers() {
 			List<LoanOfferDto> expectedOffers = DtoInitializer.initOffers();
 			when(monthlyPaymentCalculatorService.calculate(any(BigDecimal.class), anyInt(), any(BigDecimal.class))).thenReturn(
 					new BigDecimal("172548.3667108814202625"),
@@ -70,17 +66,14 @@ public class CalculatorServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода CalculatorService:score()")
-	class TestingScore
-	{
+	class TestingScore {
 		@BeforeEach
-		void initScoringData()
-		{
+		void initScoringData() {
 			scoringData = DtoInitializer.initScoringData();
 		}
 		
 		@Test
-		void score_whenValidScoringDataReceived_thenReturnCreditDto() throws Exception
-		{
+		void score_whenValidScoringDataReceived_thenReturnCreditDto() throws Exception {
 			CreditDto expectedCredit = DtoInitializer.initCreditDto();
 			when(personalRateCalculatorService.countPersonalRate(scoringData, RATE)).thenReturn(RATE);
 			when(monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), RATE)).thenReturn(new BigDecimal("172548.3667108814202625"));

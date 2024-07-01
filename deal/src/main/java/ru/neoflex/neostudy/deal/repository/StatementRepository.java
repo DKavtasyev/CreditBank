@@ -7,6 +7,5 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import java.util.UUID;
 
 @Repository
-public interface StatementRepository extends JpaRepository<Statement, UUID>
-{
+public interface StatementRepository extends JpaRepository<Statement, UUID> {
 }

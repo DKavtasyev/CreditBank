@@ -16,8 +16,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 @Schema(description = "Пользовательсткие данные для расчёта кредита")
-public class ScoringDataDto
-{
+public class ScoringDataDto {
 	@NotNull
 	@DecimalMin(value = "30000")
 	@Schema(description = "Предварительно одобренная сумма", example = "1000000")

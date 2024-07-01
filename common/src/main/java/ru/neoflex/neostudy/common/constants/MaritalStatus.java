@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.common.constants;
 
-public enum MaritalStatus
-{
+public enum MaritalStatus {
 	MARRIED,
 	DIVORCED,
 	SINGLE,

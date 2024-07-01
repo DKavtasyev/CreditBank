@@ -11,8 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class CreditDto
-{
+public class CreditDto {
 	@Schema(description = "Сумма займа")
 	private BigDecimal amount;
 	@Schema(description = "Срок кредитования")

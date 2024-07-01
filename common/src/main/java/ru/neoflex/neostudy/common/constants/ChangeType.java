@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.common.constants;
 
-public enum ChangeType
-{
+public enum ChangeType {
 	AUTOMATIC,
 	MANUAL
 }

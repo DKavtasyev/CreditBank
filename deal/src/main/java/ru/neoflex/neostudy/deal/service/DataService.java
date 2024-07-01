@@ -15,13 +15,11 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class DataService
-{
+public class DataService {
 	private final ClientEntityService clientEntityService;
 	private final StatementEntityService statementEntityService;
 	
-	public Statement writeData(LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException
-	{
+	public Statement writeData(LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException {
 		Optional<Client> optionalClient = clientEntityService.findClientByPassport(loanStatementRequest);
 		Client client = clientEntityService.checkAndSaveClient(loanStatementRequest, optionalClient);
 		
@@ -32,13 +30,11 @@ public class DataService
 	}
 	
 	
-	public Statement findStatement(UUID statementId) throws StatementNotFoundException
-	{
-		return statementEntityService.findStatement(statementId).orElseThrow(() -> new StatementNotFoundException("Statement not found"));
+	public Statement findStatement(UUID statementId) throws StatementNotFoundException {
+		return statementEntityService.findStatement(statementId).orElseThrow(() -> new StatementNotFoundException(String.format("Statement with id = %s not found", statementId)));
 	}
 	
-	public void updateStatement(LoanOfferDto loanOffer) throws StatementNotFoundException
-	{
+	public void updateStatement(LoanOfferDto loanOffer) throws StatementNotFoundException {
 		Statement statement = findStatement(loanOffer.getStatementId());
 		statementEntityService.setStatus(statement, ApplicationStatus.APPROVED);
 		statement.setAppliedOffer(loanOffer);

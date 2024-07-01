@@ -15,8 +15,7 @@ import java.util.Objects;
 
 @Data
 @Builder
-public class EmploymentDto
-{
+public class EmploymentDto {
 	@NotNull(message = "Поле \"Рабочий статус\" не может быть пустым")
 	@Schema(description = "Рабочий статус", example = "EMPLOYED")
 	EmploymentStatus employmentStatus;
@@ -46,10 +45,13 @@ public class EmploymentDto
 	Integer workExperienceCurrent;
 	
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (!(o instanceof EmploymentDto that)) return false;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof EmploymentDto that)) {
+			return false;
+		}
 		return employmentStatus == that.employmentStatus
 				&& Objects.equals(employmentINN, that.employmentINN)
 				&& salary.compareTo(that.salary) == 0
@@ -59,8 +61,7 @@ public class EmploymentDto
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(employmentStatus, employmentINN, salary, position, workExperienceTotal, workExperienceCurrent);
 	}
 }

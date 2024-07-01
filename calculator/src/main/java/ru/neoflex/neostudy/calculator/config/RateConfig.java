@@ -7,14 +7,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "rate")
-public class RateConfig
-{
+public class RateConfig {
 	private String baseRate;
 	private String insuranceEnabled;
 	private String salaryClient;
 	
-	public RateConfig(String baseRate, String insuranceEnabled, String salaryClient, EmploymentStatusConfig employmentStatus, Position position, MaritalStatus maritalStatus, Woman woman, Man man, NonBinary nonBinary)
-	{
+	public RateConfig(String baseRate, String insuranceEnabled, String salaryClient, EmploymentStatusConfig employmentStatus, Position position, MaritalStatus maritalStatus, Woman woman, Man man, NonBinary nonBinary) {
 		this.baseRate = baseRate;
 		this.insuranceEnabled = insuranceEnabled;
 		this.salaryClient = salaryClient;
@@ -36,8 +34,7 @@ public class RateConfig
 	@ConfigurationProperties(prefix = "employment-status")
 	@Getter
 	@Setter
-	public static class EmploymentStatusConfig
-	{
+	public static class EmploymentStatusConfig {
 		private String selfEmployed;
 		private String businessOwner;
 	}
@@ -45,8 +42,7 @@ public class RateConfig
 	@Getter
 	@Setter
 	@ConfigurationProperties(prefix = "position")
-	public static class Position
-	{
+	public static class Position {
 		private String middleManager;
 		private String topManager;
 	}
@@ -54,8 +50,7 @@ public class RateConfig
 	@Getter
 	@Setter
 	@ConfigurationProperties(prefix = "marital-status")
-	public static class MaritalStatus
-	{
+	public static class MaritalStatus {
 		private String married;
 		private String divorced;
 	}
@@ -63,8 +58,7 @@ public class RateConfig
 	@Getter
 	@Setter
 	@ConfigurationProperties(prefix = "woman")
-	public static class Woman
-	{
+	public static class Woman {
 		private int ageFrom;
 		private int ageTo;
 		private String rate;
@@ -73,8 +67,7 @@ public class RateConfig
 	@Getter
 	@Setter
 	@ConfigurationProperties(prefix = "man")
-	public static class Man
-	{
+	public static class Man {
 		private int ageFrom;
 		private int ageTo;
 		private String rate;
@@ -83,8 +76,7 @@ public class RateConfig
 	@Getter
 	@Setter
 	@ConfigurationProperties(prefix = "non-binary")
-	public static class NonBinary
-	{
+	public static class NonBinary {
 		private String rate;
 	}
 }

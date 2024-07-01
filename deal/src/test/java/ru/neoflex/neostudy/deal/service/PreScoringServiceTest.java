@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PreScoringServiceTest
-{
+class PreScoringServiceTest {
 	@Mock
 	CalculatorRequester calculatorRequester;
 	
@@ -36,18 +35,15 @@ class PreScoringServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода PreScoringService:getOffers()")
-	class TestingGetOffersMethod
-	{
+	class TestingGetOffersMethod {
 		@BeforeEach
-		void init()
-		{
+		void init() {
 			offers = DtoInitializer.initOffers().stream().sorted((s1, s2) -> s2.getTotalAmount().compareTo(s1.getTotalAmount())).toList();
 			statement = new Statement();
 		}
 		
 		@Test
-		void getOffers()
-		{
+		void getOffers() {
 			UUID statementId = UUID.randomUUID();
 			statement.setStatementId(statementId);
 			when(calculatorRequester.requestLoanOffers(loanStatementRequestDto)).thenReturn(offers);

@@ -15,15 +15,13 @@ import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 
 @Service
 @RequiredArgsConstructor
-public class ScoringService
-{
+public class ScoringService {
 	private final CalculatorRequester calculatorRequester;
 	private final ScoringDataMapper scoringDataMapper;
 	private final CreditMapper creditMapper;
 	private final StatementEntityService statementEntityService;
 	
-	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement)
-	{
+	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) {
 		ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
 		CreditDto creditDto = calculatorRequester.requestCalculatedLoanTerms(scoringDataDto);
 		Credit credit = creditMapper.dtoToEntity(creditDto);

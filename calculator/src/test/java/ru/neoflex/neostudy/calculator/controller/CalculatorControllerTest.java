@@ -33,8 +33,7 @@ import static ru.neoflex.neostudy.calculator.custom.ResponseBodyMatcher.response
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = CalculatorController.class)
-public class CalculatorControllerTest
-{
+public class CalculatorControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -49,21 +48,17 @@ public class CalculatorControllerTest
 	
 	@Nested
 	@DisplayName("Тестирование метода CalculatorController:calculationOfPossibleLoanTerms()")
-	class TestingCalculationOfPossibleLoanTerms
-	{
+	class TestingCalculationOfPossibleLoanTerms {
 		@BeforeEach
-		void initLoanStatementRequest()
-		{
+		void initLoanStatementRequest() {
 			loanStatementRequest = DtoInitializer.initLoanStatementRequest();
 		}
 		
 		@Nested
 		@DisplayName("Тестирование прослушивания HTTP запросов")
-		class TestingListeningHttpRequests
-		{
+		class TestingListeningHttpRequests {
 			@Test
-			void calculationOfPossibleLoanTerms_whenValidInput_returns200() throws Exception
-			{
+			void calculationOfPossibleLoanTerms_whenValidInput_returns200() throws Exception {
 				mockMvc.perform(post("/calculator/offers")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -71,8 +66,7 @@ public class CalculatorControllerTest
 			}
 			
 			@Test
-			void calculationOfPossibleLoanTerms_whenNotAllowedMethod_returns405() throws Exception
-			{
+			void calculationOfPossibleLoanTerms_whenNotAllowedMethod_returns405() throws Exception {
 				mockMvc.perform(get("/calculator/offers")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -82,15 +76,12 @@ public class CalculatorControllerTest
 		
 		@Nested
 		@DisplayName("Тестирование валидации входных данных")
-		class TestingValidation
-		{
+		class TestingValidation {
 			@Nested
 			@DisplayName("Тестирование валидации поля amount")
-			class TestingValidationOfAmount
-			{
+			class TestingValidationOfAmount {
 				@Test
-				void calculationOfPossibleLoanTerms_whenAmountIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenAmountIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setAmount(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -99,8 +90,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenAmountLess30000_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenAmountLess30000_thenReturns400() throws Exception {
 					loanStatementRequest.setAmount(BigDecimal.valueOf(29_999));
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -111,11 +101,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля term")
-			class TestingValidationOfTerm
-			{
+			class TestingValidationOfTerm {
 				@Test
-				void calculationOfPossibleLoanTerms_whenTermIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenTermIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setTerm(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -124,8 +112,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenTermLess6_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenTermLess6_thenReturns400() throws Exception {
 					loanStatementRequest.setTerm(5);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -136,11 +123,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля firstName")
-			class TestingValidationOfFirstName
-			{
+			class TestingValidationOfFirstName {
 				@Test
-				void calculationOfPossibleLoanTerms_whenFirstNameIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenFirstNameIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setFirstName(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -149,8 +134,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenFirstNameIsBlank_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenFirstNameIsBlank_thenReturns400() throws Exception {
 					loanStatementRequest.setFirstName("               ");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -159,8 +143,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenFirstNameLessTwo_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenFirstNameLessTwo_thenReturns400() throws Exception {
 					loanStatementRequest.setFirstName("A");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -169,8 +152,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenFirstNameMoreThirty_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenFirstNameMoreThirty_thenReturns400() throws Exception {
 					loanStatementRequest.setFirstName("1234567890123456789012345678901");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -181,11 +163,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля lastName")
-			class TestingValidationOfLastName
-			{
+			class TestingValidationOfLastName {
 				@Test
-				void calculationOfPossibleLoanTerms_whenLastNameIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenLastNameIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setLastName(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -194,8 +174,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenLastNameIsBlank_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenLastNameIsBlank_thenReturns400() throws Exception {
 					loanStatementRequest.setLastName("               ");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -204,8 +183,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenLastNameLessTwo_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenLastNameLessTwo_thenReturns400() throws Exception {
 					loanStatementRequest.setLastName("A");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -214,8 +192,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenLastNameMoreThirty_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenLastNameMoreThirty_thenReturns400() throws Exception {
 					loanStatementRequest.setLastName("1234567890123456789012345678901");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -226,11 +203,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля middleName")
-			class TestingValidationOfMiddleName
-			{
+			class TestingValidationOfMiddleName {
 				@Test
-				void calculationOfPossibleLoanTerms_whenMiddleNameLessTwo_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenMiddleNameLessTwo_thenReturns400() throws Exception {
 					loanStatementRequest.setMiddleName("A");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -239,8 +214,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenMiddleNameMoreThirty_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenMiddleNameMoreThirty_thenReturns400() throws Exception {
 					loanStatementRequest.setMiddleName("1234567890123456789012345678901");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -251,11 +225,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля email")
-			class TestingValidationOfEmail
-			{
+			class TestingValidationOfEmail {
 				@Test
-				void calculationOfPossibleLoanTerms_whenEmailIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenEmailIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setEmail(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -265,8 +237,7 @@ public class CalculatorControllerTest
 				
 				@ParameterizedTest
 				@ValueSource(strings = {"    ", "1234", "fake", "vasya@", "@mail", "vasya@mail!", "vas @mail"})
-				void calculationOfPossibleLoanTerms_whenEmailIsInvalid_thenReturns400(String argument) throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenEmailIsInvalid_thenReturns400(String argument) throws Exception {
 					loanStatementRequest.setEmail(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -277,11 +248,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля birthdate")
-			class TestingValidationOfBirthdate
-			{
+			class TestingValidationOfBirthdate {
 				@Test
-				void calculationOfPossibleLoanTerms_whenBirthdateIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenBirthdateIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setBirthDate(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -290,8 +259,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenAgeIsLessThanEighteen_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenAgeIsLessThanEighteen_thenReturns400() throws Exception {
 					loanStatementRequest.setBirthDate(LocalDate.now().minusYears(18).plusDays(1));
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -302,11 +270,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля passportSeries")
-			class TestingValidationOfPassportSeries
-			{
+			class TestingValidationOfPassportSeries {
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportSeriesIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportSeriesIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportSeries(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -316,8 +282,7 @@ public class CalculatorControllerTest
 				
 				@ParameterizedTest
 				@ValueSource(strings = {"    ", "12as", "as12", "fake"})
-				void calculationOfPossibleLoanTerms_whenPassportSeriesIsNotDigits_thenReturns400(String argument) throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportSeriesIsNotDigits_thenReturns400(String argument) throws Exception {
 					loanStatementRequest.setPassportSeries(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -326,8 +291,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportSeriesLessFour_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportSeriesLessFour_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportSeries("123");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -336,8 +300,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportSeriesMoreFour_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportSeriesMoreFour_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportSeries("12345");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -348,11 +311,9 @@ public class CalculatorControllerTest
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля passportNumber")
-			class TestingValidationOfPassportNumber
-			{
+			class TestingValidationOfPassportNumber {
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportNumberIsNull_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsNull_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportNumber(null);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -362,8 +323,7 @@ public class CalculatorControllerTest
 				
 				@ParameterizedTest
 				@ValueSource(strings = {"      ", "12as12", "as1234", "number"})
-				void calculationOfPossibleLoanTerms_whenPassportNumberIsNotDigits_thenReturns400(String argument) throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsNotDigits_thenReturns400(String argument) throws Exception {
 					loanStatementRequest.setPassportNumber(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -372,8 +332,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportNumberLessFour_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportNumberLessFour_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportNumber("12345");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -382,8 +341,7 @@ public class CalculatorControllerTest
 				}
 				
 				@Test
-				void calculationOfPossibleLoanTerms_whenPassportNumberMoreFour_thenReturns400() throws Exception
-				{
+				void calculationOfPossibleLoanTerms_whenPassportNumberMoreFour_thenReturns400() throws Exception {
 					loanStatementRequest.setPassportNumber("1234567");
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -395,11 +353,9 @@ public class CalculatorControllerTest
 		
 		@Nested
 		@DisplayName("Тестирование десериализации входных данных и вызова метода сервиса")
-		class TestingDeserialization
-		{
+		class TestingDeserialization {
 			@Test
-			void calculationOfPossibleLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception
-			{
+			void calculationOfPossibleLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				mockMvc.perform(post("/calculator/offers")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(loanStatementRequest)));
@@ -422,11 +378,9 @@ public class CalculatorControllerTest
 		
 		@Nested
 		@DisplayName("Тестирование сериализации посчитанных предложений")
-		class TestingSerializationOfLoanOfferDtoList
-		{
+		class TestingSerializationOfLoanOfferDtoList {
 			@Test
-			void calculationOfPossibleLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception
-			{
+			void calculationOfPossibleLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				List<LoanOfferDto> offers = DtoInitializer.initOffers();
 				when(calculatorServiceMock.preScore(any(LoanStatementRequestDto.class))).thenReturn(offers);
 				
@@ -441,21 +395,17 @@ public class CalculatorControllerTest
 	
 	@Nested
 	@DisplayName("Тестирование метода CalculatorController:fullCalculationOfLoanTerms()")
-	class TestingFullCalculationOfLoanTerms
-	{
+	class TestingFullCalculationOfLoanTerms {
 		@BeforeAll
-		static void initScoringData()
-		{
+		static void initScoringData() {
 			scoringData = DtoInitializer.initScoringData();
 		}
 		
 		@Nested
 		@DisplayName("Тестирование прослушивания HTTP запросов")
-		class TestingListeningHttpRequests
-		{
+		class TestingListeningHttpRequests {
 			@Test
-			void fullCalculationOfLoanTerms_whenValidInput_returns200() throws Exception
-			{
+			void fullCalculationOfLoanTerms_whenValidInput_returns200() throws Exception {
 				mockMvc.perform(post("/calculator/calc")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(scoringData)))
@@ -463,8 +413,7 @@ public class CalculatorControllerTest
 			}
 			
 			@Test
-			void fullCalculationOfLoanTerms_whenNotAllowedMethod_returns405() throws Exception
-			{
+			void fullCalculationOfLoanTerms_whenNotAllowedMethod_returns405() throws Exception {
 				mockMvc.perform(get("/calculator/calc")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(scoringData)))
@@ -474,11 +423,9 @@ public class CalculatorControllerTest
 		
 		@Nested
 		@DisplayName("Тестирование десериализации входных данных и вызова метода сервиса")
-		class TestingDeserialization
-		{
+		class TestingDeserialization {
 			@Test
-			void fullCalculationOfLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception
-			{
+			void fullCalculationOfLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				mockMvc.perform(post("/calculator/calc")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(scoringData)));
@@ -514,15 +461,13 @@ public class CalculatorControllerTest
 		
 		@Nested
 		@DisplayName("Тестирование обработки исключений")
-		class TestingExceptions
-		{
+		class TestingExceptions {
 			@Test
-			void fullCalculationOfLoanTerms_whenNotSuitableInput_thenThrowLoanRefusalException() throws Exception
-			{
+			void fullCalculationOfLoanTerms_whenNotSuitableInput_thenThrowLoanRefusalException() throws Exception {
 				when(calculatorServiceMock.score(any(ScoringDataDto.class))).thenThrow(LoanRefusalException.class);
 				mockMvc.perform(post("/calculator/calc")
-						.contentType("application/json")
-						.content(objectMapper.writeValueAsString(scoringData)))
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(scoringData)))
 						.andExpect(status().isBadRequest());
 			}
 		}

@@ -11,25 +11,21 @@ import ru.neoflex.neostudy.deal.entity.Credit;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CreditMapperTest
-{
+class CreditMapperTest {
 	private final CreditMapper creditMapper = new CreditMapper();
 	private CreditDto creditDto;
 	
 	@BeforeEach
-	void init()
-	{
+	void init() {
 		creditDto = DtoInitializer.initCreditDto();
 	}
 	
 	
 	@Nested
 	@DisplayName("Тестирование метода CreditMapper:dtoToEntity()")
-	class TestingDtoToEntityMethod
-	{
+	class TestingDtoToEntityMethod {
 		@Test
-		void dtoToEntity_whenGivenCreditDto_thenReturnCredit()
-		{
+		void dtoToEntity_whenGivenCreditDto_thenReturnCredit() {
 			Credit actualCredit = creditMapper.dtoToEntity(creditDto);
 			assertAll(() -> {
 				assertThat(actualCredit.getAmount().compareTo(creditDto.getAmount()) == 0).isTrue();

@@ -2,14 +2,13 @@ package ru.neoflex.neostudy.deal.aspect;
 
 import org.aspectj.lang.annotation.Pointcut;
 
-public class Pointcuts
-{
+public class Pointcuts {
 	@Pointcut("execution(* ru.neoflex.neostudy.deal.controller.DealController.*(..))")
-	public void allControllerMethods(){}
+	public void allControllerMethods() {}
 	
 	@Pointcut("execution(* ru.neoflex.neostudy.deal.requester.CalculatorRequester.request*(..))")
-	public void allCalculatorRequesterMethods(){}
+	public void allCalculatorRequesterMethods() {}
 	
 	@Pointcut("execution(* ru.neoflex.neostudy.deal.repository.*.save(..))")
-	public void allSaveEntityMethods(){}
+	public void allSaveEntityMethods() {}
 }

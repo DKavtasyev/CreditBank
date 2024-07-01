@@ -16,19 +16,16 @@ import ru.neoflex.neostudy.deal.util.EntityInitializer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ScoringDataMapperTest
-{
+class ScoringDataMapperTest {
 	private final FinishingRegistrationRequestDto finishingRegistrationRequestDto = DtoInitializer.initFinishingRegistrationRequest();
 	private final Statement statement = EntityInitializer.initStatement();
 	ScoringDataMapper mapper = new ScoringDataMapper();
 	
 	@Nested
 	@DisplayName("Тестирование метода ScoringDataMapper:formScoringDataDto()")
-	class TestingFormScoringDataDtoMethod
-	{
+	class TestingFormScoringDataDtoMethod {
 		@Test
-		void formScoringDataDto()
-		{
+		void formScoringDataDto() {
 			ScoringDataDto actualScoringDataDto = mapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
 			LoanOfferDto expectedLoanOfferDto = statement.getAppliedOffer();
 			Client expectedClient = statement.getClient();

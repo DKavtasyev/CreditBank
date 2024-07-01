@@ -7,12 +7,10 @@ import ru.neoflex.neostudy.deal.entity.Credit;
 import java.util.UUID;
 
 @Component
-public class CreditMapper implements Mapper<Credit, CreditDto>
-{
+public class CreditMapper implements Mapper<Credit, CreditDto> {
 	
 	@Override
-	public Credit dtoToEntity(CreditDto creditDto)
-	{
+	public Credit dtoToEntity(CreditDto creditDto) {
 		return new Credit()
 				.setCreditId(UUID.randomUUID())
 				.setAmount(creditDto.getAmount())

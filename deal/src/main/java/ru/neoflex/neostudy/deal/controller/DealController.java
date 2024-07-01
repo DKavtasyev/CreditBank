@@ -3,7 +3,6 @@ package ru.neoflex.neostudy.deal.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -30,8 +29,7 @@ import java.util.UUID;
 @Tag(
 		name = "Сделка",
 		description = "Управление данными сделки")
-public class DealController
-{
+public class DealController {
 	private final PreScoringService preScoringService;
 	private final ScoringService scoringService;
 	private final DataService dataService;
@@ -47,14 +45,14 @@ public class DealController
 					@ApiResponse(responseCode = "400", description = "Bad request")
 			})
 	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(
-			@RequestBody @Valid LoanStatementRequestDto loanStatementRequest,
-			BindingResult bindingResult) throws InvalidPassportDataException, InvalidPreScoreParameters
-	{
-		if (bindingResult.hasErrors())
+			@RequestBody LoanStatementRequestDto loanStatementRequest,
+			BindingResult bindingResult) throws InvalidPassportDataException, InvalidPreScoreParameters {        // Валидация выключена, перенесена в МС statement
+		if (bindingResult.hasErrors()) {
 			throw new InvalidPreScoreParameters(bindingResult.getAllErrors().stream()
 					.map(DefaultMessageSourceResolvable::getDefaultMessage)
 					.reduce((s1, s2) -> s1 + "; " + s2)
 					.orElse("Unknown errors"));
+		}
 		
 		Statement statement = dataService.writeData(loanStatementRequest);
 		List<LoanOfferDto> offers = preScoringService.getOffers(loanStatementRequest, statement);
@@ -77,8 +75,7 @@ public class DealController
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
-	public ResponseEntity<Void> applyOffer(@RequestBody @Valid LoanOfferDto loanOffer) throws StatementNotFoundException
-	{
+	public ResponseEntity<Void> applyOffer(@RequestBody LoanOfferDto loanOffer) throws StatementNotFoundException {
 		dataService.updateStatement(loanOffer);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -93,9 +90,8 @@ public class DealController
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
-	public ResponseEntity<Void> calculateLoanParameters(@RequestBody @Valid FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException
-	{
+	public ResponseEntity<Void> calculateLoanParameters(@RequestBody FinishingRegistrationRequestDto finishingRegistrationRequestDto,
+														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException {
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		return ResponseEntity.status(HttpStatus.OK).build();

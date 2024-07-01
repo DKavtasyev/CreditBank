@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.common.constants;
 
-public enum Gender
-{
+public enum Gender {
 	MALE,
 	FEMALE,
 	NON_BINARY

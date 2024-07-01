@@ -11,12 +11,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PreScoringService
-{
+public class PreScoringService {
 	private final CalculatorRequester calculatorRequester;
 	
-	public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequest, Statement statement)
-	{
+	public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequest, Statement statement) {
 		return calculatorRequester.requestLoanOffers(loanStatementRequest)
 				.stream()
 				.map(offer -> offer.setStatementId(statement.getStatementId()))

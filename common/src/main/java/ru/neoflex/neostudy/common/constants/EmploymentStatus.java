@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.common.constants;
 
-public enum EmploymentStatus
-{
+public enum EmploymentStatus {
 	UNEMPLOYED,
 	SELF_EMPLOYED,
 	EMPLOYED,

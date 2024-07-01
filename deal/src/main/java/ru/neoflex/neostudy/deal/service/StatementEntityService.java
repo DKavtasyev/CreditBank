@@ -14,22 +14,18 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class StatementEntityService
-{
+public class StatementEntityService {
 	private final StatementRepository statementRepository;
 	
-	public Statement save(Statement statement)
-	{
+	public Statement save(Statement statement) {
 		return statementRepository.save(statement);
 	}
 	
-	public Optional<Statement> findStatement(UUID statementId)
-	{
+	public Optional<Statement> findStatement(UUID statementId) {
 		return statementRepository.findById(statementId);
 	}
 	
-	public void setStatus(Statement statement, ApplicationStatus status)
-	{
+	public void setStatus(Statement statement, ApplicationStatus status) {
 		statement.setStatus(status);
 		statement.getStatusHistory().add(new StatusHistory()
 				.setStatus(statement.getStatus())

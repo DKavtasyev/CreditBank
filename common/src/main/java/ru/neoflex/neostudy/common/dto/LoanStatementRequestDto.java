@@ -14,8 +14,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class LoanStatementRequestDto
-{
+public class LoanStatementRequestDto {
 	@NotNull(message = "Запрашиваемая сумма не может быть пустой")
 	@DecimalMin(value = "30000", message = "Запрашиваемая сумма должна быть не менее 30000")
 	@Schema(description = "Запрашиваемая сумма", example = "1000000")
@@ -52,12 +51,12 @@ public class LoanStatementRequestDto
 	private LocalDate birthDate;
 	
 	@NotNull(message = "Номер паспорта не может быть пустым")
-	@Pattern(regexp="^([1-9][0-9]{3})$", message = "Серия паспорта должна состоять из четырёх цифр")
+	@Pattern(regexp = "^([1-9][0-9]{3})$", message = "Серия паспорта должна состоять из четырёх цифр")
 	@Schema(description = "Серия паспорта", example = "1234")
 	private String passportSeries;
 	
 	@NotNull(message = "Серия паспорта не может быть пустой")
-	@Pattern(regexp="^([1-9][0-9]{5})$", message = "Номер паспорта должен состоять из шести цифр")
+	@Pattern(regexp = "^([1-9][0-9]{5})$", message = "Номер паспорта должен состоять из шести цифр")
 	@Schema(description = "Номер паспорта", example = "123456")
 	private String passportNumber;
 }

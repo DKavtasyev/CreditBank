@@ -15,15 +15,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CalculatorRequester
-{
+public class CalculatorRequester {
 	public static final String OFFERS_URL = "http://localhost:8081/calculator/offers";
 	public static final String CREDIT_URL = "http://localhost:8081/calculator/calc";
 	
 	private final RestTemplate restTemplate;
 	
-	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto)
-	{
+	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
 		ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,8 +35,7 @@ public class CalculatorRequester
 		return responseEntity.getBody();
 	}
 	
-	public CreditDto requestCalculatedLoanTerms(ScoringDataDto scoringDataDto)
-	{
+	public CreditDto requestCalculatedLoanTerms(ScoringDataDto scoringDataDto) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		

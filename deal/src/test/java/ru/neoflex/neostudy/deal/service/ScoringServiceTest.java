@@ -23,8 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ScoringServiceTest
-{
+class ScoringServiceTest {
 	@Mock
 	ScoringDataMapper scoringDataMapper;
 	
@@ -47,8 +46,7 @@ class ScoringServiceTest
 	Credit credit;
 	
 	@BeforeEach
-	void init()
-	{
+	void init() {
 		finishingRegistrationRequestDto = DtoInitializer.initFinishingRegistrationRequest();
 		statement = new Statement();
 		statement.setStatementId(UUID.randomUUID());
@@ -59,11 +57,9 @@ class ScoringServiceTest
 	
 	@Nested
 	@DisplayName("Тестирование метода ScoringServiceTest:scoreAndSaveCredit()")
-	class TestingSetStatusMethod
-	{
+	class TestingSetStatusMethod {
 		@Test
-		void scoreAndSaveCredit()
-		{
+		void scoreAndSaveCredit() {
 			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenReturn(scoringDataDto);
 			when(calculatorRequester.requestCalculatedLoanTerms(scoringDataDto)).thenReturn(creditDto);
 			when(creditMapper.dtoToEntity(creditDto)).thenReturn(credit);

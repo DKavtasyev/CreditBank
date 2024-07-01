@@ -18,8 +18,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class FinishingRegistrationRequestDto
-{
+public class FinishingRegistrationRequestDto {
 	@NotNull(message = "Пол должен быть указан")
 	@Schema(description = "Пол", example = "MALE")
 	private Gender gender;

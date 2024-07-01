@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
 		info = @Info(
 				title = "REST API MS deal",
-				version = "1.0",
+				version = "1.0.0",
 				description = """
 						Модуль управления данными о сделке по кредиту и их сохранением
 						""",
@@ -20,7 +20,5 @@ import org.springframework.context.annotation.Configuration;
 		}
 )
 @Configuration
-public class OpenApiConfig
-{
-
+public class OpenApiConfig {
 }

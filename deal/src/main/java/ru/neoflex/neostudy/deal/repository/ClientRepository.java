@@ -10,8 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ClientRepository extends JpaRepository<Client, UUID>
-{
+public interface ClientRepository extends JpaRepository<Client, UUID> {
 	@Query(value = "SELECT * FROM client c WHERE c.passport ->> 'series' = :passport_series and c.passport ->> 'number' = :passport_number", nativeQuery = true)
 	Optional<Client> findClientByPassportSeriesAndPassportNumber(@Param("passport_series") String passportSeries, @Param("passport_number") String passportNumber);
 }

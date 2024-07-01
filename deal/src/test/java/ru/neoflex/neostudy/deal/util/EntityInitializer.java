@@ -18,14 +18,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @UtilityClass
-public class EntityInitializer
-{
+public class EntityInitializer {
 	private final LoanStatementRequestDto loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
 	private final EmploymentDto employmentDto = DtoInitializer.initEmploymentDto();
 	private final CreditDto creditDto = DtoInitializer.initCreditDto();
 	
-	public static Client initClient()
-	{
+	public static Client initClient() {
 		return new Client()
 				.setClientIdUuid(UUID.randomUUID())
 				.setLastName(loanStatementRequestDto.getLastName())
@@ -41,8 +39,7 @@ public class EntityInitializer
 				.setAccountNumber("18923749187");
 	}
 	
-	private static Passport initPassport()
-	{
+	private static Passport initPassport() {
 		return new Passport()
 				.setPassportUuid(UUID.randomUUID())
 				.setSeries(loanStatementRequestDto.getPassportSeries())
@@ -51,8 +48,7 @@ public class EntityInitializer
 				.setIssueDate(LocalDate.now().minusYears(5).minusMonths(3));
 	}
 	
-	private static Employment initEmployment()
-	{
+	private static Employment initEmployment() {
 		return new Employment()
 				.setEmploymentUuid(UUID.randomUUID())
 				.setStatus(employmentDto.getEmploymentStatus())
@@ -63,8 +59,7 @@ public class EntityInitializer
 				.setWorkExperienceCurrent(employmentDto.getWorkExperienceCurrent());
 	}
 	
-	public static Credit initCredit()
-	{
+	public static Credit initCredit() {
 		return new Credit()
 				.setAmount(creditDto.getAmount())
 				.setTerm(creditDto.getTerm())
@@ -76,8 +71,7 @@ public class EntityInitializer
 				.setSalaryClient(creditDto.getIsSalaryClient());
 	}
 	
-	public static Statement initStatement()
-	{
+	public static Statement initStatement() {
 		return new Statement()
 				.setClient(initClient())
 				.setCredit(initCredit())

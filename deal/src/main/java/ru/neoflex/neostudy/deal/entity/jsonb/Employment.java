@@ -12,8 +12,7 @@ import java.util.UUID;
 
 @Data
 @Accessors(chain = true)
-public class Employment implements Serializable
-{
+public class Employment implements Serializable {
 	private UUID employmentUuid;
 	private EmploymentStatus status;
 	private String employerInn;
@@ -23,10 +22,13 @@ public class Employment implements Serializable
 	private Integer workExperienceCurrent;
 	
 	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (!(o instanceof Employment that)) return false;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Employment that)) {
+			return false;
+		}
 		return status == that.status
 				&& Objects.equals(employerInn, that.employerInn)
 				&& salary.compareTo(that.salary) == 0
@@ -36,8 +38,7 @@ public class Employment implements Serializable
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(status, employerInn, salary, position, workExperienceTotal, workExperienceCurrent);
 	}
 }

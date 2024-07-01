@@ -10,19 +10,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-public class SchedulePaymentsCalculatorService
-{
-	void countPayment(PaymentScheduleElementDto previousScheduleElement, List<PaymentScheduleElementDto> scheduleOfPayments, BigDecimal dailyRate)
-	{
+public class SchedulePaymentsCalculatorService {
+	void countPayment(PaymentScheduleElementDto previousScheduleElement, List<PaymentScheduleElementDto> scheduleOfPayments, BigDecimal dailyRate) {
 		BigDecimal monthlyPayment = previousScheduleElement.getTotalPayment();
 		BigDecimal previousRemainingDebt = previousScheduleElement.getRemainingDebt();
 		
-		if (previousRemainingDebt.add(previousScheduleElement.getInterestPayment()).compareTo(monthlyPayment) <= 0)
-		{
+		if (previousRemainingDebt.add(previousScheduleElement.getInterestPayment()).compareTo(monthlyPayment) <= 0) {
 			previousScheduleElement.setTotalPayment(monthlyPayment.add(previousRemainingDebt));
 		}
-		else
-		{
+		else {
 			LocalDate date = previousScheduleElement.getDate().plusMonths(1);
 			int numberOfDays = (int) ChronoUnit.DAYS.between(previousScheduleElement.getDate(), date);
 			BigDecimal interestPayment = countInterestPayment(previousRemainingDebt, dailyRate, numberOfDays);
@@ -42,8 +38,7 @@ public class SchedulePaymentsCalculatorService
 		}
 	}
 	
-	BigDecimal countInterestPayment(BigDecimal remainingDebt, BigDecimal dailyRate, int numberOfDays)
-	{
+	BigDecimal countInterestPayment(BigDecimal remainingDebt, BigDecimal dailyRate, int numberOfDays) {
 		return remainingDebt.multiply(dailyRate.multiply(BigDecimal.valueOf(numberOfDays))).setScale(16, RoundingMode.HALF_EVEN);
 	}
 }
