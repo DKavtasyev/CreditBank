@@ -72,7 +72,6 @@ public class DealController {
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
 	public ResponseEntity<Void> applyOffer(@RequestBody LoanOfferDto loanOffer) throws StatementNotFoundException {
