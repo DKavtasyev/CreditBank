@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.statement.requester.DealRequester;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class StatementService {
 		return dealRequester.requestLoanOffers(loanStatementRequestDto);
 	}
 	
-	public void applyChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParameters {
+	public void applyChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParametersException {
 		dealRequester.sendChosenOffer(loanOfferDto);
 	}
 }

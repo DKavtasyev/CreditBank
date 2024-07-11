@@ -1,21 +1,21 @@
 package ru.neoflex.neostudy.deal.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.deal.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.deal.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
 import ru.neoflex.neostudy.deal.service.ScoringService;
@@ -44,19 +44,9 @@ public class DealController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request")
 			})
-	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(
-			@RequestBody LoanStatementRequestDto loanStatementRequest,
-			BindingResult bindingResult) throws InvalidPassportDataException, InvalidPreScoreParameters {        // Валидация выключена, перенесена в МС statement
-		if (bindingResult.hasErrors()) {
-			throw new InvalidPreScoreParameters(bindingResult.getAllErrors().stream()
-					.map(DefaultMessageSourceResolvable::getDefaultMessage)
-					.reduce((s1, s2) -> s1 + "; " + s2)
-					.orElse("Unknown errors"));
-		}
-		
+	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException {
 		Statement statement = dataService.writeData(loanStatementRequest);
 		List<LoanOfferDto> offers = preScoringService.getOffers(loanStatementRequest, statement);
-		
 		return new ResponseEntity<>(offers, HttpStatus.OK);
 	}
 	
@@ -74,7 +64,7 @@ public class DealController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
-	public ResponseEntity<Void> applyOffer(@RequestBody LoanOfferDto loanOffer) throws StatementNotFoundException {
+	public ResponseEntity<Void> applyOffer(@RequestBody @Parameter(description = "Выбранное пользователем предложение кредита") LoanOfferDto loanOffer) throws StatementNotFoundException {
 		dataService.updateStatement(loanOffer);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -87,10 +77,11 @@ public class DealController {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request"),
-					@ApiResponse(responseCode = "404", description = "Not found")
+					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "406", description = "Not acceptable")
 			})
-	public ResponseEntity<Void> calculateLoanParameters(@RequestBody FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException {
+	public ResponseEntity<Void> calculateLoanParameters(@RequestBody @Parameter(description = "Пользовательские данные для расчёта и оформления кредита") FinishingRegistrationRequestDto finishingRegistrationRequestDto,
+														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException, JsonProcessingException, LoanRefusalException {
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		return ResponseEntity.status(HttpStatus.OK).build();

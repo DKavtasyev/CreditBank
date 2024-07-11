@@ -36,7 +36,14 @@
 		<dependency>
 			<groupId>ru.neoflex.neostudy</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0</version>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- 	liquibase	 -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.28.0</version>
 		</dependency>
 	</dependencies>
 
@@ -53,6 +60,26 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.28.0</version>
+				<configuration>
+					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://localhost:5432/credit_bank</url>
+					<username>postgres</username>
+					<password>postgres</password>
+					<outputChangeLogFile>src/main/resources/liquibase-outputChangeLog.xml</outputChangeLogFile>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>changelogSync</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

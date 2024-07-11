@@ -1,5 +1,6 @@
 package ru.neoflex.neostudy.deal.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
@@ -7,6 +8,7 @@ import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.deal.entity.Credit;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.mapper.CreditMapper;
@@ -21,7 +23,7 @@ public class ScoringService {
 	private final CreditMapper creditMapper;
 	private final StatementEntityService statementEntityService;
 	
-	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) {
+	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws JsonProcessingException, LoanRefusalException {
 		ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
 		CreditDto creditDto = calculatorRequester.requestCalculatedLoanTerms(scoringDataDto);
 		Credit credit = creditMapper.dtoToEntity(creditDto);

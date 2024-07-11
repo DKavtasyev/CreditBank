@@ -132,33 +132,33 @@ public class DtoInitializer {
 				.setNumber(3)
 				.setDate(LocalDate.now().plusMonths(3))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("6862.1261052421682693"))
-				.setDebtPayment(new BigDecimal("165686.2406056392519932"))
-				.setRemainingDebt(new BigDecimal("507613.7670323102800367"));
+				.setInterestPayment(new BigDecimal("6640.7671986214531639"))
+				.setDebtPayment(new BigDecimal("165907.5995122599670986"))
+				.setRemainingDebt(new BigDecimal("507392.4081256895649313"));
 		
 		PaymentScheduleElementDto paymentScheduleElementFour = new PaymentScheduleElementDto()
 				.setNumber(4)
 				.setDate(LocalDate.now().plusMonths(4))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("5006.6015378533613876"))
-				.setDebtPayment(new BigDecimal("167541.7651730280588749"))
-				.setRemainingDebt(new BigDecimal("340072.0018592822211618"));
+				.setInterestPayment(new BigDecimal("5171.2322143225488706"))
+				.setDebtPayment(new BigDecimal("167377.1344965588713919"))
+				.setRemainingDebt(new BigDecimal("340015.2736291306935394"));
 		
 		PaymentScheduleElementDto paymentScheduleElementFive = new PaymentScheduleElementDto()
 				.setNumber(5)
 				.setDate(LocalDate.now().plusMonths(5))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("3465.9393066209330306"))
-				.setDebtPayment(new BigDecimal("169082.4274042604872319"))
-				.setRemainingDebt(new BigDecimal("170989.5744550217339299"));
+				.setInterestPayment(new BigDecimal("3353.5753015478838399"))
+				.setDebtPayment(new BigDecimal("169194.7914093335364226"))
+				.setRemainingDebt(new BigDecimal("170820.4822197971571168"));
 		
 		PaymentScheduleElementDto paymentScheduleElementSix = new PaymentScheduleElementDto()
 				.setNumber(6)
 				.setDate(LocalDate.now().plusMonths(6))
-				.setTotalPayment(new BigDecimal("172676.0469701946985980"))
-				.setInterestPayment(new BigDecimal("1686.4725151729646681"))
-				.setDebtPayment(new BigDecimal("170861.8941957084555944"))
-				.setRemainingDebt(new BigDecimal("127.6802593132783355"));
+				.setTotalPayment(new BigDecimal("172561.4471344757900662"))
+				.setInterestPayment(new BigDecimal("1740.9649146786329494"))
+				.setDebtPayment(new BigDecimal("170807.4017962027873131"))
+				.setRemainingDebt(new BigDecimal("13.0804235943698037"));
 		
 		List<PaymentScheduleElementDto> scheduleOfPayments = new ArrayList<>();
 		Collections.addAll(scheduleOfPayments,

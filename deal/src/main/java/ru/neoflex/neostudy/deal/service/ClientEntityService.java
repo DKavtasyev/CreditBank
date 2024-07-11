@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.deal.entity.Client;
-import ru.neoflex.neostudy.deal.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.deal.mapper.PreScoreClientPersonalIdentificationInformationMapper;
 import ru.neoflex.neostudy.deal.repository.ClientRepository;
 

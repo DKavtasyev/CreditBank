@@ -1,7 +1,6 @@
 package ru.neoflex.neostudy.statement.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,18 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.statement.requester.DealRequester;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,7 +63,7 @@ public class StatementServiceTest {
 		}
 		
 		@Test
-		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws JsonProcessingException, InvalidPreScoreParameters, StatementNotFoundException {
+		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws JsonProcessingException, InvalidPreScoreParametersException, StatementNotFoundException {
 			statementService.applyChosenOffer(loanOfferDto);
 			verify(dealRequester, times(1)).sendChosenOffer(loanOfferDto);
 		}

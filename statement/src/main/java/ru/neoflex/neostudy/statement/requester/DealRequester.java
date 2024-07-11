@@ -10,9 +10,9 @@ import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.exception.ExceptionDetails;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class DealRequester {
 		return offers;
 	}
 	
-	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParameters {
+	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParametersException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
@@ -66,7 +66,7 @@ public class DealRequester {
 		catch (HttpClientErrorException e) {
 			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(400))){
 				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				throw new InvalidPreScoreParameters(exceptionDetails.getMessage());
+				throw new InvalidPreScoreParametersException(exceptionDetails.getMessage());
 			}
 			else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
 				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);

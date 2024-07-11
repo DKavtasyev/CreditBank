@@ -7,8 +7,8 @@ import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.deal.entity.Client;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.deal.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 
 import java.util.Optional;
 import java.util.UUID;

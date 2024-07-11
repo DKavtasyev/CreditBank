@@ -17,9 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.statement.service.StatementService;
 
 import java.math.BigDecimal;

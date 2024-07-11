@@ -6,6 +6,8 @@ import ru.neoflex.neostudy.common.util.DtoInitializer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ class SchedulePaymentsCalculatorServiceTest {
 	void countPayment_whenPreviousScheduleElementAndDailyRateReceived_thenReturnAllOtherPaymentScheduleElements() {
 		List<PaymentScheduleElementDto> actualScheduleOfPayments = new ArrayList<>();
 		PaymentScheduleElementDto firstPaymentScheduleElement = expectedScheduleOfPayments.get(0);
+		firstPaymentScheduleElement.setDate(LocalDate.of(2024, Month.AUGUST, 10));						// В зависимости от даты незначительно меняются рассчитанные суммы. Чтобы со временем не сбивались захардкоденные значения сумм платежей для тестов, дата должна быть фиксированной.
 		actualScheduleOfPayments.add(firstPaymentScheduleElement);
 		schedulePaymentsCalculatorService.countPayment(firstPaymentScheduleElement, actualScheduleOfPayments, dailyRate);
 		assertEquals(expectedScheduleOfPayments, actualScheduleOfPayments);

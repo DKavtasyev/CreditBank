@@ -15,10 +15,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.deal.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
 import ru.neoflex.neostudy.deal.service.ScoringService;
@@ -811,6 +812,19 @@ public class DealControllerTest {
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
 						.andExpect(status().isNotFound());
+			}
+			
+			@Test
+			void calculateLoanParameters_whenLoanRefused_thenReturn406() throws Exception {
+				UUID statementId = UUID.randomUUID();
+				Statement statement = new Statement();
+				statement.setStatementId(statementId);
+				when(dataService.findStatement(statementId)).thenReturn(statement);
+				doThrow(LoanRefusalException.class).when(scoringService).scoreAndSaveCredit(any(FinishingRegistrationRequestDto.class), any(Statement.class));
+				mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
+						.andExpect(status().isNotAcceptable());
 			}
 		}
 	}

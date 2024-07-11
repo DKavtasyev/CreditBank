@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
-import ru.neoflex.neostudy.calculator.exception.LoanRefusalException;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.common.constants.EmploymentPosition;
 import ru.neoflex.neostudy.common.constants.EmploymentStatus;

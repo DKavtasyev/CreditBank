@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.deal.exception;
+package ru.neoflex.neostudy.common.exception;
 
 public class StatementNotFoundException extends Exception {
 	

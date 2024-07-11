@@ -2,6 +2,7 @@ package ru.neoflex.neostudy.statement.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.statement.service.StatementService;
 
 import java.util.List;
@@ -41,10 +42,10 @@ public class StatementController {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request")})
-	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Valid LoanStatementRequestDto loanStatementRequestDto,
-															BindingResult bindingResult) throws InvalidPreScoreParameters, InvalidPassportDataException, JsonProcessingException {
+	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequestDto,
+															BindingResult bindingResult) throws InvalidPreScoreParametersException, InvalidPassportDataException, JsonProcessingException {
 		if (bindingResult.hasErrors()) {
-			throw new InvalidPreScoreParameters(bindingResult.getAllErrors().stream()
+			throw new InvalidPreScoreParametersException(bindingResult.getAllErrors().stream()
 					.map(DefaultMessageSourceResolvable::getDefaultMessage)
 					.reduce((s1, s2) -> s1 + "; " + s2)
 					.orElse("Unknown errors"));
@@ -62,16 +63,15 @@ public class StatementController {
 					
 					Примечание: для отправки запроса через Swagger нужно в поле statementId Request body установить
 					значение statementId соответствующей statement из базы данных, или скопировать один из четырёх
-					предложений займа, полученных при запросе по адресу: /deal/statement.
+					предложений займа, полученных при запросе по адресу: /statement.
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found")
 			})
-	public ResponseEntity<Void> applyOffer(@RequestBody LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParameters {
+	public ResponseEntity<Void> applyOffer(@RequestBody @Parameter(description = "Выбранное пользователем предложение кредита") LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParametersException {
 		statementService.applyChosenOffer(loanOfferDto);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
 }

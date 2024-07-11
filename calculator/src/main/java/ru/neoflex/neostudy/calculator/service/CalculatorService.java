@@ -6,8 +6,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.calculator.config.CreditConfig;
 import ru.neoflex.neostudy.calculator.config.RateConfig;
-import ru.neoflex.neostudy.calculator.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.dto.*;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

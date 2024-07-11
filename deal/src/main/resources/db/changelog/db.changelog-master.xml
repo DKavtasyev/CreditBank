@@ -1,0 +1,125 @@
+<!--suppress HttpUrlsUsage -->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="1" author="postgres">
+		<createProcedure>
+			DO $body$
+			BEGIN
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'application_status') THEN
+			CREATE TYPE public.application_status AS ENUM ('PREAPPROVAL', 'APPROVED', 'CC_DENIED', 'CC_APPROVED', 'PREPARE_DOCUMENTS', 'DOCUMENT_CREATED', 'CLIENT_DENIED', 'DOCUMENT_SIGNED', 'CREDIT_ISSUED');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'change_type') THEN
+			CREATE TYPE public.change_type AS ENUM ('AUTOMATIC', 'MANUAL');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'credit_status') THEN
+			CREATE TYPE public.credit_status AS ENUM ('CALCULATED', 'ISSUED');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'employment_position') THEN
+			CREATE TYPE public.employment_position AS ENUM ('WORKER', 'MID_MANAGER', 'TOP_MANAGER', 'OWNER');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'employment_status') THEN
+			CREATE TYPE public.employment_status AS ENUM ('UNEMPLOYED', 'SELF_EMPLOYED', 'EMPLOYED', 'BUSINESS_OWNER');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'gender') THEN
+			CREATE TYPE public.gender AS ENUM ('MALE', 'FEMALE', 'NON_BINARY');
+			END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'marital_status') THEN
+			CREATE TYPE public.marital_status AS ENUM ('MARRIED', 'DIVORCED', 'SINGLE', 'WIDOW_WIDOWER');
+			END IF;
+			END $body$;
+		</createProcedure>
+	</changeSet>
+
+	<changeSet id="2" author="postgres">
+
+		<createTable tableName="statement">
+			<column name="statement_id" type="UUID">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="statement_pkey"/>
+			</column>
+			<column name="client_id" type="UUID">
+				<constraints nullable="false"/>
+			</column>
+			<column name="credit_id" type="UUID"/>
+			<column name="status" type="application_status"/>
+			<column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false"/>
+			</column>
+			<column name="applied_offer" type="JSONB"/>
+			<column name="sign_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+			<column name="ses_code" type="VARCHAR"/>
+			<column name="status_history" type="JSONB"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="postgres">
+		<createTable tableName="client">
+			<column name="client_id" type="UUID">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="client_pkey"/>
+			</column>
+			<column name="last_name" type="VARCHAR">
+				<constraints nullable="false"/>
+			</column>
+			<column name="first_name" type="VARCHAR">
+				<constraints nullable="false"/>
+			</column>
+			<column name="middle_name" type="VARCHAR"/>
+			<column name="birth_date" type="date">
+				<constraints nullable="false"/>
+			</column>
+			<column name="email" type="VARCHAR">
+				<constraints nullable="false"/>
+			</column>
+			<column name="gender" type="GENDER"/>
+			<column name="marital_status" type="marital_status"/>
+			<column name="dependent_amount" type="INTEGER"/>
+			<column name="passport" type="JSONB">
+				<constraints nullable="false"/>
+			</column>
+			<column name="employment" type="JSONB"/>
+			<column name="account_number" type="VARCHAR"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4" author="postgres">
+		<createTable tableName="credit">
+			<column name="credit_id" type="UUID">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="credit_pkey"/>
+			</column>
+			<column name="amount" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="term" type="INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="monthly_payment" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="rate" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="psk" type="numeric">
+				<constraints nullable="false"/>
+			</column>
+			<column name="payment_schedule" type="JSONB">
+				<constraints nullable="false"/>
+			</column>
+			<column name="insurance_enabled" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="salary_client" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="credit_status" type="credit_status"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="postgres" id="5">
+		<addForeignKeyConstraint baseColumnNames="client_id" baseTableName="statement" constraintName="fk_statement_client" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="client_id" referencedTableName="client" validate="true"/>
+	</changeSet>
+	<changeSet author="postgres" id="6">
+		<addForeignKeyConstraint baseColumnNames="credit_id" baseTableName="statement" constraintName="fk_statement_credit" deferrable="false" initiallyDeferred="false" onDelete="SET NULL" onUpdate="RESTRICT" referencedColumnNames="credit_id" referencedTableName="credit" validate="true"/>
+	</changeSet>
+</databaseChangeLog>

@@ -3,10 +3,10 @@ package ru.neoflex.neostudy.calculator.service;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.calculator.config.RateConfig;
 import ru.neoflex.neostudy.calculator.config.RefusalConfig;
-import ru.neoflex.neostudy.calculator.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.constants.Gender;
 import ru.neoflex.neostudy.common.dto.EmploymentDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
+import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -66,7 +66,7 @@ public class PersonalRateCalculatorService {
 		boolean isUnemployed = employmentDto.getEmploymentStatus().equals(UNEMPLOYED);
 		
 		if (inappropriateWorkExperience || inappropriateAge || inappropriateAmount || isUnemployed) {
-			throw new LoanRefusalException();
+			throw new LoanRefusalException("Loan denied");
 		}
 		else {
 			if (employmentDto.getEmploymentStatus().equals(SELF_EMPLOYED)) {

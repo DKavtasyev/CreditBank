@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import ru.neoflex.neostudy.common.exception.ExceptionDetails;
-import ru.neoflex.neostudy.statement.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.statement.exception.InvalidPreScoreParameters;
-import ru.neoflex.neostudy.statement.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
+import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
+import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,8 +24,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDetails);
 	}
 	
-	@ExceptionHandler(InvalidPreScoreParameters.class)
-	private ResponseEntity<?> handleInvalidLoanRequestParametersException(InvalidPreScoreParameters e, WebRequest request) {
+	@ExceptionHandler(InvalidPreScoreParametersException.class)
+	private ResponseEntity<?> handleInvalidLoanRequestParametersException(InvalidPreScoreParametersException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetails);
 	}
