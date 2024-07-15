@@ -377,7 +377,7 @@ public class DealControllerTest {
 				ArgumentCaptor<LoanStatementRequestDto> loanStatementRequestDtoCaptor = ArgumentCaptor.forClass(LoanStatementRequestDto.class);
 				ArgumentCaptor<Statement> statementCaptor = ArgumentCaptor.forClass(Statement.class);
 				assertAll(() -> {
-					verify(dataService, times(1)).writeData(loanStatementRequestDtoCaptor.capture());
+					verify(dataService, times(1)).prepareData(loanStatementRequestDtoCaptor.capture());
 					verify(preScoringService, times(1)).getOffers(loanStatementRequestDtoCaptor.capture(), statementCaptor.capture());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getAmount().compareTo(loanStatementRequest.getAmount())).isEqualTo(0);
 					assertThat(loanStatementRequestDtoCaptor.getValue().getTerm()).isEqualTo(loanStatementRequest.getTerm());
@@ -399,7 +399,7 @@ public class DealControllerTest {
 			void getLoanOffers_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				List<LoanOfferDto> offers = DtoInitializer.initOffers();
 				Statement statement = new Statement();
-				when(dataService.writeData(any(LoanStatementRequestDto.class))).thenReturn(statement);
+				when(dataService.prepareData(any(LoanStatementRequestDto.class))).thenReturn(statement);
 				when(preScoringService.getOffers(any(LoanStatementRequestDto.class), any(Statement.class))).thenReturn(offers);
 				
 				ResultActions response = mockMvc.perform(post("/deal/statement")
@@ -415,7 +415,7 @@ public class DealControllerTest {
 		class TestingExceptions {
 			@Test
 			void getLoanOffers_whenPassportDataIsInvalid_thenReturn400() throws Exception {
-				doThrow(InvalidPassportDataException.class).when(dataService).writeData(any(LoanStatementRequestDto.class));
+				doThrow(InvalidPassportDataException.class).when(dataService).prepareData(any(LoanStatementRequestDto.class));
 				mockMvc.perform(post("/deal/statement")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -463,7 +463,7 @@ public class DealControllerTest {
 				
 				ArgumentCaptor<LoanOfferDto> loanOfferDtoCaptor = ArgumentCaptor.forClass(LoanOfferDto.class);
 				assertAll(() -> {
-					verify(dataService, times(1)).updateStatement(loanOfferDtoCaptor.capture());
+					verify(dataService, times(1)).applyOfferAndSave(loanOfferDtoCaptor.capture());
 					assertThat(loanOfferDtoCaptor.getValue().getStatementId().toString()).isEqualTo(loanOfferDto.getStatementId().toString());
 					assertThat(loanOfferDtoCaptor.getValue().getRequestedAmount().compareTo(loanOfferDto.getRequestedAmount())).isEqualTo(0);
 					assertThat(loanOfferDtoCaptor.getValue().getTotalAmount().compareTo(loanOfferDto.getTotalAmount())).isEqualTo(0);
@@ -481,7 +481,7 @@ public class DealControllerTest {
 		class TestingExceptions {
 			@Test
 			void applyOffer_whenStatementNotFound_thenThrowStatementNotFoundException() throws Exception {
-				doThrow(StatementNotFoundException.class).when(dataService).updateStatement(any(LoanOfferDto.class));
+				doThrow(StatementNotFoundException.class).when(dataService).applyOfferAndSave(any(LoanOfferDto.class));
 				mockMvc.perform(post("/deal/offer/select")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanOfferDto)))

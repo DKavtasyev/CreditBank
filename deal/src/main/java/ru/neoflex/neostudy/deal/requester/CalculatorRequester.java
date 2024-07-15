@@ -13,6 +13,7 @@ import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
 import ru.neoflex.neostudy.common.exception.ExceptionDetails;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 
 import java.net.URI;
@@ -27,7 +28,7 @@ public class CalculatorRequester {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 	
-	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) {
+	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) throws InternalMicroserviceException {
 		ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,7 +38,13 @@ public class CalculatorRequester {
 				.headers(headers)
 				.body(loanStatementRequestDto);
 		
-		ResponseEntity<List<LoanOfferDto>> responseEntity = restTemplate.exchange(requestEntity, responseType);
+		ResponseEntity<List<LoanOfferDto>> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(requestEntity, responseType);
+		}
+		catch (HttpClientErrorException e) {
+			throw new InternalMicroserviceException("Calculator error", e);
+		}
 		return responseEntity.getBody();
 	}
 	

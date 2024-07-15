@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class PreScoringService {
 	private final CalculatorRequester calculatorRequester;
 	
-	public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequest, Statement statement) {
+	public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequest, Statement statement) throws InternalMicroserviceException {
 		return calculatorRequester.requestLoanOffers(loanStatementRequest)
 				.stream()
 				.map(offer -> offer.setStatementId(statement.getStatementId()))

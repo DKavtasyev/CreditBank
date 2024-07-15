@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
@@ -43,7 +44,7 @@ class PreScoringServiceTest {
 		}
 		
 		@Test
-		void getOffers() {
+		void getOffers() throws InternalMicroserviceException {
 			UUID statementId = UUID.randomUUID();
 			statement.setStatementId(statementId);
 			when(calculatorRequester.requestLoanOffers(loanStatementRequestDto)).thenReturn(offers);

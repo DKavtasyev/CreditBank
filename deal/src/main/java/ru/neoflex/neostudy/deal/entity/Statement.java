@@ -13,7 +13,7 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
-import ru.neoflex.neostudy.deal.entity.jsonb.StatusHistory;
+import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -54,6 +54,7 @@ public class Statement {
 	@Column(name = "applied_offer")
 	private LoanOfferDto appliedOffer;
 	
+	@Basic
 	@Column(name = "sign_date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATETIME_PATTERN)
 	private LocalDateTime signDate;
@@ -63,5 +64,5 @@ public class Statement {
 	
 	@JdbcTypeCode(value = SqlTypes.JSON)
 	@Column(name = "status_history")
-	private LinkedList<StatusHistory> statusHistory = new LinkedList<>();
+	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
 }

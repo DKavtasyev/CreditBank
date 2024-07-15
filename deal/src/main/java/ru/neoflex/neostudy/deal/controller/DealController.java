@@ -9,14 +9,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.DataService;
+import ru.neoflex.neostudy.deal.service.KafkaService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
 import ru.neoflex.neostudy.deal.service.ScoringService;
 
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("${app.rest.prefix}")
+@RequestMapping("${app.rest.deal.prefix}")
 @RequiredArgsConstructor
 @Tag(
 		name = "Сделка",
@@ -33,6 +36,7 @@ public class DealController {
 	private final PreScoringService preScoringService;
 	private final ScoringService scoringService;
 	private final DataService dataService;
+	private final KafkaService kafkaService;
 	
 	@PostMapping("/statement")
 	@Operation(
@@ -44,9 +48,10 @@ public class DealController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request")
 			})
-	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException {
-		Statement statement = dataService.writeData(loanStatementRequest);
+	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException, InternalMicroserviceException {
+		Statement statement = dataService.prepareData(loanStatementRequest);
 		List<LoanOfferDto> offers = preScoringService.getOffers(loanStatementRequest, statement);
+		dataService.updateStatement(statement, ApplicationStatus.PREAPPROVAL);
 		return new ResponseEntity<>(offers, HttpStatus.OK);
 	}
 	
@@ -62,10 +67,28 @@ public class DealController {
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "404", description = "Not found")
+					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	public ResponseEntity<Void> applyOffer(@RequestBody @Parameter(description = "Выбранное пользователем предложение кредита") LoanOfferDto loanOffer) throws StatementNotFoundException {
-		dataService.updateStatement(loanOffer);
+	public ResponseEntity<Void> applyOffer(@RequestBody @Parameter(description = "Выбранное пользователем предложение кредита") LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException {
+		
+		dataService.applyOfferAndSave(loanOffer);
+		kafkaService.sendFinishRegistrationRequest(loanOffer.getStatementId());
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	@GetMapping("/offer/deny/{statementId}")
+	@Operation(
+			summary = "Отказ клиента от кредита",
+			description = "При получении отказа клиента от кредита сохраняет информацию в заявке. По statementId находит" +
+					"соответствующую заявку и меняет её статус на CLIENT_DENIED.",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "404", description = "Not found"),
+			})
+	public ResponseEntity<Void> denyOffer(@PathVariable("statementId") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
+		Statement statement = dataService.denyOffer(statementId);
+		kafkaService.sendDenial(statement);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
@@ -78,12 +101,14 @@ public class DealController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
-					@ApiResponse(responseCode = "406", description = "Not acceptable")
+					@ApiResponse(responseCode = "406", description = "Not acceptable"),
+					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	public ResponseEntity<Void> calculateLoanParameters(@RequestBody @Parameter(description = "Пользовательские данные для расчёта и оформления кредита") FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException, JsonProcessingException, LoanRefusalException {
+														@PathVariable("statementId") UUID statementId) throws StatementNotFoundException, JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
+		kafkaService.sendCreatingDocumentsRequest(statement);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	

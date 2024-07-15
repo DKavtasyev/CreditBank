@@ -56,7 +56,7 @@ class DataServiceTest {
 			when(clientEntityServiceMock.findClientByPassport(loanStatementRequestDto)).thenReturn(optionalClient);
 			when(clientEntityServiceMock.checkAndSaveClient(loanStatementRequestDto, optionalClient)).thenReturn(client);
 			when(statementEntityServiceMock.save(any(Statement.class))).thenReturn(statement);
-			Statement actualStatement = dataService.writeData(loanStatementRequestDto);
+			Statement actualStatement = dataService.prepareData(loanStatementRequestDto);
 			Assertions.assertAll(() -> {
 				verify(clientEntityServiceMock, times(1)).findClientByPassport(loanStatementRequestDto);
 				verify(clientEntityServiceMock, times(1)).checkAndSaveClient(loanStatementRequestDto, optionalClient);
@@ -97,7 +97,7 @@ class DataServiceTest {
 			loanOffer.setStatementId(statementId);
 			Optional<Statement> optionalStatement = Optional.of(statement);
 			when(statementEntityServiceMock.findStatement(statementId)).thenReturn(optionalStatement);
-			dataService.updateStatement(loanOffer);
+			dataService.applyOfferAndSave(loanOffer);
 			assertAll(() -> {
 				assertThat(statement.getAppliedOffer()).isSameAs(loanOffer);
 				verify(statementEntityServiceMock, times(1)).setStatus(statement, ApplicationStatus.APPROVED);

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.entity.jsonb.StatusHistory;
+import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
 import ru.neoflex.neostudy.deal.repository.StatementRepository;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class StatementEntityService {
 	
 	public void setStatus(Statement statement, ApplicationStatus status) {
 		statement.setStatus(status);
-		statement.getStatusHistory().add(new StatusHistory()
+		statement.getStatementStatusHistory().add(new StatementStatusHistory()
 				.setStatus(statement.getStatus())
 				.setTime(LocalDateTime.now())
 				.setChangeType(ChangeType.AUTOMATIC));

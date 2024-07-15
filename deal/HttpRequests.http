@@ -1,0 +1,80 @@
+
+### Предоставление возможных предложений займа
+POST http://localhost:8082/deal/statement
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "amount": 1000000,
+  "term": 6,
+  "firstName": "Дмитрий",
+  "lastName": "Кавтасьев",
+  "middleName": "Владимирович",
+  "email": "999DK@mail.ru",
+  "birthDate": "1991-12-20",
+  "passportSeries": "3611",
+  "passportNumber": "566209"
+}
+
+### Применение выбранного пользователем кредитного предложения.
+### В поле statementId установить корректное значение
+POST http://localhost:8082/deal/offer/select
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "statementId": "67a37ef8-298e-4d33-9cb4-f1dd1455ea72",
+  "requestedAmount": 1000000,
+  "totalAmount": 1044202.8612807381502446,
+  "term": 6,
+  "monthlyPayment": 174033.8102134563583741,
+  "rate": 0.15,
+  "isInsuranceEnabled": false,
+  "isSalaryClient": true
+}
+
+### Отказ клиента от кредита
+### В URL установить корректный statementId
+GET http://localhost:8082/deal/offer/deny/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
+
+### Оформление условий кредита
+### В URL установить корректный statementId
+POST http://localhost:8082/deal/calculate/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "gender": "MALE",
+  "maritalStatus": "SINGLE",
+  "dependentAmount": 0,
+  "passportIssueDate": "2019-06-11",
+  "passportIssueBranch": "ГУ МВД ПО Г. МОСКВА",
+  "employment": {
+	"employmentStatus": "EMPLOYED",
+	"employmentINN": "12341",
+	"salary": 150000,
+	"position": "WORKER",
+	"workExperienceTotal": 60,
+	"workExperienceCurrent": 24
+  },
+  "accountNumber": "1231512341"
+}
+
+### Запрос на формирование документов и отправку их пользователю
+### В URL установить корректный statementId
+POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/send
+
+### Запрос на подписание документов
+### В URL установить корректный statementId
+POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/sign
+
+### Подписание документов
+### В URL установить корректный statementId
+POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/code
+
+### Установка статуса для заявки Statement
+PUT http://localhost:8082/deal/admin/statement/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/status
+Content-Type: application/json
+Cache-Control: no-store
+
+"CC_APPROVED"

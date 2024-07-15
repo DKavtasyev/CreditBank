@@ -19,25 +19,34 @@ public class DataService {
 	private final ClientEntityService clientEntityService;
 	private final StatementEntityService statementEntityService;
 	
-	public Statement writeData(LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException {
+	public Statement prepareData(LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException {
 		Optional<Client> optionalClient = clientEntityService.findClientByPassport(loanStatementRequest);
 		Client client = clientEntityService.checkAndSaveClient(loanStatementRequest, optionalClient);
 		
 		Statement statement = new Statement();
 		statement.setStatementId(UUID.randomUUID());
 		statement.setClient(client);
-		return statementEntityService.save(statement);
+		return statement;
 	}
-	
 	
 	public Statement findStatement(UUID statementId) throws StatementNotFoundException {
 		return statementEntityService.findStatement(statementId).orElseThrow(() -> new StatementNotFoundException(String.format("Statement with id = %s not found", statementId)));
 	}
 	
-	public void updateStatement(LoanOfferDto loanOffer) throws StatementNotFoundException {
-		Statement statement = findStatement(loanOffer.getStatementId());
-		statementEntityService.setStatus(statement, ApplicationStatus.APPROVED);
-		statement.setAppliedOffer(loanOffer);
+	public void updateStatement(Statement statement, ApplicationStatus status) {
+		statementEntityService.setStatus(statement, status);
 		statementEntityService.save(statement);
+	}
+	
+	public void applyOfferAndSave(LoanOfferDto loanOffer) throws StatementNotFoundException {
+		Statement statement = findStatement(loanOffer.getStatementId());
+		statement.setAppliedOffer(loanOffer);
+		updateStatement(statement, ApplicationStatus.APPROVED);
+	}
+	
+	public Statement denyOffer(UUID statementId) throws StatementNotFoundException {
+		Statement statement = findStatement(statementId);
+		updateStatement(statement, ApplicationStatus.CLIENT_DENIED);
+		return statement;
 	}
 }

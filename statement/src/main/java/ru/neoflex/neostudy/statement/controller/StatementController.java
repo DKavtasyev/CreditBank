@@ -33,7 +33,7 @@ import java.util.List;
 public class StatementController {
 	private final StatementService statementService;
 	
-	@PostMapping("")
+	@PostMapping
 	@Operation(
 			summary = "Предоставление возможных предложений займа",
 			description = "Получает запрос от пользователя на предварительный расчёт кредита, проверяет полученные данные, " +

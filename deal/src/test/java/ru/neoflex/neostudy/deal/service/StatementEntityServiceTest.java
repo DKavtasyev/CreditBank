@@ -64,11 +64,11 @@ class StatementEntityServiceTest {
 			statementEntityService.setStatus(statement, status);
 			assertAll(() -> {
 				assertThat(statement.getStatus()).isEqualTo(status);
-				assertThat(statement.getStatusHistory()).isNotEmpty();
-				assertThat(statement.getStatusHistory().peekLast()).isNotNull();
-				assertThat(statement.getStatusHistory().peekLast().getStatus()).isEqualTo(status);
-				assertThat(statement.getStatusHistory().peekLast().getTime()).isNotNull();
-				assertThat(statement.getStatusHistory().peekLast().getChangeType()).isEqualTo(ChangeType.AUTOMATIC);
+				assertThat(statement.getStatementStatusHistory()).isNotEmpty();
+				assertThat(statement.getStatementStatusHistory().peekLast()).isNotNull();
+				assertThat(statement.getStatementStatusHistory().peekLast().getStatus()).isEqualTo(status);
+				assertThat(statement.getStatementStatusHistory().peekLast().getTime()).isNotNull();
+				assertThat(statement.getStatementStatusHistory().peekLast().getChangeType()).isEqualTo(ChangeType.AUTOMATIC);
 			});
 		}
 		

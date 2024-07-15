@@ -32,7 +32,6 @@ public class LoggingAspect {
 			if (arg instanceof BindingResult || arg instanceof UUID) {
 				continue;
 			}
-			
 			log.info(getLoggingText(arg, methodName, "Received argument: ", true));
 		}
 		
@@ -54,12 +53,12 @@ public class LoggingAspect {
 		log.warn(sb);
 	}
 	
-	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.DataService.writeData(..))", returning = "statement")
+	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.DataService.prepareData(..))", returning = "statement")
 	private void afterReturningWriteDataMethod(Statement statement) {
 		log.info(getLoggingText(statement, "writeData", "Created and save new Statement: ", true));
 	}
 	
-	@After("execution(* ru.neoflex.neostudy.deal.service.DataService.updateStatement(..))")
+	@After("execution(* ru.neoflex.neostudy.deal.service.DataService.applyOfferAndSave(..))")
 	private void afterUpdateStatementMethod(JoinPoint joinPoint) {
 		Object[] arguments = joinPoint.getArgs();
 		
@@ -72,7 +71,9 @@ public class LoggingAspect {
 	@After("execution(* ru.neoflex.neostudy.deal.service.StatementEntityService.setStatus(..))")
 	private void afterSetStatusMethod(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
-		String joinPointString = String.format("For statement id: %1$s has been set status: %2$s.", ((Statement) args[0]).getStatementId().toString(), args[1].toString());
+		String statementId = ((Statement) args[0]).getStatementId().toString();
+		String status = args[1].toString();
+		String joinPointString = String.format("For statement id: %1$s has been set status: %2$s.", statementId, status);
 		log.info(getLoggingText(args[0], "setStatus", joinPointString, false));
 	}
 	
@@ -102,9 +103,14 @@ public class LoggingAspect {
 		}
 	}
 	
-	@After("execution(* ru.neoflex.neostudy.deal.service.ScoringService.scoreAndSaveCredit(..))")
-	private void afterScoreAndSaveCredit(JoinPoint joinPoint) {
-		Object[] args = joinPoint.getArgs();
+	@SuppressWarnings("AroundAdviceStyleInspection")
+	@Around("execution(* ru.neoflex.neostudy.deal.service.ScoringService.scoreAndSaveCredit(..))")
+	private void aroundScoreAndSaveCredit(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+		String methodName = methodSignature.getName();
+		Object[] args = proceedingJoinPoint.getArgs();
+		
+		proceedMethod(proceedingJoinPoint, methodName);
 		
 		String joinPointString1 = String.format("Credit id: %1$s has been created and has been set for statement id: %2$s.", ((Statement) args[1]).getCredit().getCreditId().toString(), ((Statement) args[1]).getStatementId().toString());
 		log.info(getLoggingText(args[1], "scoreAndSaveCredit", joinPointString1, false));
@@ -121,6 +127,9 @@ public class LoggingAspect {
 		catch (Throwable e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Method: ").append(methodName).append("; ").append(e);
+			if (e.getCause() != null) {
+				sb.append(", cause: ").append(e.getCause());
+			}
 			log.warn(sb);
 			throw e;
 		}

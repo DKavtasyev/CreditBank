@@ -11,6 +11,7 @@ import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Credit;
@@ -61,7 +62,7 @@ class ScoringServiceTest {
 	@DisplayName("Тестирование метода ScoringServiceTest:scoreAndSaveCredit()")
 	class TestingSetStatusMethod {
 		@Test
-		void scoreAndSaveCredit() throws JsonProcessingException, LoanRefusalException {
+		void scoreAndSaveCredit() throws JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
 			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenReturn(scoringDataDto);
 			when(calculatorRequester.requestCalculatedLoanTerms(scoringDataDto)).thenReturn(creditDto);
 			when(creditMapper.dtoToEntity(creditDto)).thenReturn(credit);
