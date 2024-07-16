@@ -61,7 +61,7 @@ class StatementEntityServiceTest {
 		@MethodSource("argsProvidedFactory")
 		void setStatus(ApplicationStatus status) {
 			Statement statement = new Statement();
-			statementEntityService.setStatus(statement, status);
+			statementEntityService.setStatus(statement, status, ChangeType.AUTOMATIC);
 			assertAll(() -> {
 				assertThat(statement.getStatus()).isEqualTo(status);
 				assertThat(statement.getStatementStatusHistory()).isNotEmpty();

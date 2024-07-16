@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
@@ -51,7 +52,7 @@ public class DealController {
 	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException, InternalMicroserviceException {
 		Statement statement = dataService.prepareData(loanStatementRequest);
 		List<LoanOfferDto> offers = preScoringService.getOffers(loanStatementRequest, statement);
-		dataService.updateStatement(statement, ApplicationStatus.PREAPPROVAL);
+		dataService.updateStatement(statement, ApplicationStatus.PREAPPROVAL, ChangeType.AUTOMATIC);
 		return new ResponseEntity<>(offers, HttpStatus.OK);
 	}
 	

@@ -9,6 +9,7 @@ import ru.neoflex.neostudy.common.dto.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,9 +113,10 @@ public class DtoInitializer {
 	}
 	
 	public CreditDto initCreditDto() {
+		LocalDate date = LocalDate.of(2024, Month.JULY, 10);
 		PaymentScheduleElementDto paymentScheduleElementOne = new PaymentScheduleElementDto()
 				.setNumber(1)
-				.setDate(LocalDate.now().plusMonths(1))
+				.setDate(date.plusMonths(1))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
 				.setInterestPayment(new BigDecimal("9863.0136986310000000"))
 				.setDebtPayment(new BigDecimal("162685.3530122504202625"))
@@ -122,7 +124,7 @@ public class DtoInitializer {
 		
 		PaymentScheduleElementDto paymentScheduleElementTwo = new PaymentScheduleElementDto()
 				.setNumber(2)
-				.setDate(LocalDate.now().plusMonths(2))
+				.setDate(date.plusMonths(2))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
 				.setInterestPayment(new BigDecimal("8533.7273610813725549"))
 				.setDebtPayment(new BigDecimal("164014.6393498000477076"))
@@ -130,7 +132,7 @@ public class DtoInitializer {
 		
 		PaymentScheduleElementDto paymentScheduleElementThree = new PaymentScheduleElementDto()
 				.setNumber(3)
-				.setDate(LocalDate.now().plusMonths(3))
+				.setDate(date.plusMonths(3))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
 				.setInterestPayment(new BigDecimal("6640.7671986214531639"))
 				.setDebtPayment(new BigDecimal("165907.5995122599670986"))
@@ -138,7 +140,7 @@ public class DtoInitializer {
 		
 		PaymentScheduleElementDto paymentScheduleElementFour = new PaymentScheduleElementDto()
 				.setNumber(4)
-				.setDate(LocalDate.now().plusMonths(4))
+				.setDate(date.plusMonths(4))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
 				.setInterestPayment(new BigDecimal("5171.2322143225488706"))
 				.setDebtPayment(new BigDecimal("167377.1344965588713919"))
@@ -146,7 +148,7 @@ public class DtoInitializer {
 		
 		PaymentScheduleElementDto paymentScheduleElementFive = new PaymentScheduleElementDto()
 				.setNumber(5)
-				.setDate(LocalDate.now().plusMonths(5))
+				.setDate(date.plusMonths(5))
 				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
 				.setInterestPayment(new BigDecimal("3353.5753015478838399"))
 				.setDebtPayment(new BigDecimal("169194.7914093335364226"))
@@ -154,7 +156,7 @@ public class DtoInitializer {
 		
 		PaymentScheduleElementDto paymentScheduleElementSix = new PaymentScheduleElementDto()
 				.setNumber(6)
-				.setDate(LocalDate.now().plusMonths(6))
+				.setDate(date.plusMonths(6))
 				.setTotalPayment(new BigDecimal("172561.4471344757900662"))
 				.setInterestPayment(new BigDecimal("1740.9649146786329494"))
 				.setDebtPayment(new BigDecimal("170807.4017962027873131"))

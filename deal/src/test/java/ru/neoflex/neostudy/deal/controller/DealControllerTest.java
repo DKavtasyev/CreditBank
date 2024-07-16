@@ -21,6 +21,7 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
+import ru.neoflex.neostudy.deal.service.KafkaService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
 import ru.neoflex.neostudy.deal.service.ScoringService;
 
@@ -53,6 +54,8 @@ public class DealControllerTest {
 	private ScoringService scoringService;
 	@MockBean
 	private DataService dataService;
+	@MockBean
+	private KafkaService kafkaService;
 	
 	LoanStatementRequestDto loanStatementRequest;
 	LoanOfferDto loanOfferDto;
@@ -464,6 +467,7 @@ public class DealControllerTest {
 				ArgumentCaptor<LoanOfferDto> loanOfferDtoCaptor = ArgumentCaptor.forClass(LoanOfferDto.class);
 				assertAll(() -> {
 					verify(dataService, times(1)).applyOfferAndSave(loanOfferDtoCaptor.capture());
+					verify(kafkaService, times(1)).sendFinishRegistrationRequest(loanOfferDto.getStatementId());
 					assertThat(loanOfferDtoCaptor.getValue().getStatementId().toString()).isEqualTo(loanOfferDto.getStatementId().toString());
 					assertThat(loanOfferDtoCaptor.getValue().getRequestedAmount().compareTo(loanOfferDto.getRequestedAmount())).isEqualTo(0);
 					assertThat(loanOfferDtoCaptor.getValue().getTotalAmount().compareTo(loanOfferDto.getTotalAmount())).isEqualTo(0);

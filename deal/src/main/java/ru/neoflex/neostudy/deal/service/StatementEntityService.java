@@ -17,19 +17,19 @@ import java.util.UUID;
 public class StatementEntityService {
 	private final StatementRepository statementRepository;
 	
-	public Statement save(Statement statement) {
-		return statementRepository.save(statement);
+	public void save(Statement statement) {
+		statementRepository.save(statement);
 	}
 	
 	public Optional<Statement> findStatement(UUID statementId) {
 		return statementRepository.findById(statementId);
 	}
 	
-	public void setStatus(Statement statement, ApplicationStatus status) {
+	public void setStatus(Statement statement, ApplicationStatus status, ChangeType changeType) {
 		statement.setStatus(status);
 		statement.getStatementStatusHistory().add(new StatementStatusHistory()
 				.setStatus(statement.getStatus())
 				.setTime(LocalDateTime.now())
-				.setChangeType(ChangeType.AUTOMATIC));
+				.setChangeType(changeType));
 	}
 }

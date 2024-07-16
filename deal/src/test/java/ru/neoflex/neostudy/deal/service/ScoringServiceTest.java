@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
@@ -22,7 +23,7 @@ import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +38,7 @@ class ScoringServiceTest {
 	CreditMapper creditMapper;
 	
 	@Mock
-	StatementEntityService statementEntityService;
+	DataService dataService;
 	
 	@InjectMocks
 	ScoringService scoringService;
@@ -73,10 +74,8 @@ class ScoringServiceTest {
 				verify(creditMapper, times(1)).dtoToEntity(creditDto);
 				assertThat(credit.getCreditStatus()).isEqualTo(CreditStatus.CALCULATED);
 				assertThat(statement.getCredit()).isSameAs(credit);
-				verify(statementEntityService, times(1)).setStatus(statement, ApplicationStatus.CC_APPROVED);
-				verify(statementEntityService, times(1)).save(statement);
+				verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
 			});
 		}
 	}
-	
 }

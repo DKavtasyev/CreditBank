@@ -17,6 +17,7 @@ import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.UUID;
 
 import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTERN;
@@ -65,4 +66,27 @@ public class Statement {
 	@JdbcTypeCode(value = SqlTypes.JSON)
 	@Column(name = "status_history")
 	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Statement statement)) {
+			return false;
+		}
+		return Objects.equals(client, statement.client)
+				&& Objects.equals(credit, statement.credit)
+				&& status == statement.status
+				&& Objects.equals(creationDate, statement.creationDate)
+				&& Objects.equals(appliedOffer, statement.appliedOffer)
+				&& Objects.equals(signDate, statement.signDate)
+				&& Objects.equals(sessionCode, statement.sessionCode)
+				&& Objects.equals(statementStatusHistory, statement.statementStatusHistory);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(client, credit, status, creationDate, appliedOffer, signDate, sessionCode, statementStatusHistory);
+	}
 }

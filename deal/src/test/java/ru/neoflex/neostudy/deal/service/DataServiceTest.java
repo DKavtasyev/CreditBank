@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
@@ -36,32 +37,31 @@ class DataServiceTest {
 	private final PreScoreClientPersonalIdentificationInformationMapper mapper = new PreScoreClientPersonalIdentificationInformationMapper();
 	private LoanStatementRequestDto loanStatementRequestDto;
 	private Client client;
-	private final Statement statement = new Statement();
+	private final Statement expectedStatement = new Statement();
 	private final LoanOfferDto loanOffer = new LoanOfferDto();
 	
 	@BeforeEach
 	void init() {
 		loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
 		client = mapper.dtoToEntity(loanStatementRequestDto);
-		statement.setClient(client);
-		statement.setStatementId(UUID.randomUUID());
+		expectedStatement.setClient(client);
+		expectedStatement.setStatementId(UUID.randomUUID());
 	}
 	
 	@Nested
-	@DisplayName("Тестирование метода DataService:writeData()")
+	@DisplayName("Тестирование метода DataService:prepareData()")
 	class TestingWriteDataMethod {
 		@Test
-		void writeData() throws InvalidPassportDataException {
+		void prepareData() throws InvalidPassportDataException {
 			Optional<Client> optionalClient = Optional.of(client);
 			when(clientEntityServiceMock.findClientByPassport(loanStatementRequestDto)).thenReturn(optionalClient);
 			when(clientEntityServiceMock.checkAndSaveClient(loanStatementRequestDto, optionalClient)).thenReturn(client);
-			when(statementEntityServiceMock.save(any(Statement.class))).thenReturn(statement);
+//			when(statementEntityServiceMock.save(any(Statement.class))).thenReturn(expectedStatement);
 			Statement actualStatement = dataService.prepareData(loanStatementRequestDto);
 			Assertions.assertAll(() -> {
 				verify(clientEntityServiceMock, times(1)).findClientByPassport(loanStatementRequestDto);
 				verify(clientEntityServiceMock, times(1)).checkAndSaveClient(loanStatementRequestDto, optionalClient);
-				verify(statementEntityServiceMock, times(1)).save(any(Statement.class));
-				assertThat(actualStatement).isSameAs(statement);
+				assertThat(actualStatement).isEqualTo(expectedStatement);
 			});
 		}
 	}
@@ -72,11 +72,11 @@ class DataServiceTest {
 		@Test
 		void findStatement_whenStatementExists_thenReturnStatement() throws StatementNotFoundException {
 			UUID statementId = UUID.randomUUID();
-			statement.setStatementId(statementId);
-			Optional<Statement> optionalStatement = Optional.of(statement);
+			expectedStatement.setStatementId(statementId);
+			Optional<Statement> optionalStatement = Optional.of(expectedStatement);
 			when(statementEntityServiceMock.findStatement(statementId)).thenReturn(optionalStatement);
 			Statement actualStatement = dataService.findStatement(statementId);
-			assertThat(actualStatement).isSameAs(statement);
+			assertThat(actualStatement).isSameAs(expectedStatement);
 		}
 		
 		@Test
@@ -93,15 +93,15 @@ class DataServiceTest {
 	class TestingUpdateStatementMethod {
 		@Test
 		void updateStatement() throws StatementNotFoundException {
-			UUID statementId = statement.getStatementId();
+			UUID statementId = expectedStatement.getStatementId();
 			loanOffer.setStatementId(statementId);
-			Optional<Statement> optionalStatement = Optional.of(statement);
+			Optional<Statement> optionalStatement = Optional.of(expectedStatement);
 			when(statementEntityServiceMock.findStatement(statementId)).thenReturn(optionalStatement);
 			dataService.applyOfferAndSave(loanOffer);
 			assertAll(() -> {
-				assertThat(statement.getAppliedOffer()).isSameAs(loanOffer);
-				verify(statementEntityServiceMock, times(1)).setStatus(statement, ApplicationStatus.APPROVED);
-				verify(statementEntityServiceMock, times(1)).save(statement);
+				assertThat(expectedStatement.getAppliedOffer()).isSameAs(loanOffer);
+				verify(statementEntityServiceMock, times(1)).setStatus(expectedStatement, ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
+				verify(statementEntityServiceMock, times(1)).save(expectedStatement);
 			});
 			
 		}
