@@ -32,4 +32,9 @@ public class ParamsService {
 		params.put("statementId", emailMessage.getStatementId());
 		return params;
 	}
+	
+	public void addDocumentAsText(Map<String, Object> params, String document) {
+		String messageText = (String) params.get("messageText");
+		params.put("messageText", messageText + "\n\nВаши документы: \n\n" + document);
+	}
 }

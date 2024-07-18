@@ -3,6 +3,7 @@ package ru.neoflex.neostudy.deal.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,9 @@ import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.entity.sign.SignData;
 import ru.neoflex.neostudy.deal.service.DataService;
-import ru.neoflex.neostudy.deal.service.KafkaService;
-import ru.neoflex.neostudy.deal.service.StatementEntityService;
+import ru.neoflex.neostudy.deal.service.DocumentsService;
+import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
+import ru.neoflex.neostudy.deal.service.entity.StatementEntityService;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,26 +29,36 @@ import java.util.UUID;
 @RestController
 @RequestMapping("${app.rest.document.prefix}")
 @RequiredArgsConstructor
+@Tag(
+		name = "Документы",
+		description = "Оформление документов на кредит")
 public class DocumentsController {
 	private final DataService dataService;
 	private final KafkaService kafkaService;
 	private final StatementEntityService statementEntityService;
+	private final DocumentsService documentsService;
 	
 	@PostMapping("/{statementId}/send")
 	@Operation(
 			summary = "Запрос на формирование документов и отправку их пользователю",
 			description = """
 					Является запросом на формирование документов, статус кредита меняет на "PREPARE_DOCUMENTS".
+					После получения документов микросервисом dossier, он отправляет PUT-запрос на измерение статуса
+					кредита на "DOCUMENTS_CREATED". После этого МС dossier отправляет пользователю email с документами
+					на кредит.
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	public ResponseEntity<Void> requestToSendingDocuments(@PathVariable("statementId") @Parameter(description = "Идентификатор заявки Statement") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
+	public ResponseEntity<Void> sendDocuments(@PathVariable("statementId")
+											  @Parameter(description = "Идентификатор заявки Statement")
+											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		Statement statement = dataService.findStatement(statementId);
 		dataService.updateStatement(statement, ApplicationStatus.PREPARE_DOCUMENTS, ChangeType.AUTOMATIC);
-		kafkaService.sendDocumentSigningRequest(statement);
+		String documents = documentsService.formDocument(statement);
+		kafkaService.sendDocumentSigningRequest(statement, documents);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
@@ -55,14 +67,15 @@ public class DocumentsController {
 			summary = "Запрос на формирование кода ПЭП и на подписание документов пользователем.",
 			description = """
 					Формирует код ПЭП, отсылает сообщение в МС dossier для отправки ссылки на подписание пользователю.
-					Статус кредита меняет на "PREPARE_DOCUMENTS".
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	public ResponseEntity<Void> requestToSigningDocuments(@PathVariable("statementId") @Parameter(description = "Идентификатор заявки Statement") UUID statementId, HttpServletRequest request) throws StatementNotFoundException, InternalMicroserviceException {
+	public ResponseEntity<Void> signDocuments(@PathVariable("statementId")
+											  @Parameter(description = "Идентификатор заявки Statement")
+											  UUID statementId, HttpServletRequest request) throws StatementNotFoundException, InternalMicroserviceException {
 		Statement statement = dataService.findStatement(statementId);
 		SignData signData = new SignData(statement);
 		request.getSession().setAttribute("token", signData);
@@ -89,8 +102,11 @@ public class DocumentsController {
 					@ApiResponse(responseCode = "406", description = "Not acceptable"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	public ResponseEntity<Void> signDocuments(@PathVariable("statementId") @Parameter(description = "Идентификатор заявки Statement") UUID statementId,
-											  @SessionAttribute(value = "token", required = false) @Parameter(hidden = true) SignData signData,
+	public ResponseEntity<Void> verifySesCode(@PathVariable("statementId")
+											  @Parameter(description = "Идентификатор заявки Statement")
+											  UUID statementId,
+											  @SessionAttribute(value = "token", required = false)
+											  @Parameter(hidden = true) SignData signData,
 											  SessionStatus sessionStatus,
 											  HttpSession session) throws StatementNotFoundException, DocumentSigningException, InternalMicroserviceException {
 		if (signData == null) {

@@ -7,6 +7,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
@@ -45,10 +46,13 @@ public class CalculatorRequester {
 		catch (HttpClientErrorException e) {
 			throw new InternalMicroserviceException("Calculator error", e);
 		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException("Connection error to MS calculator", e);
+		}
 		return responseEntity.getBody();
 	}
 	
-	public CreditDto requestCalculatedLoanTerms(ScoringDataDto scoringDataDto) throws LoanRefusalException, JsonProcessingException {
+	public CreditDto requestCalculatedLoanTerms(ScoringDataDto scoringDataDto) throws LoanRefusalException, InternalMicroserviceException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
@@ -60,14 +64,22 @@ public class CalculatorRequester {
 		ResponseEntity<String> responseEntity;
 		CreditDto creditDto = null;
 		try {
-			responseEntity = restTemplate.exchange(requestEntity, String.class);
-			creditDto = objectMapper.readValue(responseEntity.getBody(), CreditDto.class);
-		}
-		catch (HttpClientErrorException e) {
-			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))){
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				throw new LoanRefusalException(exceptionDetails.getMessage());
+			try {
+				responseEntity = restTemplate.exchange(requestEntity, String.class);
+				creditDto = objectMapper.readValue(responseEntity.getBody(), CreditDto.class);
 			}
+			catch (HttpClientErrorException e) {
+				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))){
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new LoanRefusalException(exceptionDetails.getMessage());
+				}
+			}
+		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException("Connection error to MS calculator", e);
+		}
+		catch (JsonProcessingException e) {
+			throw new InternalMicroserviceException("Can't deserialize value", e);
 		}
 		return creditDto;
 	}

@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.deal.service;
+package ru.neoflex.neostudy.deal.service.entity;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

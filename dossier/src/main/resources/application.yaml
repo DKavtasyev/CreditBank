@@ -23,7 +23,7 @@ spring:
     test-connection: true
 
 app:
-  bank-url: http://localhost:8084
+  bank-url: http://localhost:8085
   test-email: creditbank.noreply@internet.ru
 
 server:

@@ -16,6 +16,7 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.mapper.CreditMapper;
 import ru.neoflex.neostudy.deal.mapper.ScoringDataMapper;
 import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
+import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class ScoringService {
 	private final DataService dataService;
 	private final KafkaService kafkaService;
 	
-	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
+	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws LoanRefusalException, InternalMicroserviceException {
 		ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
 		CreditDto creditDto;
 		try {
@@ -34,7 +35,7 @@ public class ScoringService {
 		}
 		catch (LoanRefusalException e) {
 			dataService.updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
-			kafkaService.sendDenial(statement);
+			kafkaService.sendDenial(statement, "Вам отказано в получении кредита");
 			throw e;
 		}
 		Credit credit = creditMapper.dtoToEntity(creditDto);

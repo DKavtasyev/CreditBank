@@ -1,6 +1,6 @@
 package ru.neoflex.neostudy.common.exception;
 
-public class InvalidPreScoreParametersException extends Exception {
+public class InvalidPreScoreParametersException extends InvalidUserDataException {
 	
 	public InvalidPreScoreParametersException(String message) {
 		super(message);

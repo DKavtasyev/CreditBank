@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
@@ -35,15 +36,19 @@ public class StatementController {
 	
 	@PostMapping
 	@Operation(
-			summary = "Предоставление возможных предложений займа",
+			summary = "Создание заявки на кредит",
 			description = "Получает запрос от пользователя на предварительный расчёт кредита, проверяет полученные данные, " +
 					"делает запрос возможных условий в МС Сделка и предоставляет информацию " +
 					"пользователю для выбора.",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "400", description = "Bad request")})
-	public ResponseEntity<List<LoanOfferDto>> getLoanOffers(@RequestBody @Valid @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequestDto,
-															BindingResult bindingResult) throws InvalidPreScoreParametersException, InvalidPassportDataException, JsonProcessingException {
+					@ApiResponse(responseCode = "400", description = "Bad request"),
+					@ApiResponse(responseCode = "500", description = "Internal server error")})
+	public ResponseEntity<List<LoanOfferDto>> createStatement(@RequestBody
+															  @Valid
+															  @Parameter(description = "Пользовательские данные для предварительного расчёта кредита")
+															  LoanStatementRequestDto loanStatementRequestDto,
+															  BindingResult bindingResult) throws InvalidPreScoreParametersException, InvalidPassportDataException, InternalMicroserviceException {
 		if (bindingResult.hasErrors()) {
 			throw new InvalidPreScoreParametersException(bindingResult.getAllErrors().stream()
 					.map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -59,7 +64,7 @@ public class StatementController {
 	@Operation(
 			summary = "Применение выбранного пользователем кредитного предложения",
 			description = """
-					Отсылает post-запрос в МС Сделка для .
+					Отсылает post-запрос в МС Сделка для указания выбранного кредитного предложения.
 					
 					Примечание: для отправки запроса через Swagger нужно в поле statementId Request body установить
 					значение statementId соответствующей statement из базы данных, или скопировать один из четырёх
@@ -67,10 +72,11 @@ public class StatementController {
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "400", description = "Bad request"),
-					@ApiResponse(responseCode = "404", description = "Not found")
-			})
-	public ResponseEntity<Void> applyOffer(@RequestBody @Parameter(description = "Выбранное пользователем предложение кредита") LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParametersException {
+					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "500", description = "Internal server error")})
+	public ResponseEntity<Void> applyOffer(@RequestBody
+										   @Parameter(description = "Выбранное пользователем предложение кредита")
+										   LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
 		statementService.applyChosenOffer(loanOfferDto);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

@@ -62,7 +62,7 @@ Cache-Control: no-store
 
 ### Запрос на формирование документов и отправку их пользователю
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/send
+POST http://localhost:8082/deal/document/e971fdc1-bfb4-4ff0-9f27-6e661c121e68/send
 
 ### Запрос на подписание документов
 ### В URL установить корректный statementId

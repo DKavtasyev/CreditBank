@@ -18,4 +18,6 @@ public class EmailMessage {
 	private Theme theme;
 	@Schema(description = "Идентификатор заявки на кредит")
 	private UUID statementId;
+	@Schema(description = "Сообщение")
+	private String message;
 }

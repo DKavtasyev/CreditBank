@@ -63,7 +63,7 @@ class ScoringServiceTest {
 	@DisplayName("Тестирование метода ScoringServiceTest:scoreAndSaveCredit()")
 	class TestingSetStatusMethod {
 		@Test
-		void scoreAndSaveCredit() throws JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
+		void scoreAndSaveCredit() throws LoanRefusalException, InternalMicroserviceException {
 			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenReturn(scoringDataDto);
 			when(calculatorRequester.requestCalculatedLoanTerms(scoringDataDto)).thenReturn(creditDto);
 			when(creditMapper.dtoToEntity(creditDto)).thenReturn(credit);

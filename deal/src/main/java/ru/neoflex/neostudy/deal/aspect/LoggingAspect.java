@@ -41,12 +41,12 @@ public class LoggingAspect {
 		return targetMethodResult;
 	}
 	
-	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.ClientEntityService.findClientByPassport(..))", returning = "optionalClient")
+	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.entity.ClientEntityService.findClientByPassport(..))", returning = "optionalClient")
 	private void afterReturningFindClientByPassport(Optional<Client> optionalClient) {
 		optionalClient.ifPresentOrElse(client -> log.info(getLoggingText(client, "checkAndSaveClient", "Client was found in DB: ", true)), () -> log.info("Method: checkAndSaveClient; creating new Client..."));
 	}
 	
-	@AfterThrowing(pointcut = "execution(* ru.neoflex.neostudy.deal.service.ClientEntityService.checkAndSaveClient(..))", throwing = "exception")
+	@AfterThrowing(pointcut = "execution(* ru.neoflex.neostudy.deal.service.entity.ClientEntityService.checkAndSaveClient(..))", throwing = "exception")
 	private void aroundCheckAndSaveClientMethod(Throwable exception) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Method: ").append("checkAndSaveClient").append("; ").append(exception);
@@ -68,7 +68,7 @@ public class LoggingAspect {
 		}
 	}
 	
-	@After("execution(* ru.neoflex.neostudy.deal.service.StatementEntityService.setStatus(..))")
+	@After("execution(* ru.neoflex.neostudy.deal.service.entity.StatementEntityService.setStatus(..))")
 	private void afterSetStatusMethod(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
 		String statementId = ((Statement) args[0]).getStatementId().toString();

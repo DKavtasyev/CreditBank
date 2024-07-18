@@ -41,7 +41,7 @@ public class CalculatorController {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success")
 			})
-	public ResponseEntity<List<LoanOfferDto>> calculateLoanOffers(
+	public ResponseEntity<List<LoanOfferDto>> generateOffers(
 			@RequestBody @Parameter(description = "Пользовательские данные для предварительного расчёта кредита") LoanStatementRequestDto loanStatementRequest) {
 		List<LoanOfferDto> offers = service.preScore(loanStatementRequest);
 		return new ResponseEntity<>(offers, HttpStatus.OK);
@@ -55,7 +55,7 @@ public class CalculatorController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "406", description = "Not acceptable")
 			})
-	public ResponseEntity<CreditDto> calculateLoanTerms(
+	public ResponseEntity<CreditDto> calculateCredit(
 			@RequestBody @Parameter(description = "Пользовательсткие данные для расчёта кредита") ScoringDataDto scoringData) throws LoanRefusalException {
 		CreditDto credit = service.score(scoringData);
 		return new ResponseEntity<>(credit, HttpStatus.OK);

@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.deal.service;
+package ru.neoflex.neostudy.deal.service.entity;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +9,7 @@ import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
 import ru.neoflex.neostudy.deal.repository.StatementRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,5 +32,9 @@ public class StatementEntityService {
 				.setStatus(statement.getStatus())
 				.setTime(LocalDateTime.now())
 				.setChangeType(changeType));
+	}
+	
+	public List<Statement> findAllStatements() {
+		return statementRepository.findAll();
 	}
 }

@@ -4,4 +4,8 @@ public class InternalMicroserviceException extends Exception {
 	public InternalMicroserviceException(String message, Throwable cause) {
 		super(message, cause);
 	}
+	
+	public InternalMicroserviceException(String message) {
+		super(message);
+	}
 }

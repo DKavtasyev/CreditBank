@@ -13,6 +13,7 @@ import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.repository.StatementRepository;
+import ru.neoflex.neostudy.deal.service.entity.StatementEntityService;
 
 import java.util.Arrays;
 import java.util.UUID;

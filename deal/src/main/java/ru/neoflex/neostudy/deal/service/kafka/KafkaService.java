@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.deal.service;
+package ru.neoflex.neostudy.deal.service.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,37 +24,36 @@ public class KafkaService {
 	public void sendFinishRegistrationRequest(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		String email = statementRepository.getClientEmailByStatementId(statementId).orElseThrow(() ->
 				new StatementNotFoundException(String.format("Statement with id = %s not found or corresponding client is invalid", statementId)));
-		EmailMessage emailMessage = new EmailMessage(email, FINISH_REGISTRATION, statementId);
+		EmailMessage emailMessage = new EmailMessage(email, FINISH_REGISTRATION, statementId, null);
 		messageSender.send(FINISH_REGISTRATION.getTopicName(), emailMessage);
 	}
 	
 	public void sendCreatingDocumentsRequest(Statement statement) throws InternalMicroserviceException {
-		sendMessage(statement, CREATE_DOCUMENTS);
+		sendMessage(statement, CREATE_DOCUMENTS, null);
 	}
 	
-	public void sendDenial(Statement statement) throws InternalMicroserviceException {
-		sendMessage(statement, STATEMENT_DENIED);
+	public void sendDenial(Statement statement, String message) throws InternalMicroserviceException {
+		sendMessage(statement, STATEMENT_DENIED, message);
 	}
 	
-	
-	private void sendMessage(Statement statement, Theme theme) throws InternalMicroserviceException {
-		String email = statement.getClient().getEmail();
-		EmailMessage emailMessage = new EmailMessage(email, theme, statement.getStatementId());
-		messageSender.send(theme.getTopicName(), emailMessage);
-	}
-	
-	public void sendDocumentSigningRequest(Statement statement) throws InternalMicroserviceException {
-		sendMessage(statement, SEND_DOCUMENTS);
+	public void sendDocumentSigningRequest(Statement statement, String documents) throws InternalMicroserviceException {
+		sendMessage(statement, SEND_DOCUMENTS, documents);
 	}
 	
 	public void sendSignature(SignData signData) throws InternalMicroserviceException {
 		Statement statement = signData.getStatement();
 		String email = statement.getClient().getEmail() + " " + signData.getToken();
 		statement.getClient().setEmail(email);
-		sendMessage(statement, SEND_SES);
+		sendMessage(statement, SEND_SES, null);
 	}
 	
 	public void sendCreditIssuedMessage(Statement statement) throws InternalMicroserviceException {
-		sendMessage(statement, CREDIT_ISSUED);
+		sendMessage(statement, CREDIT_ISSUED, null);
+	}
+	
+	private void sendMessage(Statement statement, Theme theme, String message) throws InternalMicroserviceException {
+		String email = statement.getClient().getEmail();
+		EmailMessage emailMessage = new EmailMessage(email, theme, statement.getStatementId(), message);
+		messageSender.send(theme.getTopicName(), emailMessage);
 	}
 }

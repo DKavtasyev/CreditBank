@@ -21,7 +21,7 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
-import ru.neoflex.neostudy.deal.service.KafkaService;
+import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
 import ru.neoflex.neostudy.deal.service.ScoringService;
 

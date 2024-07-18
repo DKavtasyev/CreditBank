@@ -6,13 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.common.exception.ExceptionDetails;
-import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
-import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.*;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class DealRequester {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 	
-	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) throws InvalidPassportDataException, JsonProcessingException {
+	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) throws InvalidPassportDataException, InternalMicroserviceException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
@@ -39,19 +37,31 @@ public class DealRequester {
 		ResponseEntity<String> responseEntity;
 		List<LoanOfferDto> offers = new ArrayList<>();
 		try {
-			responseEntity = restTemplate.exchange(requestEntity, String.class);
-			offers = objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructCollectionType(List.class, LoanOfferDto.class));
-		}
-		catch (HttpClientErrorException e) {
-			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(400))){
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				throw new InvalidPassportDataException(exceptionDetails.getMessage());
+			try {
+				responseEntity = restTemplate.exchange(requestEntity, String.class);
+				offers = objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructCollectionType(List.class, LoanOfferDto.class));
 			}
+			catch (HttpClientErrorException e) {
+				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(400))){
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new InvalidPassportDataException(exceptionDetails.getMessage());
+				}
+				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new InternalMicroserviceException(exceptionDetails.getMessage());
+				}
+			}
+		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException("Connection error to MS deal", e);
+		}
+		catch (JsonProcessingException e) {
+			throw new InternalMicroserviceException("Can't deserialize value", e);
 		}
 		return offers;
 	}
 	
-	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, JsonProcessingException, InvalidPreScoreParametersException {
+	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
@@ -61,17 +71,25 @@ public class DealRequester {
 				.body(loanOfferDto);
 		
 		try {
-			restTemplate.exchange(requestEntity, Void.class);
+			try {
+				restTemplate.exchange(requestEntity, Void.class);
+			}
+			catch (HttpClientErrorException e) {
+				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new StatementNotFoundException(exceptionDetails.getMessage());
+				}
+				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new InternalMicroserviceException(exceptionDetails.getMessage());
+				}
+			}
 		}
-		catch (HttpClientErrorException e) {
-			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(400))){
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				throw new InvalidPreScoreParametersException(exceptionDetails.getMessage());
-			}
-			else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				throw new StatementNotFoundException(exceptionDetails.getMessage());
-			}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException("Connection error to MS deal", e);
+		}
+		catch (JsonProcessingException e) {
+			throw new InternalMicroserviceException("Can't deserialize value", e);
 		}
 	}
 }

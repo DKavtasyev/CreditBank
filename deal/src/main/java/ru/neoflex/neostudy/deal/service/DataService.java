@@ -10,7 +10,10 @@ import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Client;
 import ru.neoflex.neostudy.deal.entity.Statement;
+import ru.neoflex.neostudy.deal.service.entity.ClientEntityService;
+import ru.neoflex.neostudy.deal.service.entity.StatementEntityService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,5 +52,9 @@ public class DataService {
 		Statement statement = findStatement(statementId);
 		updateStatement(statement, ApplicationStatus.CLIENT_DENIED, ChangeType.AUTOMATIC);
 		return statement;
+	}
+	
+	public List<Statement> findAllStatements() {
+		return statementEntityService.findAllStatements();
 	}
 }

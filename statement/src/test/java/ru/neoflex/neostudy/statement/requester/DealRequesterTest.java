@@ -15,10 +15,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.common.exception.ExceptionDetails;
-import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
-import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.*;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 
 import java.net.URI;
@@ -61,7 +58,7 @@ class DealRequesterTest {
 		}
 		
 		@Test
-		void requestLoanOffers_whenSendLoanStatementRequestDto_thenReceiveAndReturnLoanOffers() throws URISyntaxException, JsonProcessingException, InvalidPassportDataException {
+		void requestLoanOffers_whenSendLoanStatementRequestDto_thenReceiveAndReturnLoanOffers() throws Exception {
 			String expectedResponse = mapper.writeValueAsString(expectedOffers);
 			
 			mockServer.expect(ExpectedCount.once(),
@@ -74,7 +71,7 @@ class DealRequesterTest {
 		}
 		
 		@Test
-		void requestLoanOffers_whenPassportDataIsInvalid_thenReceive400WithMessageAndThrowInvalidPassportDataException() throws URISyntaxException, JsonProcessingException {
+		void requestLoanOffers_whenPassportDataIsInvalid_thenReceive400WithMessageAndThrowInvalidPassportDataException() throws Exception {
 			int expectedStatus = 400;
 			String expectedMessage = "Message";
 			String expectedDetails = "Details";
@@ -102,7 +99,7 @@ class DealRequesterTest {
 		}
 		
 		@Test
-		void requestLoanOffers_whenSendLoanStatementRequestDto_thenReceiveAndReturnLoanOffers() throws URISyntaxException, JsonProcessingException, InvalidPreScoreParametersException, StatementNotFoundException {
+		void requestLoanOffers_whenSendLoanStatementRequestDto_thenReceiveAndReturnLoanOffers() throws Exception {
 			mockServer.expect(ExpectedCount.once(),
 							requestTo(new URI(DEAL_APPLY_OFFER_URL)))
 					.andExpect(method(HttpMethod.POST))
@@ -112,25 +109,7 @@ class DealRequesterTest {
 		}
 		
 		@Test
-		void requestLoanOffers_whenPreScoreParametersIsInvalid_thenReceive400WithMessageAndThrowInvalidPreScoreParametersException() throws URISyntaxException, JsonProcessingException {
-			int expectedStatus = 400;
-			String expectedMessage = "Message";
-			String expectedDetails = "Details";
-			String expectedResponse = mapper.writeValueAsString(new ExceptionDetails(expectedStatus, expectedMessage, expectedDetails));
-			
-			mockServer.expect(ExpectedCount.once(),
-							requestTo(new URI(DEAL_APPLY_OFFER_URL)))
-					.andExpect(method(HttpMethod.POST))
-					.andRespond(withBadRequest().body(expectedResponse));
-			
-			assertAll(() -> {
-				Exception actualException = assertThrows(InvalidPreScoreParametersException.class, () -> dealRequester.sendChosenOffer(loanOfferDto));
-				assertThat(actualException.getMessage()).isEqualTo(expectedMessage);
-			});
-		}
-		
-		@Test
-		void requestLoanOffers_whenStatementNotFound_thenReceive404WithMessageAndThrowStatementNotFoundException() throws URISyntaxException, JsonProcessingException {
+		void requestLoanOffers_whenStatementNotFound_thenReceive404WithMessageAndThrowStatementNotFoundException() throws Exception {
 			int expectedStatus = 404;
 			String expectedMessage = "Message";
 			String expectedDetails = "Details";

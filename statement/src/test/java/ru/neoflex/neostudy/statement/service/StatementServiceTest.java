@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
@@ -45,7 +46,7 @@ public class StatementServiceTest {
 		}
 		
 		@Test
-		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws InvalidPassportDataException, JsonProcessingException {
+		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws Exception {
 			List<LoanOfferDto> expectedOffers = DtoInitializer.initOffers();
 			when(dealRequester.requestLoanOffers(loanStatementRequestDto)).thenReturn(expectedOffers);
 			List<LoanOfferDto> actualOffers = statementService.getLoanOffers(loanStatementRequestDto);
@@ -63,7 +64,7 @@ public class StatementServiceTest {
 		}
 		
 		@Test
-		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws JsonProcessingException, InvalidPreScoreParametersException, StatementNotFoundException {
+		void getLoanOffers_whenGivenLoanStatementRequestDto_thenReturnListOfLoanOffersDto() throws Exception {
 			statementService.applyChosenOffer(loanOfferDto);
 			verify(dealRequester, times(1)).sendChosenOffer(loanOfferDto);
 		}

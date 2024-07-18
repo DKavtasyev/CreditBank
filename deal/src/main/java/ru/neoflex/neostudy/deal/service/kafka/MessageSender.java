@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.deal.service;
+package ru.neoflex.neostudy.deal.service.kafka;
 
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;

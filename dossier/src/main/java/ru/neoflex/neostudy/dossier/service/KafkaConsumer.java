@@ -42,8 +42,10 @@ public class KafkaConsumer {
 	
 	@KafkaListener(topics = SEND_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
 	public void sendDocumentsListen(@Payload EmailMessage emailMessage) throws StatementNotFoundException, InternalMicroserviceException, JsonProcessingException {
+		String documents = emailMessage.getMessage();
 		dealRequester.sendStatementStatus(emailMessage.getStatementId(), ApplicationStatus.DOCUMENT_CREATED);
 		var params = paramsService.getParams(emailMessage);
+		paramsService.addDocumentAsText(params, documents);
 		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
 	}
 	
