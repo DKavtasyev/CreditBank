@@ -34,7 +34,7 @@ Cache-Control: no-store
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8085/statement/registration/98748ee9-de3e-4427-b6da-ee5b47e313bd
+POST http://localhost:8085/statement/registration/2c21d557-2315-4ddb-92eb-801827d43079
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -91,4 +91,4 @@ GET http://localhost:8085/admin/statement/db80261b-33e7-4296-9a9a-5907a130ac55
 
 ### Get all statements
 ### В URL установить корректный statementId
-GET http://localhost:8085/admin/statement
+GET http://localhost:8085/admin/statement?page=1

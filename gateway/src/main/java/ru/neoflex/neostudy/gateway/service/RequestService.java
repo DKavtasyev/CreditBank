@@ -16,6 +16,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 public class RequestService {
@@ -51,7 +53,7 @@ public class RequestService {
 		requester.sendChosenOffer(loanOffer, URI.create(applyOfferUrl));
 	}
 	
-	public void finishRegistrationRequest(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException {
+	public void finishRegistrationRequest(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException, InvalidPreApproveException {
 		URI uri = UrlFormatter.substituteUrlValue(calculateCreditUrl, statementId.toString());
 		requester.sendFinishRegistrationRequest(finishingRegistrationRequestDto, uri);
 	}
@@ -87,7 +89,9 @@ public class RequestService {
 		return requester.requestStatement(uri);
 	}
 	
-	public List<Statement> getAllStatements() throws InternalMicroserviceException {
-		return requester.requestAllStatements(URI.create(getAllStatementsUrl));
+	public List<Statement> getAllStatements(Integer page) throws InternalMicroserviceException {
+		String pageAsString = isNull(page) ? "" : String.valueOf(page);
+		URI uri = UrlFormatter.addQueryParameter(getAllStatementsUrl, "page", pageAsString);
+		return requester.requestAllStatements(uri);
 	}
 }

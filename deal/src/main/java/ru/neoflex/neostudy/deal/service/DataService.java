@@ -54,7 +54,7 @@ public class DataService {
 		return statement;
 	}
 	
-	public List<Statement> findAllStatements() {
-		return statementEntityService.findAllStatements();
+	public List<Statement> findAllStatements(Integer page) {
+		return statementEntityService.findAllStatements(page);
 	}
 }

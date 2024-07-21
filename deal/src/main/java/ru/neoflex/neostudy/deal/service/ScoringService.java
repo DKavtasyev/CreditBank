@@ -9,6 +9,7 @@ import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
+import ru.neoflex.neostudy.common.exception.InvalidPreApproveException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.deal.entity.Credit;
 import ru.neoflex.neostudy.deal.entity.Statement;
@@ -26,16 +27,19 @@ public class ScoringService {
 	private final DataService dataService;
 	private final KafkaService kafkaService;
 	
-	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws LoanRefusalException, InternalMicroserviceException {
-		ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
+	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
 		CreditDto creditDto;
 		try {
+			ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
 			creditDto = calculatorRequester.requestCalculatedLoanTerms(scoringDataDto);
 		}
 		catch (LoanRefusalException e) {
 			dataService.updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
 			kafkaService.sendDenial(statement, "Вам отказано в получении кредита");
 			throw e;
+		}
+		catch (NullPointerException e) {
+			throw new InvalidPreApproveException("Invalid pre-approval of the loan", e);
 		}
 		Credit credit = creditMapper.dtoToEntity(creditDto);
 		credit.setCreditStatus(CreditStatus.CALCULATED);

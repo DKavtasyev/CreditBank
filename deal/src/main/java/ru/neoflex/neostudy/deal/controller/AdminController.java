@@ -77,8 +77,8 @@ public class AdminController {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success")
 			})
-	public ResponseEntity<List<Statement>> getAllStatements() {
-		List<Statement> statements = dataService.findAllStatements();
+	public ResponseEntity<List<Statement>> getAllStatements(@RequestParam(value = "page", required = false) Integer page) {
+		List<Statement> statements = dataService.findAllStatements(page);
 		return ResponseEntity.status(HttpStatus.OK).body(statements);
 	}
 }

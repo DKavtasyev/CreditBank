@@ -31,6 +31,7 @@ app:
       prefix: /deal/document
     admin:
       prefix: /deal/admin
+    page-size: 10
   font:
     path: fonts/times.ttf
   date:

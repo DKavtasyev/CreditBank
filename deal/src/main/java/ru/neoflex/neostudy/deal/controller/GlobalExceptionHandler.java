@@ -33,6 +33,13 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
 	}
 	
+	@ExceptionHandler(InvalidPreApproveException.class)
+	private ResponseEntity<ExceptionDetails> handleInvalidPreApproveException(InvalidPreApproveException e, WebRequest request) {
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.PRECONDITION_REQUIRED.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED).body(exceptionDetails);
+	}
+	
+	
 	@ExceptionHandler(InternalMicroserviceException.class)
 	private ResponseEntity<ExceptionDetails> handleLoanRefusalException(InternalMicroserviceException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage() + ": " + e.getCause(), request.getDescription(true));

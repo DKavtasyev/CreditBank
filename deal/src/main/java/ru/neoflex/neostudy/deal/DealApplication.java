@@ -27,8 +27,7 @@ public class DealApplication {
 		DigitalSignatureUtil digitalSignatureUtil = context.getBean(DigitalSignatureUtil.class);
 		Thread.sleep(30000L);
 		
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			 BufferedOutputStream writerCheck = new BufferedOutputStream(new FileOutputStream("file_check.pdf"), 5000)) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 			while (true) {
 				System.out.print("Введите statementId: ");
 				String statementId = reader.readLine();
@@ -48,7 +47,6 @@ public class DealApplication {
 				KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 				PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 				log.warn("public key received: {}", Arrays.toString(publicKey.getEncoded()));
-				writerCheck.write(statement.getPdfFile());
 				
 				boolean isValid = digitalSignatureUtil.verifySignature(documentAsBytes, signature, publicKey);
 				System.out.println(isValid ? "Документ оригинальный!" : "Документ подделан!");

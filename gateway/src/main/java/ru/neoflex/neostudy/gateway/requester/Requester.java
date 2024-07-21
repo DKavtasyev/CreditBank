@@ -62,7 +62,7 @@ public class Requester {
 		sendRequest(requestEntity);
 	}
 	
-	public void sendFinishRegistrationRequest(FinishingRegistrationRequestDto finishingRegistrationRequestDto, URI uri) throws InternalMicroserviceException, StatementNotFoundException, LoanRefusalException {
+	public void sendFinishRegistrationRequest(FinishingRegistrationRequestDto finishingRegistrationRequestDto, URI uri) throws InternalMicroserviceException, StatementNotFoundException, LoanRefusalException, InvalidPreApproveException {
 		RequestEntity<FinishingRegistrationRequestDto> requestEntity = getRequestEntityWithBody(finishingRegistrationRequestDto, uri);
 		
 		try {
@@ -77,6 +77,10 @@ public class Requester {
 				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))) {
 					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
 					throw new LoanRefusalException(exceptionDetails.getMessage());
+				}
+				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(428))) {
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					throw new InvalidPreApproveException(exceptionDetails.getMessage());
 				}
 				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
 					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);

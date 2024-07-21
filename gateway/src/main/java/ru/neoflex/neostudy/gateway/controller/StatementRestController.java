@@ -48,7 +48,7 @@ public class StatementRestController {
 	public ResponseEntity<Void> finishRegistration(@RequestBody
 												   @Parameter(description = "Пользовательские данные для расчёта и оформления кредита")
 												   FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-												   @PathVariable("statementId") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException {
+												   @PathVariable("statementId") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException, InvalidPreApproveException {
 		requestService.finishRegistrationRequest(finishingRegistrationRequestDto, statementId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

@@ -13,10 +13,7 @@ import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
-import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.common.exception.LoanRefusalException;
-import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.common.exception.*;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.DataService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
@@ -91,6 +88,7 @@ public class DealController {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
 					@ApiResponse(responseCode = "406", description = "Not acceptable"),
+					@ApiResponse(responseCode = "428", description = "Precondition required"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	public ResponseEntity<Void> calculateCredit(@RequestBody
@@ -98,7 +96,7 @@ public class DealController {
 												FinishingRegistrationRequestDto finishingRegistrationRequestDto,
 												@PathVariable("statementId")
 												@Parameter(description = "Идентификатор заявки Statement")
-												UUID statementId) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException {
+												UUID statementId) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		kafkaService.sendCreatingDocumentsRequest(statement);

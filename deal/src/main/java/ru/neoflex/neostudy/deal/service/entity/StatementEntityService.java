@@ -1,6 +1,9 @@
 package ru.neoflex.neostudy.deal.service.entity;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
@@ -13,10 +16,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 public class StatementEntityService {
 	private final StatementRepository statementRepository;
+	
+	@Value("${app.rest.page-size}")
+	private int pageSize;
 	
 	public void save(Statement statement) {
 		statementRepository.save(statement);
@@ -34,7 +42,8 @@ public class StatementEntityService {
 				.setChangeType(changeType));
 	}
 	
-	public List<Statement> findAllStatements() {
-		return statementRepository.findAll();
+	public List<Statement> findAllStatements(Integer page) {
+		page = isNull(page) || page == 0 ? 0 : page - 1;
+		return statementRepository.findAll(PageRequest.of(page, pageSize, Sort.by("creationDate"))).getContent();
 	}
 }

@@ -22,19 +22,19 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "67a37ef8-298e-4d33-9cb4-f1dd1455ea72",
+  "statementId": "d28ec271-b695-48b2-870f-9bffde93335e",
   "requestedAmount": 1000000,
-  "totalAmount": 1044202.8612807381502446,
+  "totalAmount": 1047181.7031009111294312,
   "term": 6,
-  "monthlyPayment": 174033.8102134563583741,
-  "rate": 0.15,
+  "monthlyPayment": 174530.2838501518549052,
+  "rate": 0.16,
   "isInsuranceEnabled": false,
-  "isSalaryClient": true
+  "isSalaryClient": false
 }
 
 ### Оформление условий кредита
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/calculate/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
+POST http://localhost:8082/deal/calculate/2c21d557-2315-4ddb-92eb-801827d43079
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -78,3 +78,11 @@ Content-Type: application/json
 Cache-Control: no-store
 
 "CC_APPROVED"
+
+### Получить выбранную заявку
+### В URL установить корректный statementId
+GET http://localhost:8082/deal/admin/statement/18afdf19-d6ef-4548-a869-eac7e8429e3d
+
+### Получить все заявки
+### В URL установить корректный statementId
+GET http://localhost:8082/deal/admin/statement?page=3
