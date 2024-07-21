@@ -8,7 +8,7 @@ spring:
     username: postgres
     password: postgres
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
   liquibase:
@@ -31,6 +31,10 @@ app:
       prefix: /deal/document
     admin:
       prefix: /deal/admin
+  font:
+    path: fonts/times.ttf
+  date:
+    pattern: dd MMMM yyyy
 
 logging:
   level:

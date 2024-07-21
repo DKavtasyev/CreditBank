@@ -1,4 +1,3 @@
-
 ### Предоставление возможных предложений займа
 POST http://localhost:8082/deal/statement
 Content-Type: application/json
@@ -33,10 +32,6 @@ Cache-Control: no-store
   "isSalaryClient": true
 }
 
-### Отказ клиента от кредита
-### В URL установить корректный statementId
-GET http://localhost:8082/deal/offer/deny/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
-
 ### Оформление условий кредита
 ### В URL установить корректный statementId
 POST http://localhost:8082/deal/calculate/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
@@ -60,17 +55,22 @@ Cache-Control: no-store
   "accountNumber": "1231512341"
 }
 
+### Отказ клиента от кредита
+### В URL установить корректный statementId
+GET http://localhost:8082/deal/offer/deny/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
+
 ### Запрос на формирование документов и отправку их пользователю
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/e971fdc1-bfb4-4ff0-9f27-6e661c121e68/send
+POST http://localhost:8082/deal/document/93491892-331d-429f-8b83-5d867ba32cdd/send
 
 ### Запрос на подписание документов
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/sign
+POST http://localhost:8082/deal/document/93491892-331d-429f-8b83-5d867ba32cdd/sign
 
 ### Подписание документов
-### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/code
+### В URL установить корректный statementId, добавить значение параметра запроса "code", равное подписи. Её можно взять
+### из ссылки, присылаемой в письме, либо сделать запрос непосредственно из письма.
+POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/code?code=
 
 ### Установка статуса для заявки Statement
 PUT http://localhost:8082/deal/admin/statement/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/status

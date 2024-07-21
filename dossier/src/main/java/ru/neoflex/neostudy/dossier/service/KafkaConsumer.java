@@ -1,6 +1,5 @@
 package ru.neoflex.neostudy.dossier.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -9,14 +8,14 @@ import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
-import ru.neoflex.neostudy.dossier.mail.MailService;
+import ru.neoflex.neostudy.common.exception.UserDocumentException;
 import ru.neoflex.neostudy.dossier.requester.DealRequester;
+import ru.neoflex.neostudy.dossier.service.mail.MailService;
 
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumer {
 	private final MailService mailService;
-	private final ParamsService paramsService;
 	private final DealRequester dealRequester;
 	
 	
@@ -26,48 +25,36 @@ public class KafkaConsumer {
 	public static final String SEND_SES_TOPIC = "send-ses";
 	public static final String CREDIT_ISSUED_TOPIC = "credit-issued";
 	public static final String STATEMENT_DENIED_TOPIC = "statement-denied";
-	public static final String MAIL_TEMPLATE_TOPIC = "email-message.html";
 	
 	@KafkaListener(topics = FINISH_REGISTRATION_TOPIC, containerFactory = "listenerContainerFactory")
-	public void finishRegistrationListen(@Payload EmailMessage emailMessage) {
-		var params = paramsService.getParams(emailMessage);
-		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
+	public void finishRegistrationListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+		mailService.sendFinishRegistrationEmail(emailMessage);
 	}
 	
 	@KafkaListener(topics = CREATE_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
-	public void createDocumentsListen(@Payload EmailMessage emailMessage) {
-		var params = paramsService.getParams(emailMessage);
-		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
+	public void createDocumentsListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+		mailService.sendCreateDocumentsEmail(emailMessage);
 	}
 	
 	@KafkaListener(topics = SEND_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
-	public void sendDocumentsListen(@Payload EmailMessage emailMessage) throws StatementNotFoundException, InternalMicroserviceException, JsonProcessingException {
-		String documents = emailMessage.getMessage();
+	public void sendDocumentsListen(@Payload EmailMessage emailMessage) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException {
+		
 		dealRequester.sendStatementStatus(emailMessage.getStatementId(), ApplicationStatus.DOCUMENT_CREATED);
-		var params = paramsService.getParams(emailMessage);
-		paramsService.addDocumentAsText(params, documents);
-		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
+		mailService.sendDocumentsEmail(emailMessage);
 	}
 	
 	@KafkaListener(topics = SEND_SES_TOPIC, containerFactory = "listenerContainerFactory")
-	public void sendSesListen(@Payload EmailMessage emailMessage) {
-		var params = paramsService.getParams(emailMessage);
-		String[] array = emailMessage.getAddress().split(" ");
-		String address = array[0];
-		String sesCode = array[1];
-		params.put("url", params.get("url") + "+" + sesCode);
-		mailService.sendAdvancedEmail(address, MAIL_TEMPLATE_TOPIC, params);
+	public void sendSesListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+		mailService.sendSesCodeEmail(emailMessage);
 	}
 	
 	@KafkaListener(topics = CREDIT_ISSUED_TOPIC, containerFactory = "listenerContainerFactory")
-	public void creditIssuedListen(@Payload EmailMessage emailMessage) {
-		var params = paramsService.getParams(emailMessage);
-		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
+	public void creditIssuedListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+		mailService.sendCreditIssuedEmail(emailMessage);
 	}
 	
 	@KafkaListener(topics = STATEMENT_DENIED_TOPIC, containerFactory = "listenerContainerFactory")
-	public void statementDeniedListen(@Payload EmailMessage emailMessage) {
-		var params = paramsService.getParams(emailMessage);
-		mailService.sendAdvancedEmail(emailMessage.getAddress(), MAIL_TEMPLATE_TOPIC, params);
+	public void statementDeniedListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+		mailService.sendRejectionOfStatementEmail(emailMessage);
 	}
 }

@@ -23,8 +23,9 @@ spring:
     test-connection: true
 
 app:
-  bank-url: http://localhost:8085
-  test-email: creditbank.noreply@internet.ru
+  bank:
+    url: http://localhost:8085
+    official-name: CreditBank
 
 server:
   port: 8084

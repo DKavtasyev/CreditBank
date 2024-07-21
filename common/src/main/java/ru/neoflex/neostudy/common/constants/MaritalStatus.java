@@ -1,8 +1,16 @@
 package ru.neoflex.neostudy.common.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum MaritalStatus {
-	MARRIED,
-	DIVORCED,
-	SINGLE,
-	WIDOW_WIDOWER
+	MARRIED("женат/замужем"),
+	DIVORCED("разведён(а)"),
+	SINGLE("не женат/не замужем"),
+	WIDOW_WIDOWER("вдовец/вдова");
+	
+	private final String value;
+	MaritalStatus(String genderValue) {
+		this.value = genderValue;
+	}
 }

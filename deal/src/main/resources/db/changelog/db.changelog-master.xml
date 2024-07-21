@@ -51,6 +51,7 @@
 			<column name="sign_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
 			<column name="ses_code" type="VARCHAR"/>
 			<column name="status_history" type="JSONB"/>
+			<column name="pdf_file" type="BYTEA"/>
 		</createTable>
 	</changeSet>
 

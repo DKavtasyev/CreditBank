@@ -1,6 +1,5 @@
 package ru.neoflex.neostudy.deal.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;

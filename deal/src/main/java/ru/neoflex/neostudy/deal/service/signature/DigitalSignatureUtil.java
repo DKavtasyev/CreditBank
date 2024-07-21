@@ -8,20 +8,20 @@ import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
-public class DigitalSignatureService {
+public class DigitalSignatureUtil {
 	
-	public String signData(String data, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+	public String signData(byte[] data, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		Signature rsa = Signature.getInstance("SHA256withRSA");
 		rsa.initSign(privateKey);
-		rsa.update(data.getBytes());
+		rsa.update(data);
 		byte[] signedBytes = rsa.sign();
 		return Base64.getEncoder().encodeToString(signedBytes);
 	}
 	
-	public boolean verifySignature(String data, String signature, PublicKey publicKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+	public boolean verifySignature(byte[] data, String signature, PublicKey publicKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		Signature sig = Signature.getInstance("SHA256withRSA");
 		sig.initVerify(publicKey);
-		sig.update(data.getBytes());
+		sig.update(data);
 		byte[] signatureBytes = Base64.getDecoder().decode(signature);
 		return sig.verify(signatureBytes);
 	}

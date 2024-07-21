@@ -28,7 +28,7 @@ public class DealRequester {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 	
-	public void sendStatementStatus(UUID statementId, ApplicationStatus status) throws JsonProcessingException, StatementNotFoundException, InternalMicroserviceException {
+	public void sendStatementStatus(UUID statementId, ApplicationStatus status) throws StatementNotFoundException, InternalMicroserviceException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
@@ -40,19 +40,24 @@ public class DealRequester {
 				.body(status);
 		
 		try {
-			restTemplate.exchange(requestEntity, String.class);
-			log.info("Request to {} sent, content: {}", DEAL_STATUS_URL, status);
+			try {
+				restTemplate.exchange(requestEntity, String.class);
+				log.info("Request to {} sent, content: {}", DEAL_STATUS_URL, status);
+			}
+			catch (HttpClientErrorException e) {
+				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
+					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+					log.warn(exceptionDetails.getMessage());
+					throw new StatementNotFoundException(String.format(exceptionDetails.getMessage(), statementId));
+				}
+				else {
+					log.error("Error sending request, cause: {}", e.getMessage());
+					throw new InternalMicroserviceException("Microservice error", e);
+				}
+			}
 		}
-		catch (HttpClientErrorException e) {
-			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-				log.warn(exceptionDetails.getMessage());
-				throw new StatementNotFoundException(String.format(exceptionDetails.getMessage(), statementId));
-			}
-			else {
-				log.error("Error sending request, cause: {}", e.getMessage());
-				throw new InternalMicroserviceException("Microservice error", e);
-			}
+		catch (JsonProcessingException e) {
+			throw new InternalMicroserviceException("Can't deserialize value", e);
 		}
 	}
 }

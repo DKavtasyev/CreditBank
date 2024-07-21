@@ -1,6 +1,5 @@
 package ru.neoflex.neostudy.deal.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

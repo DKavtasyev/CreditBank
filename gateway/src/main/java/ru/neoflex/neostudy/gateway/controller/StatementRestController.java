@@ -1,6 +1,5 @@
 package ru.neoflex.neostudy.gateway.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,7 @@ import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.exception.*;
-import ru.neoflex.neostudy.gateway.RequestService;
+import ru.neoflex.neostudy.gateway.service.RequestService;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @Tag(
 		name = "Фасад",
 		description = "Предоставление общего интерфейса API для работы с приложением")
-public class StatementController {
+public class StatementRestController {
 	private final RequestService requestService;
 	
 	
@@ -40,7 +39,7 @@ public class StatementController {
 	@PostMapping("/select")
 	public ResponseEntity<Void> applyOffer(@RequestBody
 										   @Parameter(description = "Выбранное пользователем предложение кредита")
-										   LoanOfferDto loanOffer) throws StatementNotFoundException, InvalidPreScoreParametersException, JsonProcessingException {
+										   LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException {
 		requestService.applyOfferRequest(loanOffer);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -49,13 +48,13 @@ public class StatementController {
 	public ResponseEntity<Void> finishRegistration(@RequestBody
 												   @Parameter(description = "Пользовательские данные для расчёта и оформления кредита")
 												   FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-												   @PathVariable("statementId") UUID statementId) throws StatementNotFoundException, JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
-		requestService.finishRegistrationRequest(finishingRegistrationRequestDto);
+												   @PathVariable("statementId") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException {
+		requestService.finishRegistrationRequest(finishingRegistrationRequestDto, statementId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@GetMapping("/deny/{statementId}")
-	public ResponseEntity<Void> denyOffer(@PathVariable("statementId") UUID statementId) {
+	public ResponseEntity<Void> denyOffer(@PathVariable("statementId") UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		requestService.denyOfferRequest(statementId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

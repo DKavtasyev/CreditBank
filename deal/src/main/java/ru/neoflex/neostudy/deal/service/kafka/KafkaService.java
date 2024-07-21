@@ -7,7 +7,6 @@ import ru.neoflex.neostudy.common.dto.EmailMessage;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.entity.sign.SignData;
 import ru.neoflex.neostudy.deal.repository.StatementRepository;
 
 import java.util.UUID;
@@ -22,9 +21,8 @@ public class KafkaService {
 	private final StatementRepository statementRepository;
 	
 	public void sendFinishRegistrationRequest(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
-		String email = statementRepository.getClientEmailByStatementId(statementId).orElseThrow(() ->
-				new StatementNotFoundException(String.format("Statement with id = %s not found or corresponding client is invalid", statementId)));
-		EmailMessage emailMessage = new EmailMessage(email, FINISH_REGISTRATION, statementId, null);
+		String emailTo = getEmailTo(statementId);
+		EmailMessage emailMessage = new EmailMessage(emailTo, FINISH_REGISTRATION, statementId, null);
 		messageSender.send(FINISH_REGISTRATION.getTopicName(), emailMessage);
 	}
 	
@@ -40,15 +38,19 @@ public class KafkaService {
 		sendMessage(statement, SEND_DOCUMENTS, documents);
 	}
 	
-	public void sendSignature(SignData signData) throws InternalMicroserviceException {
-		Statement statement = signData.getStatement();
-		String email = statement.getClient().getEmail() + " " + signData.getToken();
-		statement.getClient().setEmail(email);
-		sendMessage(statement, SEND_SES, null);
+	public void sendSignature(UUID statementId, String signature) throws InternalMicroserviceException, StatementNotFoundException {
+		String emailTo = getEmailTo(statementId);
+		EmailMessage emailMessage = new EmailMessage(emailTo, SEND_SES, statementId, signature);
+		messageSender.send(SEND_SES.getTopicName(), emailMessage);
 	}
 	
 	public void sendCreditIssuedMessage(Statement statement) throws InternalMicroserviceException {
 		sendMessage(statement, CREDIT_ISSUED, null);
+	}
+	
+	private String getEmailTo(UUID statementId) throws StatementNotFoundException {
+		return statementRepository.getClientEmailByStatementId(statementId).orElseThrow(() ->
+				new StatementNotFoundException(String.format("Statement with id = %s not found or corresponding client is invalid", statementId)));
 	}
 	
 	private void sendMessage(Statement statement, Theme theme, String message) throws InternalMicroserviceException {

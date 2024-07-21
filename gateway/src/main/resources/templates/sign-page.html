@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Подпись документов</title>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<link rel="stylesheet" href="/css/w3.css">
+	<link rel="stylesheet" href="/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/css/w3-theme-blue-grey.css">
+	<link rel="stylesheet" href="/css/css.css">
+	<style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "Open Sans", sans-serif
+        }
+	</style>
+</head>
+<body class="w3-theme-l5">
+<div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+	<img src="/static/img/logo.png" alt="logo" class="w3-left w3-circle w3-margin-right" style="width:60px">
+	<span class="w3-right w3-opacity" th:text="${currentDate}">date</span>
+	<h4>CreditBank</h4><br>
+	<hr class="w3-clear">
+	<p th:text="${messageText}">text</p>
+</div>
+</body>
+</html>
