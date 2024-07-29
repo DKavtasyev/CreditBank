@@ -22,19 +22,19 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "d28ec271-b695-48b2-870f-9bffde93335e",
+  "statementId": "729b4d4d-5bff-4f14-bae1-2fbe7d848e12",
   "requestedAmount": 1000000,
-  "totalAmount": 1047181.7031009111294312,
+  "totalAmount": 1044202.8612807381502446,
   "term": 6,
-  "monthlyPayment": 174530.2838501518549052,
-  "rate": 0.16,
+  "monthlyPayment": 174033.8102134563583741,
+  "rate": 0.15,
   "isInsuranceEnabled": false,
-  "isSalaryClient": false
+  "isSalaryClient": true
 }
 
 ### Оформление условий кредита
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/calculate/2c21d557-2315-4ddb-92eb-801827d43079
+POST http://localhost:8082/deal/calculate/729b4d4d-5bff-4f14-bae1-2fbe7d848e12
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -57,20 +57,20 @@ Cache-Control: no-store
 
 ### Отказ клиента от кредита
 ### В URL установить корректный statementId
-GET http://localhost:8082/deal/offer/deny/67a37ef8-298e-4d33-9cb4-f1dd1455ea72
+GET http://localhost:8082/deal/offer/deny/cf1d4807-8d65-45e2-be13-23c47485f31b
 
 ### Запрос на формирование документов и отправку их пользователю
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/93491892-331d-429f-8b83-5d867ba32cdd/send
+POST http://localhost:8082/deal/document/729b4d4d-5bff-4f14-bae1-2fbe7d848e12/send
 
 ### Запрос на подписание документов
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/document/93491892-331d-429f-8b83-5d867ba32cdd/sign
+POST http://localhost:8082/deal/document/729b4d4d-5bff-4f14-bae1-2fbe7d848e12/sign
 
 ### Подписание документов
-### В URL установить корректный statementId, добавить значение параметра запроса "code", равное подписи. Её можно взять
-### из ссылки, присылаемой в письме, либо сделать запрос непосредственно из письма.
-POST http://localhost:8082/deal/document/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/code?code=
+### В URL установить корректный statementId, добавить значение параметра запроса "code", равное подписи.
+### Подпись нужно взять из параметра "code" ссылки, присылаемой в письме.
+POST http://localhost:8082/deal/document/729b4d4d-5bff-4f14-bae1-2fbe7d848e12/code?code=
 
 ### Установка статуса для заявки Statement
 PUT http://localhost:8082/deal/admin/statement/67a37ef8-298e-4d33-9cb4-f1dd1455ea72/status
@@ -84,5 +84,6 @@ Cache-Control: no-store
 GET http://localhost:8082/deal/admin/statement/18afdf19-d6ef-4548-a869-eac7e8429e3d
 
 ### Получить все заявки
+### Возвращает все заявки, отсортированные по дате создания
 ### В URL установить корректный statementId
-GET http://localhost:8082/deal/admin/statement?page=3
+GET http://localhost:8082/deal/admin/statement?page=2

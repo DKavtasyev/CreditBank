@@ -5,23 +5,27 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.EmploymentPosition;
 import ru.neoflex.neostudy.common.constants.EmploymentStatus;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(description = "Пользовательсткие данные о месте работы")
 public class EmploymentDto {
 	@NotNull(message = "Поле \"Рабочий статус\" не может быть пустым")
 	@Schema(description = "Рабочий статус", example = "EMPLOYED")
 	EmploymentStatus employmentStatus;
 	
 	@NotNull(message = "Поле \"ИНН\" не может быть пустым")
-	@Pattern(regexp = "^([1-9][0-9]{11})$", message = "ИНН должен состоять из 12 цифр")
+	@Pattern(regexp = "^([1-9]\\d{11})$", message = "ИНН должен состоять из 12 цифр")
 	@Schema(description = "ИНН", example = "123456789012")
 	String employmentINN;
 	
@@ -54,7 +58,7 @@ public class EmploymentDto {
 		}
 		return employmentStatus == that.employmentStatus
 				&& Objects.equals(employmentINN, that.employmentINN)
-				&& salary.compareTo(that.salary) == 0
+				&& (Objects.equals(salary, that.salary) || salary.compareTo(that.salary) == 0)
 				&& position == that.position
 				&& Objects.equals(workExperienceTotal, that.workExperienceTotal)
 				&& Objects.equals(workExperienceCurrent, that.workExperienceCurrent);

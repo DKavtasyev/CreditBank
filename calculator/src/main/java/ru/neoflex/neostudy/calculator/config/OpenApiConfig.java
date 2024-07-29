@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
 		info = @Info(
 				title = "REST API MS calculator",
-				version = "1.0",
+				version = "0.0.1-SNAPSHOT",
 				description = """
 						Калькулятор кредита с ежемесячной фиксированной процентной ставкой,
 						с аннуитетным ежемесячным платежом, со страховкой

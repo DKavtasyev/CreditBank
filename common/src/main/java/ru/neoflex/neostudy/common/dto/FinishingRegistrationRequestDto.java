@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.Gender;
 import ru.neoflex.neostudy.common.constants.MaritalStatus;
 
@@ -15,9 +13,13 @@ import java.time.LocalDate;
 
 import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
 
+@Builder
 @Getter
 @Setter
-@Accessors(chain = true)
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(description = "Пользовательские данные для завершения оформления кредита")
 public class FinishingRegistrationRequestDto {
 	@NotNull(message = "Пол должен быть указан")
 	@Schema(description = "Пол", example = "MALE")

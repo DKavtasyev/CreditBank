@@ -1,17 +1,19 @@
 package ru.neoflex.neostudy.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
-@Data
+@Builder
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@Accessors(chain = true)
+@AllArgsConstructor
+@Schema(description = "Данные о кредитном предложении")
 public class LoanOfferDto {
 	@Schema(description = "Идентификатор предложения")
 	private UUID statementId;
@@ -40,10 +42,10 @@ public class LoanOfferDto {
 		}
 		
 		return requestedAmount.compareTo(that.requestedAmount) == 0 &&
-				totalAmount.compareTo(that.totalAmount) == 0 &&
+				(Objects.equals(totalAmount, that.totalAmount) || totalAmount.compareTo(that.totalAmount) == 0) &&
 				Objects.equals(term, that.term) &&
-				monthlyPayment.compareTo(that.monthlyPayment) == 0 &&
-				rate.compareTo(that.rate) == 0 &&
+				(Objects.equals(monthlyPayment, that.monthlyPayment) || monthlyPayment.compareTo(that.monthlyPayment) == 0) &&
+				(Objects.equals(rate, that.rate) || rate.compareTo(that.rate) == 0) &&
 				Objects.equals(isInsuranceEnabled, that.isInsuranceEnabled) &&
 				Objects.equals(isSalaryClient, that.isSalaryClient);
 	}

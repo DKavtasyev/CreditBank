@@ -22,6 +22,12 @@ public class ParamsService {
 	@Value("${app.bank.url}")
 	private String bankUrl;
 	
+	/**
+	 * Формирует и возвращает {@code Map<String, Object>}, содержащую в себе параметры, необходимые для отправки и
+	 * формирования email-сообщения.
+	 * @param emailMessage объект с данными для email сообщения.
+	 * @return {@code Map<String, Object>} с наименованием и значением параметров.
+	 */
 	public Map<String, Object> getParams(EmailMessage emailMessage) {
 		Theme theme = emailMessage.getTheme();
 		String path = theme.getPath();

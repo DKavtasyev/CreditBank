@@ -1,19 +1,10 @@
 package ru.neoflex.neostudy.statement.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
@@ -21,34 +12,26 @@ import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.InvalidPreScoreParametersException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
+import ru.neoflex.neostudy.statement.controller.annotations.StatementControllerInterface;
 import ru.neoflex.neostudy.statement.service.StatementService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("${app.rest.prefix}")
 @RequiredArgsConstructor
-@Tag(
-		name = "Заявка",
-		description = "Оформление заявки на кредит")
-public class StatementController {
+public class StatementController implements StatementControllerInterface {
 	private final StatementService statementService;
 	
-	@PostMapping
-	@Operation(
-			summary = "Создание заявки на кредит",
-			description = "Получает запрос от пользователя на предварительный расчёт кредита, проверяет полученные данные, " +
-					"делает запрос возможных условий в МС Сделка и предоставляет информацию " +
-					"пользователю для выбора.",
-			responses = {
-					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "400", description = "Bad request"),
-					@ApiResponse(responseCode = "500", description = "Internal server error")})
-	public ResponseEntity<List<LoanOfferDto>> createStatement(@RequestBody
-															  @Valid
-															  @Parameter(description = "Пользовательские данные для предварительного расчёта кредита")
-															  LoanStatementRequestDto loanStatementRequestDto,
-															  BindingResult bindingResult) throws InvalidPreScoreParametersException, InvalidPassportDataException, InternalMicroserviceException {
+	/**
+	 * Перенаправляет запрос с пользовательскими данными {@code LoanStatementRequestDto} в микросервис deal. Принимает в
+	 * теле запроса объект {@code LoanStatementRequestDto}, проводит прескоринг данных, содержащихся в нём. Возвращает
+	 * объект {@code Statement}, полученный в ответе от МС deal.
+	 * @param loanStatementRequestDto данные пользовательского запроса кредита.
+	 * @return ответ {@code ResponseEntity} со статусом 200 и со списком с рассчитанными кредитными предложениями типа
+	 * {@code LoanOfferDto} в теле ответа.
+	 */
+	@Override
+	public ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequestDto, BindingResult bindingResult) throws InvalidPreScoreParametersException, InvalidPassportDataException, InternalMicroserviceException {
 		if (bindingResult.hasErrors()) {
 			throw new InvalidPreScoreParametersException(bindingResult.getAllErrors().stream()
 					.map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -60,23 +43,8 @@ public class StatementController {
 		return new ResponseEntity<>(offers, HttpStatus.OK);
 	}
 	
-	@PostMapping("/offer")
-	@Operation(
-			summary = "Применение выбранного пользователем кредитного предложения",
-			description = """
-					Отсылает post-запрос в МС Сделка для указания выбранного кредитного предложения.
-					
-					Примечание: для отправки запроса через Swagger нужно в поле statementId Request body установить
-					значение statementId соответствующей statement из базы данных, или скопировать один из четырёх
-					предложений займа, полученных при запросе по адресу: /statement.
-					""",
-			responses = {
-					@ApiResponse(responseCode = "200", description = "Success"),
-					@ApiResponse(responseCode = "404", description = "Not found"),
-					@ApiResponse(responseCode = "500", description = "Internal server error")})
-	public ResponseEntity<Void> applyOffer(@RequestBody
-										   @Parameter(description = "Выбранное пользователем предложение кредита")
-										   LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
+	@Override
+	public ResponseEntity<Void> applyOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
 		statementService.applyChosenOffer(loanOfferDto);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

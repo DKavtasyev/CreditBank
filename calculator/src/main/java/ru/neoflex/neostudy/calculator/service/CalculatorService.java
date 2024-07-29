@@ -1,18 +1,15 @@
 package ru.neoflex.neostudy.calculator.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.neoflex.neostudy.calculator.config.CreditConfig;
-import ru.neoflex.neostudy.calculator.config.RateConfig;
+import ru.neoflex.neostudy.calculator.util.CountTime;
 import ru.neoflex.neostudy.common.dto.*;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,91 +21,128 @@ public class CalculatorService {
 	private final MonthlyPaymentCalculatorService monthlyPaymentCalculatorService;
 	private final PersonalRateCalculatorService personalRateCalculatorService;
 	private final SchedulePaymentsCalculatorService schedulePaymentsCalculatorService;
-	private final RateConfig rateConfig;
-	private final CreditConfig creditConfig;
+	private final RefusalService refusalService;
 	
+	@Value("${rate.base-rate}")
 	private BigDecimal BASE_RATE;
+	@Value("${credit.insurance-percent}")
 	private BigDecimal INSURANCE_PERCENT;
+	@Value("${rate.insurance-enabled}")
 	private BigDecimal INSURANCE_ENABLED;
+	@Value("${rate.salary-client}")
 	private BigDecimal SALARY_CLIENT;
 	
-	@PostConstruct
-	private void init() {
-		BASE_RATE = new BigDecimal(rateConfig.getBaseRate());
-		INSURANCE_PERCENT = new BigDecimal(creditConfig.getInsurancePercent());
-		INSURANCE_ENABLED = new BigDecimal(rateConfig.getInsuranceEnabled());
-		SALARY_CLIENT = new BigDecimal(rateConfig.getSalaryClient());
-	}
-	
+	/**
+	 * Возвращает List с посчитанными кредитными предложениями в зависимости от кредитных опций. Опции
+	 * представляют собой значение {@code boolean}. Метод перебирает все возможные комбинации значений кредитных опций в
+	 * цикле for, который повторяется число раз, равное числу кредитных опций. В цикле каждой опции присваивается
+	 * значение в соответствии с её разрядом двоичного числа i. Распределение опций по двоичным разрядам осуществлено в
+	 * произвольном порядке. Далее аргумент {@code loanStatementRequest} и опции передаются в метод {@code generateOffers},
+	 * который на основании переданных значений высчитывает один экземпляр кредитного предложения типа {@code LoanOfferDto},
+	 * который добавляется в список кредитных предложений. При прохождении всех итераций цикла список с готовыми
+	 * значениями возвращается.
+	 * @param loanStatementRequest пользовательский запрос кредита
+	 * @return список с рассчитанными кредитными предложениями типа {@code LoanOfferDto}.
+	 */
 	public List<LoanOfferDto> preScore(LoanStatementRequestDto loanStatementRequest) {
-		List<LoanOfferDto> offersList = new ArrayList<>();
-		
+		List<LoanOfferDto> offers = new ArrayList<>();
 		for (byte i = 0; i <= 3; i++) {
-			BigDecimal rate = BASE_RATE;
-			BigDecimal amount = loanStatementRequest.getAmount();
-			boolean isInsuranceEnabled = i >> 1 > 0;
-			boolean isSalaryClient = (i & 1) > 0;
-			
-			if (isInsuranceEnabled) {
-				amount = amount.multiply(INSURANCE_PERCENT);
-				rate = rate.add(INSURANCE_ENABLED);
-			}
-			if (isSalaryClient) {
-				rate = rate.add(SALARY_CLIENT);
-			}
-			
-			BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(amount, loanStatementRequest.getTerm(), rate);
-			log.info("Monthly payment has been calculated. Value = " + monthlyPayment.doubleValue());
-			
-			LoanOfferDto loanOffer = new LoanOfferDto()
-					.setRequestedAmount(loanStatementRequest.getAmount())
-					.setTotalAmount(monthlyPayment.multiply(BigDecimal.valueOf(loanStatementRequest.getTerm())))
-					.setTerm(loanStatementRequest.getTerm())
-					.setMonthlyPayment(monthlyPayment)
-					.setRate(rate)
-					.setIsInsuranceEnabled(isInsuranceEnabled)
-					.setIsSalaryClient(isSalaryClient);
-			
-			offersList.add(loanOffer);
+			boolean isInsuranceEnabled = (i & 2) == 2;
+			boolean isSalaryClient = (i & 1) == 1;
+			offers.add(generateOffer(loanStatementRequest, isInsuranceEnabled, isSalaryClient));
 		}
-		return offersList;
+		return offers;
 	}
 	
-	public CreditDto score(ScoringDataDto scoringData) throws LoanRefusalException {
-		if (scoringData.getIsInsuranceEnabled()) {
-			scoringData.setAmount(scoringData.getAmount().multiply(INSURANCE_PERCENT));
+	/**
+	 * Возвращает кредитное предложение, рассчитанное в соответствии параметрами метода, базовой процентной ставкой.
+	 * Осуществляет корректировку процентной ставки в соотвествии с кредитными опциями {@code isInsuranceEnabled},
+	 * {@code isSalaryClient}, которые представляют собой значения {@code boolean}. Если параметр {@code isInsuranceEnabled}
+	 * активен, тогда к общей сумме кредита {@code amount} добавляется страховка, составляющая определённый процент от
+	 * кредита. Процент задаётся в виде множителя в параметре {@code INSURANCE_PERCENT} и равен количеству сотых
+	 * долей после единицы. При этом процентная ставка корректируется на значение {@code INSURANCE_ENABLED}. Если
+	 * параметр {@code isSalaryClient} активен, то процентная ставка корректируется на величину {@code SALARY_CLIENT}.
+	 * Далее высчитывается ежемесячный платёж и формируется и возвращается кредитное предложение.
+	 * @param loanStatementRequest данные запроса кредита от пользователя.
+	 * @param isInsuranceEnabled параметр страховки кредита.
+	 * @param isSalaryClient параметр запрлатный кредит.
+	 * @return кредитное предложение типа {@code LoanOfferDto}
+	 */
+	private LoanOfferDto generateOffer(LoanStatementRequestDto loanStatementRequest, boolean isInsuranceEnabled, boolean isSalaryClient) {
+		BigDecimal rate = BASE_RATE;
+		BigDecimal amount = loanStatementRequest.getAmount();
+		
+		if (isInsuranceEnabled) {
+			amount = amount.multiply(INSURANCE_PERCENT);
+			rate = rate.add(INSURANCE_ENABLED);
+		}
+		if (isSalaryClient) {
+			rate = rate.add(SALARY_CLIENT);
 		}
 		
-		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, BASE_RATE);
-		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
+		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(amount, loanStatementRequest.getTerm(), rate);
+		log.info("Monthly payment has been calculated. Value = " + monthlyPayment.doubleValue());
+		
+		return LoanOfferDto.builder()
+				.requestedAmount(loanStatementRequest.getAmount())
+				.totalAmount(monthlyPayment.multiply(BigDecimal.valueOf(loanStatementRequest.getTerm())))
+				.term(loanStatementRequest.getTerm())
+				.monthlyPayment(monthlyPayment)
+				.rate(rate)
+				.isInsuranceEnabled(isInsuranceEnabled)
+				.isSalaryClient(isSalaryClient)
+				.build();
+	}
+	
+	/**
+	 * Возвращает рассчитанные данные кредита, имеющие тип CreditDto. Принимает на вход данные от пользователя
+	 * ScoringDataDto, добавляет к сумме кредита процент страховки, если данная кредитная опция активна. Высчитывает
+	 * количество полных лет потребителя, проверяет выполнение условий выдачи кредита. При невыполнении условий
+	 * выбрасывается исключение {@code LoanRefusalException}. Высчитывает персональную кредитную ставку, из неё
+	 * высчитывает дневную кредитную ставку. Высчитывает ежемесячный платёж. По полученным данным высчитывает первый
+	 * элемент графика платежей PaymentScheduleElementDto, добавляет его в график платежей, и на основании его вызывает
+	 * рекурсивный метод расчёта последующих платежей. Формирует и возвращает готовый объект {@code CreditDto}.
+	 * @param scoringData данные от пользователя для расчёта кредита.
+	 * @return объект типа CreditDto, содержащий все данные о сроках и суммах платежей по кредиту.
+	 * @throws LoanRefusalException если данные от пользователя не соответствуют условиям выдачи кредита.
+	 */
+	public CreditDto score(ScoringDataDto scoringData) throws LoanRefusalException {
+		
+		addInsuranceIfRequired(scoringData);
+		int age = CountTime.countAge(scoringData.getBirthdate());
+		refusalService.checkRefuseConditions(scoringData, age);
+		
 		List<PaymentScheduleElementDto> scheduleOfPayments = new ArrayList<>();
-		BigDecimal dailyRate = rate.divide(BigDecimal.valueOf(365), 16, RoundingMode.HALF_EVEN);
+		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, BASE_RATE, age);
+		BigDecimal dailyRate = personalRateCalculatorService.calculateDailyRate(rate);
+		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
 		
-		LocalDate firstPaymentDate = LocalDate.now().plusMonths(1);
-		BigDecimal firstInterestPayment = schedulePaymentsCalculatorService.countInterestPayment(scoringData.getAmount(), dailyRate, (int) ChronoUnit.DAYS.between(LocalDate.now(), firstPaymentDate));
-		BigDecimal firstDebtPayment = monthlyPayment.subtract(firstInterestPayment);
-		BigDecimal firstRemainingDebt = scoringData.getAmount().subtract(firstDebtPayment);
-		
-		PaymentScheduleElementDto firstPaymentScheduleElement = new PaymentScheduleElementDto()
-				.setNumber(1)
-				.setDate(firstPaymentDate)
-				.setTotalPayment(monthlyPayment)
-				.setInterestPayment(firstInterestPayment)
-				.setDebtPayment(firstDebtPayment)
-				.setRemainingDebt(firstRemainingDebt);
-		
+		PaymentScheduleElementDto firstPaymentScheduleElement = schedulePaymentsCalculatorService.calculatePaymentScheduleElement(1, scoringData.getAmount(), dailyRate, monthlyPayment, LocalDate.now());
 		scheduleOfPayments.add(firstPaymentScheduleElement);
-		
 		schedulePaymentsCalculatorService.countPayment(firstPaymentScheduleElement, scheduleOfPayments, dailyRate);
 		
-		return new CreditDto()
-				.setAmount(scoringData.getAmount())
-				.setTerm(scoringData.getTerm())
-				.setMonthlyPayment(monthlyPayment)
-				.setRate(rate)
-				.setPsk(scheduleOfPayments.stream().map(PaymentScheduleElementDto::getTotalPayment).reduce(BigDecimal.ZERO, BigDecimal::add))
-				.setIsInsuranceEnabled(scoringData.getIsInsuranceEnabled())
-				.setIsSalaryClient(scoringData.getIsSalaryClient())
-				.setPaymentSchedule(scheduleOfPayments);
+		return CreditDto.builder()
+				.amount(scoringData.getAmount())
+				.term(scoringData.getTerm())
+				.monthlyPayment(monthlyPayment)
+				.rate(rate)
+				.psk(scheduleOfPayments.stream().map(PaymentScheduleElementDto::getTotalPayment).reduce(BigDecimal.ZERO, BigDecimal::add))
+				.isInsuranceEnabled(scoringData.getIsInsuranceEnabled())
+				.isSalaryClient(scoringData.getIsSalaryClient())
+				.paymentSchedule(scheduleOfPayments)
+				.build();
+	}
+	
+	/**
+	 * Если страховка включена, прибавляет к общей сумме кредита определённый процент от неё, который является суммой
+	 * страхового взноса. Процент задаётся в параметре {@code INSURANCE_PERCENT} в виде множителя и равен количеству
+	 * сотых долей после единицы. Значение общей суммы кредита обновляется в существующем объекте {@code ScoringDataDto}.
+	 * @param scoringData данные от пользователя для расчёта кредита.
+	 */
+	private void addInsuranceIfRequired(ScoringDataDto scoringData) {
+		boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();
+		if (isInsuranceEnabled) {
+			scoringData.setAmount(scoringData.getAmount().multiply(INSURANCE_PERCENT));
+		}
 	}
 }

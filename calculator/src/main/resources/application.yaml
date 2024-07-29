@@ -19,9 +19,6 @@ logging:
 
 credit:
   insurance-percent: 1.05
-  # noinspection SpellCheckingInspection
-  min-amount: 30000
-  min-term: 6
 
 rate:
   base-rate: 0.16

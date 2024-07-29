@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
+import ru.neoflex.neostudy.common.exception.UserDocumentException;
 import ru.neoflex.neostudy.deal.entity.Statement;
 
 import java.io.ByteArrayOutputStream;
@@ -23,8 +24,15 @@ public class PdfDocumentCreator implements DocumentCreator {
 	@Value("${app.font.path}")
 	private String fontPath;
 	
+	/**
+	 * Создаёт документ по кредиту в формате .pdf и возвращает его в виде массива байтов {@code byte[]}. Текстовая часть
+	 * документа состоит из двух частей: данные клиента и данные по кредиту. В ней описаны все значимые условия кредита.
+	 * @param statement объект-entity, содержащий все данные по кредиту.
+	 * @return сформированный документ в виде массива байт.
+	 * @throws InternalMicroserviceException если шрифт, используемый в документе повреждён или не найден.
+	 */
 	@Override
-	public byte[] createDocument(Statement statement) throws InternalMicroserviceException {
+	public byte[] createDocument(Statement statement) throws InternalMicroserviceException, UserDocumentException {
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 			PdfWriter writer = new PdfWriter(byteArrayOutputStream);
 			
@@ -42,8 +50,8 @@ public class PdfDocumentCreator implements DocumentCreator {
 		catch (IOException e) {
 			throw new InternalMicroserviceException("Creating document error", e);
 		}
-		
-		
-		
+		catch (NullPointerException e) {
+			throw new UserDocumentException("Document can't be created before finishing registration of the credit");
+		}
 	}
 }

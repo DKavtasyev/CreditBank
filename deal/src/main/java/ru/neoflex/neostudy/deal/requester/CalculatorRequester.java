@@ -29,15 +29,17 @@ public class CalculatorRequester {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 	
+	/**
+	 * Отправляет в микросервис calculator запрос с данными в теле запроса типа {@code LoanStatementRequestDto}, которые
+	 * получены от пользователя при ега запросе на выдачу кредита. Возвращает List, полученный в ответе от МС calculator,
+	 * содержащий четыре кредитных предложения.
+	 * @param loanStatementRequestDto данные пользовательского запроса кредита.
+	 * @return список доступных предложений кредита.
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС calculator недоступен.
+	 */
 	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) throws InternalMicroserviceException {
 		ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		
-		RequestEntity<LoanStatementRequestDto> requestEntity = RequestEntity
-				.post(URI.create(OFFERS_URL))
-				.headers(headers)
-				.body(loanStatementRequestDto);
+		RequestEntity<LoanStatementRequestDto> requestEntity = getRequestEntity(loanStatementRequestDto, OFFERS_URL);
 		
 		ResponseEntity<List<LoanOfferDto>> responseEntity;
 		try {
@@ -52,34 +54,74 @@ public class CalculatorRequester {
 		return responseEntity.getBody();
 	}
 	
-	public CreditDto requestCalculatedLoanTerms(ScoringDataDto scoringDataDto) throws LoanRefusalException, InternalMicroserviceException {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+	/**
+	 * Отправляет запрос в МС calculator с пользовательскими данными {@code ScoringDataDto} для расчёта кредита в
+	 * теле запроса, десериализует из тела ответа и возвращает объект CreditDto, содержащий данные о графике и суммах
+	 * платежей по кредиту.
+	 * @param scoringDataDto данные от пользователя для расчёта кредита.
+	 * @return объект типа CreditDto, содержащий все данные о сроках и суммах платежей по кредиту.
+	 * @throws LoanRefusalException ответ от МС calculator пришёл со статусом 406 Not acceptable.
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС calculator недоступен.
+	 */
+	public CreditDto requestCalculatedCredit(ScoringDataDto scoringDataDto) throws LoanRefusalException, InternalMicroserviceException {
+		RequestEntity<ScoringDataDto> requestEntity = getRequestEntity(scoringDataDto, CREDIT_URL);
 		
-		RequestEntity<ScoringDataDto> requestEntity = RequestEntity
-				.post(URI.create(CREDIT_URL))
-				.headers(headers)
-				.body(scoringDataDto);
-		
-		ResponseEntity<String> responseEntity;
-		CreditDto creditDto = null;
+		CreditDto creditDto;
 		try {
-			try {
-				responseEntity = restTemplate.exchange(requestEntity, String.class);
-				creditDto = objectMapper.readValue(responseEntity.getBody(), CreditDto.class);
-			}
-			catch (HttpClientErrorException e) {
-				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))){
-					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-					throw new LoanRefusalException(exceptionDetails.getMessage());
-				}
-			}
+			creditDto = requestCreditDto(requestEntity);
 		}
 		catch (RestClientException e) {
 			throw new InternalMicroserviceException("Connection error to MS calculator", e);
 		}
 		catch (JsonProcessingException e) {
 			throw new InternalMicroserviceException("Can't deserialize value", e);
+		}
+		return creditDto;
+	}
+	
+	/**
+	 * Возвращает сформированный параметризованный типом аргумента метод t {@code RequestEntity} с методом запроса
+	 * POST, адресом запроса url, телом запроса t.
+	 * @param t объект, записываемый в тело запроса.
+	 * @param url адрес, по которому будет произведён запрос.
+	 * @param <T> тип аргумента t.
+	 * @return {@code RequestEntity<T>}.
+	 */
+	private <T> RequestEntity<T> getRequestEntity(T t, String url) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		return RequestEntity
+				.post(URI.create(url))
+				.headers(headers)
+				.body(t);
+	}
+	
+	/**
+	 * Производит запрос в соответствии с переданным RequestEntity, принимает ответ, десериализует из тела ответа и
+	 * возвращает объект CreditDto, содержащий данные о графике и суммах платежей по кредиту.
+	 * @param requestEntity сформированный объект запроса {@code RequestEntity}.
+	 * @return объект типа CreditDto, содержащий все данные о сроках и суммах платежей по кредиту.
+	 * @throws JsonProcessingException если не удалось десериализовать значение из тела принятого ответа.
+	 * @throws LoanRefusalException ответ от МС calculator пришёл со статусом 406 Not acceptable.
+	 * @throws InternalMicroserviceException если данные на входе калькулятора имеют некорректный формат.
+	 */
+	private CreditDto requestCreditDto(RequestEntity<ScoringDataDto> requestEntity) throws JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
+		ResponseEntity<String> responseEntity;
+		CreditDto creditDto = null;
+		try {
+			responseEntity = restTemplate.exchange(requestEntity, String.class);
+			creditDto = objectMapper.readValue(responseEntity.getBody(), CreditDto.class);
+		}
+		catch (HttpClientErrorException e) {
+			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))){
+				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+				throw new LoanRefusalException(exceptionDetails.getMessage());
+			}
+			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))){
+				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+				throw new InternalMicroserviceException(exceptionDetails.getMessage());
+			}
 		}
 		return creditDto;
 	}

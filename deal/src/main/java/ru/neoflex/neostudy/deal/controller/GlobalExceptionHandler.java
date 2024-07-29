@@ -15,6 +15,12 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetails);
 	}
 	
+	@ExceptionHandler(SignatureVerificationFailedException.class)
+	private ResponseEntity<ExceptionDetails> handleDocumentSigningException(SignatureVerificationFailedException e, WebRequest request) {
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exceptionDetails);
+	}
+	
 	@ExceptionHandler(StatementNotFoundException.class)
 	private ResponseEntity<?> handleStatementNotFoundException(StatementNotFoundException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getDescription(false));
@@ -27,10 +33,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
 	}
 	
-	@ExceptionHandler(DocumentSigningException.class)
-	private ResponseEntity<ExceptionDetails> handleDocumentSigningException(DocumentSigningException e, WebRequest request) {
-		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.NOT_ACCEPTABLE.value(), e.getMessage(), request.getDescription(false));
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
+	@ExceptionHandler(UserDocumentException.class)
+	private ResponseEntity<ExceptionDetails> handleUnsignedDocumentException(UserDocumentException e, WebRequest request) {
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionDetails);
 	}
 	
 	@ExceptionHandler(InvalidPreApproveException.class)

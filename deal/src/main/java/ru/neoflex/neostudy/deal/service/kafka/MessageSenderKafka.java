@@ -17,6 +17,12 @@ public class MessageSenderKafka implements MessageSender {
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final ObjectMapper objectMapper;
 	
+	/**
+	 * Отправляет сообщение с помощью Kafka.
+	 * @param topic топик, в который будет отправлено сообщение.
+	 * @param emailMessage тело сообщения.
+	 * @throws InternalMicroserviceException выбрасывается, если произошла ошибка при отправке сообщения.
+	 */
 	@Override
 	public void send(String topic, EmailMessage emailMessage) throws InternalMicroserviceException {
 		String messageAsString = null;

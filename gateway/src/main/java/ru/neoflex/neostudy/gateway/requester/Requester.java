@@ -23,6 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class Requester {
+	public static final String CANT_DESERIALIZE_VALUE = "Can't deserialize value";
+	public static final String CONNECTION_ERROR_TO_MS_DEAL = "Connection error to MS deal";
 	
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
@@ -52,7 +54,7 @@ public class Requester {
 			throw new InternalMicroserviceException("Connection error to MS statement", e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 		return offers;
 	}
@@ -89,10 +91,10 @@ public class Requester {
 			}
 		}
 		catch (RestClientException e) {
-			throw new InternalMicroserviceException("Connection error to MS deal", e);
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 	}
 	
@@ -114,7 +116,7 @@ public class Requester {
 		sendRequest(requestEntity);
 	}
 	
-	public void requestVerifyingSesCode(URI uri) throws StatementNotFoundException, InternalMicroserviceException, DocumentSigningException {
+	public void requestVerifyingSesCode(URI uri) throws StatementNotFoundException, InternalMicroserviceException, SignatureVerificationFailedException {
 		RequestEntity<Void> requestEntity = getRequestEntity(uri);
 		
 		try {
@@ -128,7 +130,7 @@ public class Requester {
 				}
 				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))) {
 					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-					throw new DocumentSigningException(exceptionDetails.getMessage());
+					throw new SignatureVerificationFailedException(exceptionDetails.getMessage());
 				}
 				else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
 					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
@@ -137,10 +139,10 @@ public class Requester {
 			}
 		}
 		catch (RestClientException e) {
-			throw new InternalMicroserviceException("Connection error to MS deal", e);
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 	}
 	
@@ -164,10 +166,10 @@ public class Requester {
 			}
 		}
 		catch (RestClientException e) {
-			throw new InternalMicroserviceException("Connection error to MS deal", e);
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 	}
 	
@@ -191,10 +193,10 @@ public class Requester {
 			}
 		}
 		catch (RestClientException e) {
-			throw new InternalMicroserviceException("Connection error to MS deal", e);
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 		return statement;
 	}
@@ -210,7 +212,7 @@ public class Requester {
 			responseEntity = restTemplate.exchange(requestEntity, responseType);
 		}
 		catch (RestClientException e) {
-			throw new InternalMicroserviceException("Connection error to MS deal", e);
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 		return responseEntity.getBody();
 	}
@@ -256,7 +258,7 @@ public class Requester {
 			throw new InternalMicroserviceException("Connection error to MS", e);
 		}
 		catch (JsonProcessingException e) {
-			throw new InternalMicroserviceException("Can't deserialize value", e);
+			throw new InternalMicroserviceException(CANT_DESERIALIZE_VALUE, e);
 		}
 	}
 }

@@ -18,6 +18,15 @@ import java.math.RoundingMode;
 public class DocumentTextListGenerator implements DocumentTextGenerator {
 	private final DateFormatter dateFormatter;
 	
+	public static final String RUB = " руб. ";
+	public static final String PENNY = " коп.";
+	
+	/**
+	 * Возвращает строку с данными о клиенте, которые были взяты из объекта {@code Client}, который вложен в объект типа
+	 * {@code Statement}, передающийся в метод в качестве аргумента.
+	 * @param statement объект-entity, содержащий все данные по кредиту.
+	 * @return данные о клиенте в виде текста в формате {@code String}.
+	 */
 	@Override
 	public String formClientText(Statement statement) {
 		StringBuilder sb = new StringBuilder();
@@ -43,32 +52,50 @@ public class DocumentTextListGenerator implements DocumentTextGenerator {
 				.append("ИНН: ").append(employment.getEmployerInn()).append("\n").toString();
 	}
 	
+	/**
+	 * Возвращает строку с данными о кредите, которые были взяты из объекта {@code Statement}, который передаётся в
+	 * метод в качестве аргумента.
+	 * @param statement объект-entity, содержащий все данные по кредиту.
+	 * @return данные о кредите в виде текста в формате {@code String}.
+	 */
 	@Override
 	public String formCreditText(Statement statement) {
 		StringBuilder sb = new StringBuilder();
 		Credit credit = statement.getCredit();
 		
 		sb.append("Данные кредита").append("\n")
-				.append("Сумма займа: ").append(getRubles(credit.getAmount())).append(" руб. ").append(getPennies(credit.getAmount())).append(" коп.").append("\n")
+				.append("Сумма займа: ").append(getRubles(credit.getAmount())).append(RUB).append(getPennies(credit.getAmount())).append(PENNY).append("\n")
 				.append("Срок: ").append(credit.getTerm()).append(" месяцев").append("\n")
-				.append("Ежемесячный платёж: ").append(getRubles(credit.getMonthlyPayment())).append(" руб. ").append(getPennies(credit.getMonthlyPayment())).append(" коп.").append("\n")
+				.append("Ежемесячный платёж: ").append(getRubles(credit.getMonthlyPayment())).append(RUB).append(getPennies(credit.getMonthlyPayment())).append(PENNY).append("\n")
 				.append("Процентная ставка: ").append(credit.getRate().multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_EVEN)).append(" %").append("\n")
-				.append("Полная стоимость кредита: ").append(getRubles(credit.getPsk())).append(" руб. ").append(getPennies(credit.getPsk())).append(" коп.").append("\n")
+				.append("Полная стоимость кредита: ").append(getRubles(credit.getPsk())).append(RUB).append(getPennies(credit.getPsk())).append(PENNY).append("\n")
 				.append("Страховка включена: ").append(credit.isInsuranceEnabled() ? "да" : "нет").append("\n")
 				.append("Зарплатный клиент: ").append(credit.isSalaryClient() ? "да" : "нет").append("\n");
 		
 		for (PaymentScheduleElementDto paymentScheduleElement : credit.getPaymentSchedule()) {
 			sb.append("Платёж № ").append(paymentScheduleElement.getNumber()).append("\n")
 					.append("Дата платежа: ").append(dateFormatter.printDate(paymentScheduleElement.getDate())).append(" г.").append("\n")
-					.append("Сумма платежа: ").append(getRubles(paymentScheduleElement.getTotalPayment())).append(" руб. ").append(getPennies(paymentScheduleElement.getTotalPayment())).append(" коп.").append("\n");
+					.append("Сумма платежа: ").append(getRubles(paymentScheduleElement.getTotalPayment())).append(RUB).append(getPennies(paymentScheduleElement.getTotalPayment())).append(PENNY).append("\n");
 		}
 		return sb.toString();
 	}
 	
+	/**
+	 * Возвращает количество рублей - целую часть без округления от переданного суммы в виде дробного числа
+	 * {@code BigDecimal}.
+	 * @param amount сумма в виде дробного числа.
+	 * @return целая часть дробного числа.
+	 */
 	private BigDecimal getRubles(BigDecimal amount) {
 		return amount.divide(BigDecimal.ONE, 0, RoundingMode.DOWN);
 	}
 	
+	/**
+	 * Возвращает количество копеек - целое число, равное количеству сотых долей от переданного суммы в виде дробного
+	 * числа {@code BigDecimal}.
+	 * @param amount сумма в виде дробного числа.
+	 * @return число сотых долей переданного числа.
+	 */
 	private BigDecimal getPennies(BigDecimal amount) {
 		return amount.remainder(BigDecimal.ONE).abs().setScale(2, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100)).setScale(0, RoundingMode.DOWN);
 	}

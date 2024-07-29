@@ -2,18 +2,20 @@ package ru.neoflex.neostudy.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Data
+@Builder
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-@Accessors(chain = true)
+@AllArgsConstructor
+@Schema(description = "Данные платежа")
 public class PaymentScheduleElementDto {
 	@Schema(description = "Номер платежа")
 	private Integer number;
@@ -39,10 +41,10 @@ public class PaymentScheduleElementDto {
 		}
 		return Objects.equals(number, that.number)
 				&& Objects.equals(date, that.date)
-				&& totalPayment.compareTo(that.totalPayment) == 0
-				&& interestPayment.compareTo(that.interestPayment) == 0
-				&& debtPayment.compareTo(that.debtPayment) == 0
-				&& remainingDebt.compareTo(that.remainingDebt) == 0;
+				&& (Objects.equals(totalPayment, that.totalPayment) || totalPayment.compareTo(that.totalPayment) == 0)
+				&& (Objects.equals(interestPayment, that.interestPayment) || interestPayment.compareTo(that.interestPayment) == 0)
+				&& (Objects.equals(debtPayment, that.debtPayment) || debtPayment.compareTo(that.debtPayment) == 0)
+				&& (Objects.equals(remainingDebt, that.remainingDebt) || remainingDebt.compareTo(that.remainingDebt) == 0);
 	}
 	
 	@Override

@@ -7,15 +7,19 @@ import org.springframework.context.ConfigurableApplicationContext;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.DataService;
-import ru.neoflex.neostudy.deal.service.signature.DigitalSignatureUtil;
+import ru.neoflex.neostudy.deal.service.signature.sds.DigitalSignatureUtil;
 
-import java.io.*;
-import java.security.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
+@SuppressWarnings("all")
 
 @Log4j2
 @SpringBootApplication
@@ -43,16 +47,22 @@ public class DealApplication {
 				String publicKeyAsString = reader.readLine();
 				
 				byte[] publicKeyAsBytes = Base64.getDecoder().decode(publicKeyAsString);
-				X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyAsBytes);
-				KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-				PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-				log.warn("public key received: {}", Arrays.toString(publicKey.getEncoded()));
 				
+				PublicKey publicKey = digitalSignatureUtil.getPublicKeyFromBase64(publicKeyAsString);
 				boolean isValid = digitalSignatureUtil.verifySignature(documentAsBytes, signature, publicKey);
 				System.out.println(isValid ? "Документ оригинальный!" : "Документ подделан!");
 			}
 		}
-		catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException | InvalidKeySpecException e) {
+		catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		catch (InvalidKeySpecException e) {
+			throw new RuntimeException(e);
+		}
+		catch (SignatureException e) {
+			throw new RuntimeException(e);
+		}
+		catch (InvalidKeyException e) {
 			throw new RuntimeException(e);
 		}
 	}

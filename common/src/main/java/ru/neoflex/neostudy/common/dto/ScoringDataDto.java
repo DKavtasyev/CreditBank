@@ -3,8 +3,7 @@ package ru.neoflex.neostudy.common.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.DateTimeFormat;
 import ru.neoflex.neostudy.common.constants.Gender;
 import ru.neoflex.neostudy.common.constants.MaritalStatus;
@@ -13,8 +12,12 @@ import ru.neoflex.neostudy.common.validation.CheckAge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "Пользовательсткие данные для расчёта кредита")
 public class ScoringDataDto {
 	@NotNull
@@ -53,13 +56,13 @@ public class ScoringDataDto {
 	
 	@NotNull
 	@Size(min = 4, max = 4)
-	@Pattern(regexp = "^([1-9][0-9]{3})$")
+	@Pattern(regexp = "^([1-9]\\d{3})$")
 	@Schema(description = "Серия паспорта", example = "1234")
 	String passportSeries;
 	
 	@NotNull
 	@Size(min = 6, max = 6)
-	@Pattern(regexp = "^([1-9][0-9]{5})$")
+	@Pattern(regexp = "^([1-9]\\d{5})$")
 	@Schema(description = "Номер паспорта", example = "123456")
 	String passportNumber;
 	
@@ -85,7 +88,7 @@ public class ScoringDataDto {
 	EmploymentDto employment;
 	
 	@NotBlank
-	@Pattern(regexp = "^([1-9][0-9]*)$")
+	@Pattern(regexp = "^([1-9]\\d*)$")
 	@Schema(description = "Номер пользователя", example = "98723645982394178")
 	String accountNumber;
 	

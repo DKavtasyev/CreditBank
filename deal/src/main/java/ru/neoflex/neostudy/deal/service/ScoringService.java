@@ -27,11 +27,26 @@ public class ScoringService {
 	private final DataService dataService;
 	private final KafkaService kafkaService;
 	
+	/**
+	 * Отправляет запрос в МС calculator на расчёт графика и сумм платежей по кредиту. На основе полученной информации
+	 * создаёт entity-сущность кредита {@code Credit}, назначает её статус CALCULATED, сохраняет её в entity
+	 * {@code Statement}, после чего назначает сущности {@code Statement} статус CC_APPROVED, сохраняет {@code Credit} и
+	 * обновляет {@code Statement} в базе данных.
+	 * @param finishingRegistrationRequestDto пользовательские данные для завершения оформления кредита.
+	 * @param statement объект-entity, содержащий все данные по кредиту.
+	 * @throws LoanRefusalException если данные от пользователя не прошли скоринг (ответ от МС calculator пришёл со
+	 * статусом 406 Not acceptable).
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС calculator недоступен.
+	 * @throws InvalidPreApproveException если предварительное одобрение кредита для данной заявки на кредит отсутствует
+	 * или недействительно. В этом случае поле {@code appliedOffer} в объекте {@code Statement} будет равно {@code null},
+	 * что вызовет исключение {@code NullPointerException} при формировании объекта {@code ScoringDataDto}, которое
+	 * будет обёрнуто в InvalidPreApproveException.
+	 */
 	public void scoreAndSaveCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, Statement statement) throws LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
 		CreditDto creditDto;
 		try {
 			ScoringDataDto scoringDataDto = scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
-			creditDto = calculatorRequester.requestCalculatedLoanTerms(scoringDataDto);
+			creditDto = calculatorRequester.requestCalculatedCredit(scoringDataDto);
 		}
 		catch (LoanRefusalException e) {
 			dataService.updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);

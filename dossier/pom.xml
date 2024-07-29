@@ -14,9 +14,11 @@
 	<name>dossier</name>
 	<description>dossier</description>
 
-	<dependencies>
+	<properties>
+		<common.version>1.0.0</common.version>
+	</properties>
 
-		<!--	Kafka	-->
+	<dependencies>
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
@@ -27,27 +29,19 @@
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!--	Common module	-->
 		<dependency>
 			<groupId>ru.neoflex.neostudy</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0.0</version>
+			<version>${common.version}</version>
 		</dependency>
-
-		<!--	Mail	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-
-		<!--	Thymeleaf	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-
-		<!--	AspectJ 	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>

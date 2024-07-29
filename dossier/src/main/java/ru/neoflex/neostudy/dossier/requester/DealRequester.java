@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.exception.ExceptionDetails;
@@ -28,6 +29,15 @@ public class DealRequester {
 	private final RestTemplate restTemplate;
 	private final ObjectMapper objectMapper;
 	
+	/**
+	 * Отправляет PUT-запрос в МС deal с идентификатором запроса в URL-адресе, с переданным в аргументах метода статусом,
+	 * представляющим собой значение enum типа {@code ApplicationStatus}.
+	 * @param statementId идентификатор заявки пользователя {@code Statement}.
+	 * @param status значение статуса в виде enum типа {@code ApplicationStatus}, отсылаемое в теле запроса.
+	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
+	 * не найден в базе данных (если от микросервиса deal получен ответ со статусом 404 Not found).
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС deal недоступен.
+	 */
 	public void sendStatementStatus(UUID statementId, ApplicationStatus status) throws StatementNotFoundException, InternalMicroserviceException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -40,24 +50,41 @@ public class DealRequester {
 				.body(status);
 		
 		try {
-			try {
-				restTemplate.exchange(requestEntity, String.class);
-				log.info("Request to {} sent, content: {}", DEAL_STATUS_URL, status);
-			}
-			catch (HttpClientErrorException e) {
-				if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
-					ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
-					log.warn(exceptionDetails.getMessage());
-					throw new StatementNotFoundException(String.format(exceptionDetails.getMessage(), statementId));
-				}
-				else {
-					log.error("Error sending request, cause: {}", e.getMessage());
-					throw new InternalMicroserviceException("Microservice error", e);
-				}
-			}
+			sendRequest(statementId, status, requestEntity);
 		}
 		catch (JsonProcessingException e) {
 			throw new InternalMicroserviceException("Can't deserialize value", e);
+		}
+	}
+	
+	/**
+	 * Производит запрос в соответствии с переданным RequestEntity.
+	 * @param statementId идентификатор заявки пользователя {@code Statement}.
+	 * @param status значение статуса в виде enum типа {@code ApplicationStatus}, отсылаемое в теле запроса.
+	 * @param requestEntity сформированный объект запроса {@code RequestEntity}.
+	 * @throws JsonProcessingException если не удалось десериализовать значение из тела принятого ответа.
+	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
+	 * не найден в базе данных (если от микросервиса deal получен ответ со статусом 404 Not found).
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС deal недоступен.
+	 */
+	private void sendRequest(UUID statementId, ApplicationStatus status, RequestEntity<ApplicationStatus> requestEntity) throws JsonProcessingException, StatementNotFoundException, InternalMicroserviceException {
+		try {
+			restTemplate.exchange(requestEntity, String.class);
+			log.info("Request to {} sent, content: {}", DEAL_STATUS_URL, status);
+		}
+		catch (HttpClientErrorException e) {
+			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))){
+				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
+				log.warn(exceptionDetails.getMessage());
+				throw new StatementNotFoundException(String.format(exceptionDetails.getMessage(), statementId));
+			}
+			else {
+				log.error("Error sending request, cause: {}", e.getMessage());
+				throw new InternalMicroserviceException("Microservice error", e);
+			}
+		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException("Connection error to MS deal", e);
 		}
 	}
 }

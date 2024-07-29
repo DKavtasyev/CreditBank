@@ -14,21 +14,20 @@
 	<name>gateway</name>
 	<description>gateway</description>
 
-	<dependencies>
+	<properties>
+		<common.version>1.0.0</common.version>
+	</properties>
 
-		<!--	Common module	-->
+	<dependencies>
 		<dependency>
 			<groupId>ru.neoflex.neostudy</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0.0</version>
+			<version>${common.version}</version>
 		</dependency>
-
-		<!--	Thymeleaf	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>

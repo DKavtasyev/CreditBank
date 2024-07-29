@@ -38,7 +38,6 @@ public class KafkaConsumer {
 	
 	@KafkaListener(topics = SEND_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
 	public void sendDocumentsListen(@Payload EmailMessage emailMessage) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException {
-		
 		dealRequester.sendStatementStatus(emailMessage.getStatementId(), ApplicationStatus.DOCUMENT_CREATED);
 		mailService.sendDocumentsEmail(emailMessage);
 	}

@@ -1,16 +1,17 @@
 package ru.neoflex.neostudy.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
+@Builder
+@Getter
+@ToString
 @NoArgsConstructor
-@Accessors(chain = true)
+@AllArgsConstructor
+@Schema(description = "Основные параметры кредита и график платежей")
 public class CreditDto {
 	@Schema(description = "Сумма займа")
 	private BigDecimal amount;
@@ -29,3 +30,4 @@ public class CreditDto {
 	@Schema(description = "График платежей")
 	private List<PaymentScheduleElementDto> paymentSchedule;
 }
+

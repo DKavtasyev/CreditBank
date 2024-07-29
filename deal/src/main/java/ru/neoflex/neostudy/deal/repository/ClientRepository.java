@@ -11,6 +11,12 @@ import java.util.UUID;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
+	/**
+	 * Запрашивает в базе данных и возвращает объект {@code Optional<Client>} по заданным серии и номеру паспорта клиента.
+	 * @param passportSeries серия паспорта.
+	 * @param passportNumber номер паспорта.
+	 * @return {@code Optional<Client>}
+	 */
 	@Query(value = "SELECT * FROM client c WHERE c.passport ->> 'series' = :passport_series and c.passport ->> 'number' = :passport_number", nativeQuery = true)
 	Optional<Client> findClientByPassportSeriesAndPassportNumber(@Param("passport_series") String passportSeries, @Param("passport_number") String passportNumber);
 }
