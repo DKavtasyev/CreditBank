@@ -14,12 +14,11 @@ import org.springframework.web.client.RestTemplate;
 public class Requester {
 	private final RestTemplate restTemplate;
 	
-	public <T, R> ResponseEntity<R> request(T t, ParameterizedTypeReference<R> responseType, String url) {
-		RequestEntity<T> requestEntity = getRequestEntity(t, url);
+	public <T, R> ResponseEntity<R> request(RequestEntity<T> requestEntity, ParameterizedTypeReference<R> responseType) {
 		return restTemplate.exchange(requestEntity, responseType);
 	}
 	
-	private <T> RequestEntity<T> getRequestEntity(T t, String url) {
+	public <T> RequestEntity<T> getRequestEntity(T t, String url) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		

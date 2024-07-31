@@ -27,6 +27,7 @@ public class SdsSignatureService implements SignatureService {
 	 * @throws InternalMicroserviceException выбрасывается в случае использования неподдерживаемого алгоритма
 	 * кодирования.
 	 */
+	@Override
 	public String createSignature() throws InternalMicroserviceException {
 		KeyPair keyPair = keyGeneratorUtil.generateKeyPair();
 		PrivateKey privateKey = keyPair.getPrivate();
@@ -53,6 +54,7 @@ public class SdsSignatureService implements SignatureService {
 	 *     предоставленные входные данные.</li>
 	 * </ul>
 	 */
+	@Override
 	public void signDocument(Statement statement, String keyPair) throws InternalMicroserviceException, DocumentSignatureException {
 		log.info("Method: SDS. KeyPair: {}", keyPair);
 		String[] keys = keyPair.split(" ");
@@ -83,6 +85,30 @@ public class SdsSignatureService implements SignatureService {
 		statement.setSignDate(LocalDateTime.now());
 	}
 	
+	/**
+	 * Проверяет на подлинность документ с помощью переданной в метод подписи. В передаваемой строке содержится подпись
+	 * документа и публичный ключ, закодированный по алгоритму Base64, разделённые пробелом. В методе проверяется
+	 * наличие документа и его подписи разделение подписи и ключа, проверка документа на подлинность.
+	 * @param statement объект-entity, содержащий в себе проверяемый документ.
+	 * @param signatureAndPublicKey подпись для проверяемого документа, с помощью которой осуществляется проверка
+	 * документа на подлинность.
+	 * @throws InternalMicroserviceException выкидывается в следующих случаях:
+	 * <ul>
+	 *     <li>Использования неподдерживаемого алгоритма кодирования.</li>
+	 *     <li>Использования спецификации ключа, не подходящей для создания открытого ключа с помощью данной фабрики
+	 *     ключей</li>
+	 *     <li>Объект подписи не инициализирован должным образом или используемый алгоритм подписи не может обработать
+	 *     предоставленные входные данные.</li>
+	 * </ul>
+	 * @throws DocumentSignatureException если не выполнены условия для проверки подписи:
+	 * <ul>
+	 *     <li>Документ ранее не был создан.</li>
+	 *     <li>Документ ранее не был подписан.</li>
+	 * </ul>
+	 * @throws SignatureVerificationFailedException если проверка на подлинность показала, что документ не является
+	 * подлинным или подпись для проверки не была передана.
+	 */
+	@Override
 	public void verifySignature(Statement statement, String signatureAndPublicKey) throws InternalMicroserviceException, DocumentSignatureException, SignatureVerificationFailedException {
 		checkPreconditions(statement, signatureAndPublicKey);
 		try {
@@ -114,6 +140,18 @@ public class SdsSignatureService implements SignatureService {
 		}
 	}
 	
+	/**
+	 * Проверяет наличие подписываемого документа и подписи к нему, а также наличие передаваемой подписи для проверки.
+	 * @param statement объект-entity, содержащий в себе проверяемый документ.
+	 * @param signatureAndPublicKey подпись для проверяемого документа, с помощью которой осуществляется проверка
+	 * документа на подлинность.
+	 * @throws DocumentSignatureException если не выполнены условия для проверки подписи:
+	 * <ul>
+	 *     <li>Документ ранее не был создан.</li>
+	 *     <li>Документ ранее не был подписан.</li>
+	 * </ul>
+	 * @throws SignatureVerificationFailedException если подпись для проверки не была передана.
+	 */
 	private void checkPreconditions(Statement statement, String signatureAndPublicKey) throws DocumentSignatureException, SignatureVerificationFailedException {
 		if (statement.getPdfFile() == null) {
 			throw new DocumentSignatureException("Method: SDS. Verify signature error: document is not created");

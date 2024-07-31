@@ -3,6 +3,7 @@ package ru.neoflex.neostudy.statement.requester;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -36,7 +37,8 @@ public class DealRequestService {
 	
 	private List<LoanOfferDto> getLoanOffers(LoanStatementRequestDto loanStatementRequestDto, ParameterizedTypeReference<List<LoanOfferDto>> responseType, List<LoanOfferDto> offers) throws InvalidPassportDataException, InternalMicroserviceException {
 		try {
-			ResponseEntity<List<LoanOfferDto>> responseEntity = requester.request(loanStatementRequestDto, responseType, DEAL_OFFERS_URL);
+			RequestEntity<LoanStatementRequestDto> requestEntity = requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL);
+			ResponseEntity<List<LoanOfferDto>> responseEntity = requester.request(requestEntity, responseType);
 			offers = responseEntity.getBody();
 		}
 		catch (HttpClientErrorException e) {
@@ -58,7 +60,8 @@ public class DealRequestService {
 	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
 		ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {};
 		try {
-			requester.request(loanOfferDto, responseType, DEAL_APPLY_OFFER_URL);
+			RequestEntity<LoanOfferDto> requestEntity = requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL);
+			requester.request(requestEntity, responseType);
 		}
 		catch (HttpClientErrorException e) {
 			ExceptionDetails exceptionDetails = e.getResponseBodyAs(ExceptionDetails.class);

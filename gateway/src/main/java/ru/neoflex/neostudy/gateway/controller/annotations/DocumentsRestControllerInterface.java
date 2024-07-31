@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.neoflex.neostudy.common.exception.DocumentSignatureException;
 import ru.neoflex.neostudy.common.exception.SignatureVerificationFailedException;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
@@ -30,11 +31,12 @@ public interface DocumentsRestControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> createDocuments(@PathVariable("statementId")
 												@Parameter(description = "Идентификатор заявки Statement")
-												UUID statementId) throws StatementNotFoundException, InternalMicroserviceException;
+												UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException;
 	
 	@PostMapping("/{statementId}/sign")
 	@Operation(
@@ -45,11 +47,12 @@ public interface DocumentsRestControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> signDocuments(@PathVariable("statementId")
 											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException;
+											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException;
 	
 	@PostMapping("/{statementId}/sign/code")
 	@Operation(
@@ -58,17 +61,19 @@ public interface DocumentsRestControllerInterface {
 					Отправляет запрос, содержащий код ПЭП, в MS deal.
 					
 					Примечание: в поле statementId необходимо установить id нужной заявки Statement.
-					Добавить параметр запроса "code" со значением параметра, равным подписи документа.
+					Добавить параметр запроса "code" со значением параметра, равным подписи документа. Его можно взять
+					из ссылки, присылаемой пользователю в письме на его электронный адрес.
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "401", description = "Unauthorized"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
-					@ApiResponse(responseCode = "406", description = "Not acceptable"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> verifySesCode(@PathVariable("statementId")
 											  @Parameter(description = "Идентификатор заявки Statement")
 											  UUID statementId,
 											  @Parameter(description = "Подпись документа")
-											  @RequestParam("code") String code) throws SignatureVerificationFailedException, StatementNotFoundException, InternalMicroserviceException;
+											  @RequestParam("code") String code) throws SignatureVerificationFailedException, StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException;
 }

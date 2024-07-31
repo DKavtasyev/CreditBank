@@ -33,6 +33,12 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
 	}
 	
+	@ExceptionHandler(DocumentSignatureException.class)
+	private ResponseEntity<ExceptionDetails> handleDocumentSignatureException(DocumentSignatureException e, WebRequest request) {
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionDetails);
+	}
+	
 	@ExceptionHandler(InvalidPreApproveException.class)
 	private ResponseEntity<ExceptionDetails> handleInvalidPreApproveException(InvalidPreApproveException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.PRECONDITION_REQUIRED.value(), e.getMessage(), request.getDescription(false));

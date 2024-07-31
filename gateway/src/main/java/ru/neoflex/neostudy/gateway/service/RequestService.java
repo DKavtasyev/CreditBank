@@ -10,7 +10,9 @@ import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.entity.Statement;
 import ru.neoflex.neostudy.common.exception.*;
 import ru.neoflex.neostudy.common.util.UrlFormatter;
-import ru.neoflex.neostudy.gateway.requester.Requester;
+import ru.neoflex.neostudy.gateway.requester.AdminRequestService;
+import ru.neoflex.neostudy.gateway.requester.DocumentsRequestService;
+import ru.neoflex.neostudy.gateway.requester.StatementRequestService;
 
 import java.net.URI;
 import java.util.List;
@@ -21,8 +23,10 @@ import static java.util.Objects.isNull;
 @Service
 @RequiredArgsConstructor
 public class RequestService {
+	private final StatementRequestService statementRequestService;
+	private final DocumentsRequestService documentsRequestService;
+	private final AdminRequestService adminRequestService;
 	
-	private final Requester requester;
 	
 	@Value("${app.rest.url.statement.create-loan-statement}")
 	private String createLoanStatementUrl;
@@ -55,7 +59,7 @@ public class RequestService {
 	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
 	 */
 	public List<LoanOfferDto> createLoanStatementRequest(LoanStatementRequestDto loanStatementRequest) throws InvalidUserDataException, InternalMicroserviceException {
-		return requester.requestLoanOffers(loanStatementRequest, URI.create(createLoanStatementUrl));
+		return statementRequestService.requestLoanOffers(loanStatementRequest, URI.create(createLoanStatementUrl));
 	}
 	
 	/**
@@ -66,7 +70,7 @@ public class RequestService {
 	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
 	 */
 	public void applyOfferRequest(LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException {
-		requester.sendChosenOffer(loanOffer, URI.create(applyOfferUrl));
+		statementRequestService.sendChosenOffer(loanOffer, URI.create(applyOfferUrl));
 	}
 	
 	/**
@@ -83,7 +87,7 @@ public class RequestService {
 	 */
 	public void finishRegistrationRequest(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, LoanRefusalException, InvalidPreApproveException {
 		URI uri = UrlFormatter.substituteUrlValue(calculateCreditUrl, statementId.toString());
-		requester.sendFinishRegistrationRequest(finishingRegistrationRequestDto, uri);
+		statementRequestService.requestForFinishRegistration(finishingRegistrationRequestDto, uri);
 	}
 	
 	/**
@@ -95,7 +99,7 @@ public class RequestService {
 	 */
 	public void denyOfferRequest(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		URI uri = UrlFormatter.substituteUrlValue(denyOfferUrl, statementId.toString());
-		requester.sendOfferDenial(uri);
+		statementRequestService.sendOfferDenial(uri);
 	}
 	
 	/**
@@ -105,9 +109,9 @@ public class RequestService {
 	 * не найден в базе данных (ответ от МС statement пришёл с кодом 404 Not found).
 	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
 	 */
-	public void createDocuments(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
+	public void createDocuments(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException {
 		URI uri = UrlFormatter.substituteUrlValue(createDocumentsUrl, statementId.toString());
-		requester.requestCreatingDocuments(uri);
+		documentsRequestService.requestCreatingDocuments(uri);
 	}
 	
 	/**
@@ -117,24 +121,25 @@ public class RequestService {
 	 * не найден в базе данных (ответ от МС statement пришёл с кодом 404 Not found).
 	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
 	 */
-	public void signDocuments(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
+	public void signDocuments(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException {
 		URI uri = UrlFormatter.substituteUrlValue(signDocumentsUrl, statementId.toString());
-		requester.requestSignatureOfDocuments(uri);
+		documentsRequestService.requestSignatureOfDocuments(uri);
 	}
 	
 	/**
 	 * Перенаправляет запрос на проверку кода подписи документов в МС deal.
 	 * @param statementId идентификатор заявки пользователя {@code Statement}.
 	 * @param signature подпись в формате {@code String}.
-	 * @throws SignatureVerificationFailedException выбрасывается в случае использования некорректного кода подписи.
+	 * @throws SignatureVerificationFailedException если проверка на подлинность показала, что документ не является
+	 * подлинным или подпись для проверки не была передана (HTTP-код 401 Not authorized).
 	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
 	 * не найден в базе данных (ответ от МС statement пришёл с кодом 404 Not found).
 	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
 	 */
-	public void verifySesCode(UUID statementId, String signature) throws SignatureVerificationFailedException, StatementNotFoundException, InternalMicroserviceException {
+	public void verifySesCode(UUID statementId, String signature) throws SignatureVerificationFailedException, StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException {
 		URI uri = UrlFormatter.substituteUrlValue(verifySignatureUrl, statementId.toString());
 		uri = UrlFormatter.addQueryParameter(uri.toString(), "code", signature);
-		requester.requestVerifyingSesCode(uri);
+		documentsRequestService.requestVerifyingSesCode(uri);
 	}
 	
 	/**
@@ -147,7 +152,7 @@ public class RequestService {
 	 */
 	public void updateStatementStatus(UUID statementId, ApplicationStatus status) throws StatementNotFoundException, InternalMicroserviceException {
 		URI uri = UrlFormatter.substituteUrlValue(updateStatementStatusUrl, statementId.toString());
-		requester.sendStatementStatus(status, uri);
+		adminRequestService.sendStatementStatus(status, uri);
 	}
 	
 	/**
@@ -160,7 +165,7 @@ public class RequestService {
 	 */
 	public Statement getStatement(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		URI uri = UrlFormatter.substituteUrlValue(getStatementUrl, statementId.toString());
-		return requester.requestStatement(uri);
+		return adminRequestService.requestStatement(uri);
 	}
 	
 	/**
@@ -173,6 +178,6 @@ public class RequestService {
 	public List<Statement> getAllStatements(Integer page) throws InternalMicroserviceException {
 		String pageAsString = isNull(page) ? "" : String.valueOf(page);
 		URI uri = UrlFormatter.addQueryParameter(getAllStatementsUrl, "page", pageAsString);
-		return requester.requestAllStatements(uri);
+		return adminRequestService.requestAllStatements(uri);
 	}
 }
