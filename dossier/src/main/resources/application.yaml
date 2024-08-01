@@ -33,3 +33,23 @@ server:
 logging:
   level:
     root: info
+    # noinspection SpellCheckingInspection
+    ru.neoflex.neostudy.dossier: info
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
