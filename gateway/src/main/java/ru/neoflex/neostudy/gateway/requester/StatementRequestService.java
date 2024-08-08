@@ -103,7 +103,7 @@ public class StatementRequestService {
 	
 	public void sendOfferDenial(URI uri) throws StatementNotFoundException, InternalMicroserviceException {
 		try {
-			RequestEntity<Void> requestEntity = requester.getRequestEntity(uri);
+			RequestEntity<Void> requestEntity = requester.getRequestEntityMethodGet(uri);
 			sendRequest(requestEntity);
 		}
 		catch (RestClientException e) {

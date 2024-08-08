@@ -30,6 +30,7 @@ public interface DocumentsControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable Entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> sendDocuments(@PathVariable("statementId")
@@ -45,6 +46,7 @@ public interface DocumentsControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable Entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> signDocuments(@PathVariable("statementId")
@@ -64,8 +66,8 @@ public interface DocumentsControllerInterface {
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "401", description = "Unauthorized"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
-					@ApiResponse(responseCode = "406", description = "Not acceptable"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> verifySesCode(@PathVariable("statementId")

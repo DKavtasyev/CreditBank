@@ -6,13 +6,13 @@ Cache-Control: no-store
 {
   "amount": 1000000,
   "term": 24,
-  "firstName": "Дмитрий",
-  "lastName": "Кавтасьев",
-  "middleName": "Владимирович",
-  "email": "999DK@mail.ru",
-  "birthDate": "1991-12-20",
-  "passportSeries": "1234",
-  "passportNumber": "123456"
+  "firstName": "Иван",
+  "lastName": "Иванов",
+  "middleName": "Петрович",
+  "email": "k.d.v1991@yandex.ru",
+  "birthDate": "1995-03-18",
+  "passportSeries": "3535",
+  "passportNumber": "555555"
 }
 
 ### Choose one of four offers
@@ -22,7 +22,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "98748ee9-de3e-4427-b6da-ee5b47e313bd",
+  "statementId": "53313926-b673-4789-afdd-37af66f316da",
   "requestedAmount": 1000000,
   "totalAmount": 1163679.5531268244456968,
   "term": 24,
@@ -34,7 +34,7 @@ Cache-Control: no-store
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8085/statement/registration/2c21d557-2315-4ddb-92eb-801827d43079
+POST http://localhost:8085/statement/registration/53213926-b673-4789-afdd-37af66f316da
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -57,22 +57,22 @@ Cache-Control: no-store
 
 ### Denial of a loan
 ### В URL установить корректный statementId
-GET http://localhost:8085/statement/deny/98748ee9-de3e-4427-b6da-ee5b47e313bd
+GET http://localhost:8085/statement/deny/53313926-b673-4789-afdd-37af66f316da
 
 
 
 
 ### Create documents request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/98748ee9-de3e-4427-b6da-ee5b47e313bd
+POST http://localhost:8085/document/53313926-b673-4789-afdd-37af66f316da
 
 ### Sign documents request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/93491892-331d-429f-8b83-5d867ba32cdd/sign
+POST http://localhost:8085/document/53313926-b673-4789-afdd-37af66f316da/sign
 
 ### Verify SES code request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/93491892-331d-429f-8b83-5d867ba32cdd/sign/code
+POST http://localhost:8085/document/53313926-b673-4789-afdd-37af66f316da/sign/code?code=f94b8102-ce71-41be-aff6-fc993cfd8eda
 
 
 

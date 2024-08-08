@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
@@ -46,8 +46,14 @@ class DealRequestServiceTest {
 		
 		@Test
 		void requestLoanOffers_whenLoanStatementRequestDtoIsGiven_thenReturnLoanOffers() throws Exception {
-			ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(expectedOffers);
-			when(requester.request(any(LoanStatementRequestDto.class), any(), anyString())).thenReturn(response);
+			RequestEntity<LoanStatementRequestDto> requestEntity = RequestEntity
+					.post("")
+					.body(loanStatementRequestDto);
+			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
+			
+			ResponseEntity<List<LoanOfferDto>> response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(expectedOffers);
+			when(requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL)).thenReturn(requestEntity);
+			when(requester.request(requestEntity, responseType)).thenReturn(response);
 			List<LoanOfferDto> actualOffers = dealRequestService.requestLoanOffers(loanStatementRequestDto);
 			assertThat(actualOffers).isSameAs(expectedOffers);
 		}
@@ -63,9 +69,15 @@ class DealRequestServiceTest {
 		}
 		
 		@Test
-		void requestLoanOffers_whenSendLoanStatementRequestDto_thenReceiveAndReturnLoanOffers() throws Exception {
+		void sendChosenOffer_whenSendLoanOfferDto_thenSuccess() throws Exception {
+			RequestEntity<LoanOfferDto> requestEntity = RequestEntity
+					.post("")
+					.body(loanOfferDto);
+			
+			when(requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL)).thenReturn(requestEntity);
+			
 			dealRequestService.sendChosenOffer(loanOfferDto);
-			verify(requester, times(1)).request(any(), any(), anyString());
+			verify(requester, times(1)).request(any(), any());
 		}
 	}
 }

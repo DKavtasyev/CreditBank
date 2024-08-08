@@ -16,6 +16,7 @@
 
 	<properties>
 		<common.version>1.0.0</common.version>
+		<maven-install-plugin.version>3.1.2</maven-install-plugin.version>
 	</properties>
 
 	<dependencies>

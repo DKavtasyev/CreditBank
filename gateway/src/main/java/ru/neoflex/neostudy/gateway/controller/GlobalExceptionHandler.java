@@ -33,8 +33,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
 	}
 	
-	@ExceptionHandler(DocumentSignatureException.class)
-	private ResponseEntity<ExceptionDetails> handleDocumentSignatureException(DocumentSignatureException e, WebRequest request) {
+	@ExceptionHandler(UserDocumentException.class)
+	private ResponseEntity<ExceptionDetails> handleDocumentSignatureException(UserDocumentException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), request.getDescription(false));
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionDetails);
 	}
