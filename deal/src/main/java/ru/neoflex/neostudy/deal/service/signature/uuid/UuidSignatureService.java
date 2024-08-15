@@ -7,8 +7,12 @@ import ru.neoflex.neostudy.common.exception.SignatureVerificationFailedException
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.signature.SignatureService;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * Сервис осуществляет работу с подписью, имеющей формат UUID.
+ */
 @Service("uuidSignatureService")
 @Log4j2
 public class UuidSignatureService implements SignatureService {

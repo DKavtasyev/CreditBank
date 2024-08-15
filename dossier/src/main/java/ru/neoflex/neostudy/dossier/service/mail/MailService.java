@@ -10,6 +10,9 @@ import ru.neoflex.neostudy.common.util.UrlFormatter;
 
 import java.net.URI;
 
+/**
+ * Сервис для формирования и отправки пользователю информации по электронной почте.
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

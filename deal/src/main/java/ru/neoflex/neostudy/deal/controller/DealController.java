@@ -3,6 +3,7 @@ package ru.neoflex.neostudy.deal.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
@@ -29,7 +30,10 @@ public class DealController implements DealControllerInterface {
 	private final KafkaService kafkaService;
 	
 	@Override
-	public ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException, InternalMicroserviceException {
+	public ResponseEntity<List<LoanOfferDto>> createStatement(LoanStatementRequestDto loanStatementRequest, BindingResult bindingResult) throws InvalidPassportDataException, InternalMicroserviceException {
+		if (bindingResult.hasErrors()) {
+			throw new InternalMicroserviceException("MS deal: invalid input parameters of LoanStatementRequestDto");
+		}
 		Statement statement = dataService.prepareData(loanStatementRequest);
 		List<LoanOfferDto> offers = preScoringService.getOffers(loanStatementRequest, statement);
 		dataService.updateStatement(statement, ApplicationStatus.PREAPPROVAL, ChangeType.AUTOMATIC);
@@ -45,7 +49,10 @@ public class DealController implements DealControllerInterface {
 	}
 	
 	@Override
-	public ResponseEntity<Void> calculateCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
+	public ResponseEntity<Void> calculateCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId, BindingResult bindingResult) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
+		if (bindingResult.hasErrors()) {
+			throw new InternalMicroserviceException("MS deal: invalid input parameters of FinishingRegistrationRequestDto");
+		}
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		kafkaService.sendCreatingDocumentsRequest(statement);

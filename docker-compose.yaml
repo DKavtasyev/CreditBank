@@ -131,7 +131,7 @@ services:
       dockerfile: ./gateway/Dockerfile
     restart: unless-stopped
     ports:
-      - "8085:8085"
+      - "8080:8080"
 
   statement:
     container_name: statement

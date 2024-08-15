@@ -11,6 +11,10 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Сервис формирует из полученных данных параметры для выполнения шаблона thymeleaf и формирования html страницы для
+ * отправки по email пользователю.
+ */
 @Service
 @RequiredArgsConstructor
 public class ParamsService {

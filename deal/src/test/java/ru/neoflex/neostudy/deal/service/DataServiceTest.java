@@ -58,7 +58,6 @@ class DataServiceTest {
 			Optional<Client> optionalClient = Optional.of(client);
 			when(clientEntityServiceMock.findClientByPassport(loanStatementRequestDto)).thenReturn(optionalClient);
 			when(clientEntityServiceMock.checkAndSaveClient(loanStatementRequestDto, optionalClient)).thenReturn(client);
-//			when(statementEntityServiceMock.save(any(Statement.class))).thenReturn(expectedStatement);
 			Statement actualStatement = dataService.prepareData(loanStatementRequestDto);
 			Assertions.assertAll(() -> {
 				verify(clientEntityServiceMock, times(1)).findClientByPassport(loanStatementRequestDto);

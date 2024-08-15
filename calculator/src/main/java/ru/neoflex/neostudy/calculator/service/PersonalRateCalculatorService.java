@@ -16,6 +16,10 @@ import static ru.neoflex.neostudy.common.constants.EmploymentStatus.SELF_EMPLOYE
 import static ru.neoflex.neostudy.common.constants.MaritalStatus.DIVORCED;
 import static ru.neoflex.neostudy.common.constants.MaritalStatus.MARRIED;
 
+/**
+ * Сервис осуществляет расчёт персональной процентной ставки по кредиту в зависимости от значений значимых для расчёта
+ * кредита параметров, которые были указаны пользователем.
+ */
 @Service
 public class PersonalRateCalculatorService {
 	

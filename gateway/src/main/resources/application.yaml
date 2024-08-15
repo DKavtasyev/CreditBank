@@ -5,7 +5,7 @@ spring:
     active: default
 
 server:
-  port: 8085
+  port: 8080
 
 app:
   rest:

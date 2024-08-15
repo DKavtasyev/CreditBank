@@ -2,6 +2,9 @@ package ru.neoflex.neostudy.common.constants;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Унифицированный шаблон даты и времени для записи значений в базу данных.
+ */
 @UtilityClass
 public class DateTimeFormat {
 	public static final String DATE_PATTERN = "yyyy-MM-dd";

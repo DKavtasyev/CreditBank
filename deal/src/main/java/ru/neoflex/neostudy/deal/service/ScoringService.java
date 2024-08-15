@@ -18,6 +18,9 @@ import ru.neoflex.neostudy.deal.mapper.ScoringDataMapper;
 import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 
+/**
+ * Сервис, осуществляющий работу по расчёту и окончанию оформления кредита.
+ */
 @Service
 @RequiredArgsConstructor
 public class ScoringService {

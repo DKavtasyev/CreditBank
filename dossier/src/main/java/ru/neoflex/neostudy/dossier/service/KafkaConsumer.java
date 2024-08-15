@@ -12,6 +12,7 @@ import ru.neoflex.neostudy.common.exception.UserDocumentException;
 import ru.neoflex.neostudy.dossier.requester.DealRequester;
 import ru.neoflex.neostudy.dossier.service.mail.MailService;
 
+
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumer {

@@ -2,6 +2,9 @@ package ru.neoflex.neostudy.common.constants;
 
 import lombok.Getter;
 
+/**
+ * Пол клиента.
+ */
 @Getter
 public enum Gender {
 	MALE("мужской"),

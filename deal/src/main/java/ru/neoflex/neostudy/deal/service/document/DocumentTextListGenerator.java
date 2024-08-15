@@ -13,6 +13,9 @@ import ru.neoflex.neostudy.deal.util.DateFormatter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Сервис осуществляет генерирование текста пользовательских документов по кредиту.
+ */
 @Service
 @RequiredArgsConstructor
 public class DocumentTextListGenerator implements DocumentTextGenerator {

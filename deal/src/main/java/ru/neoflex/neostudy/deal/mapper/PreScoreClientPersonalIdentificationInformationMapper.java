@@ -7,6 +7,10 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 
 import java.util.UUID;
 
+/**
+ * Класс, использующийся для маппинга объектов DTO и entity пользовательских данных для создания заявки и
+ * предварительного расчёта кредита.
+ */
 @Component
 public class PreScoreClientPersonalIdentificationInformationMapper implements Mapper<Client, LoanStatementRequestDto> {
 	

@@ -3,6 +3,9 @@ package ru.neoflex.neostudy.common.constants;
 import lombok.Getter;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Значения тем, по которым необходимо направить письмо на почту Клиенту.
+ */
 public enum Theme {
 	FINISH_REGISTRATION(new FinishRegistrationTopic()),
 	CREATE_DOCUMENTS(new CreateDocumentsTopic()),

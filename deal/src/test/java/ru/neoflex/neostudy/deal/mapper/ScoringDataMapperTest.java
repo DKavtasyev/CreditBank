@@ -33,7 +33,7 @@ class ScoringDataMapperTest {
 			EmploymentDto actualEmployment = actualScoringDataDto.getEmployment();
 			EmploymentDto expectedEmploymentDto = finishingRegistrationRequestDto.getEmployment();
 			assertAll(() -> {
-				assertThat(actualScoringDataDto.getAmount().compareTo(expectedLoanOfferDto.getRequestedAmount())).isZero();
+				assertThat(actualScoringDataDto.getAmount()).isEqualByComparingTo(expectedLoanOfferDto.getRequestedAmount());
 				assertThat(actualScoringDataDto.getTerm()).isEqualTo(expectedLoanOfferDto.getTerm());
 				assertThat(actualScoringDataDto.getFirstName()).isEqualTo(expectedClient.getFirstName());
 				assertThat(actualScoringDataDto.getLastName()).isEqualTo(expectedClient.getLastName());
@@ -48,7 +48,7 @@ class ScoringDataMapperTest {
 				assertThat(actualScoringDataDto.getDependentAmount()).isEqualTo(finishingRegistrationRequestDto.getDependentAmount());
 				assertThat(actualEmployment.getEmploymentStatus()).isEqualTo(expectedEmploymentDto.getEmploymentStatus());
 				assertThat(actualEmployment.getEmploymentINN()).isEqualTo(expectedEmploymentDto.getEmploymentINN());
-				assertThat(actualEmployment.getSalary().compareTo(expectedEmploymentDto.getSalary())).isZero();
+				assertThat(actualEmployment.getSalary()).isEqualByComparingTo(expectedEmploymentDto.getSalary());
 				assertThat(actualEmployment.getPosition()).isEqualTo(expectedEmploymentDto.getPosition());
 				assertThat(actualEmployment.getWorkExperienceTotal()).isEqualTo(expectedEmploymentDto.getWorkExperienceTotal());
 				assertThat(actualEmployment.getWorkExperienceCurrent()).isEqualTo(expectedEmploymentDto.getWorkExperienceCurrent());

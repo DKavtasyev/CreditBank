@@ -20,6 +20,9 @@ import java.util.UUID;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Сервис верхнего уровня, осуществляющий маршрутизацию запросов к микросервисам.
+ */
 @Service
 @RequiredArgsConstructor
 public class RequestService {
@@ -51,7 +54,7 @@ public class RequestService {
 	
 	/**
 	 * Перенаправляет запрос с пользовательскими данными {@code LoanStatementRequestDto} в микросервис statement.
-	 * Возвращает List, полученный в ответе от МС statement, содержащий четыре кредитных предложения.
+	 * Возвращает List, полученный в теле ответа от МС statement, содержащий четыре кредитных предложения.
 	 * @param loanStatementRequest данные запроса кредита от пользователя.
 	 * @return список доступных предложений кредита.
 	 * @throws InvalidUserDataException если данные из пользовательского запроса кредита не прошли прескоринг или

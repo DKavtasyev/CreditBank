@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 /**
  * Утилитный класс для преобразования формата даты.
  */
-@SuppressWarnings("SpellCheckingInspection") // Подавляет замечание по написанию слова "утилитный".
 @Service
 public class DateFormatter {
 	

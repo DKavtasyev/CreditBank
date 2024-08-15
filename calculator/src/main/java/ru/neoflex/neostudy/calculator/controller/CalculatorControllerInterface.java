@@ -20,8 +20,7 @@ import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import java.util.List;
 
 @RequestMapping(path = "${app.rest.prefix}")
-@Tag(
-		name = "Калькулятор",
+@Tag(name = "Калькулятор",
 		description = "Предварительный и основной расчёт кредита")
 public interface CalculatorControllerInterface {
 	

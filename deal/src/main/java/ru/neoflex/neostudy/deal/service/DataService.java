@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Сервис уровня business services, реализующий общую работу с широким диапазоном данных по кредиту.
+ */
 @Service
 @RequiredArgsConstructor
 public class DataService {

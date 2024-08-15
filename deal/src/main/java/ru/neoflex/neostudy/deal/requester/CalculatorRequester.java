@@ -20,6 +20,9 @@ import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Сервис для формирования и отправки запросов в МС Calculator.
+ */
 @Service
 @RequiredArgsConstructor
 public class CalculatorRequester {

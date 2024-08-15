@@ -34,8 +34,8 @@ public interface DocumentsControllerInterface {
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> sendDocuments(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException;
 	
 	@PostMapping("/{statementId}/sign")
 	@Operation(
@@ -50,8 +50,8 @@ public interface DocumentsControllerInterface {
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> signDocuments(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, SignatureVerificationFailedException, DocumentSignatureException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, SignatureVerificationFailedException, DocumentSignatureException;
 	
 	@PostMapping("/{statementId}/code")
 	@Operation(
@@ -71,7 +71,7 @@ public interface DocumentsControllerInterface {
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> verifySesCode(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId,
-											  @RequestParam(value = "code") String signature) throws StatementNotFoundException, SignatureVerificationFailedException, InternalMicroserviceException, DocumentSignatureException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId,
+									   @RequestParam(value = "code", required = false) String signature) throws StatementNotFoundException, SignatureVerificationFailedException, InternalMicroserviceException, DocumentSignatureException;
 }

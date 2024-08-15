@@ -90,7 +90,7 @@ public class LoggingAspect {
 				}
 			}
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			log.error("Logging error: " + e);
 		}
 		return sb;

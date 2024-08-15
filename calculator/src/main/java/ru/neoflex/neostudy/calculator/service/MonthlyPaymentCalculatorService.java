@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Сервис для вычисления суммы ежемесячного аннуитетного платежа по кредиту.
+ */
 @Service
 public class MonthlyPaymentCalculatorService {
 	

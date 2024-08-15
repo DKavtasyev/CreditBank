@@ -17,8 +17,8 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(SignatureVerificationFailedException.class)
 	private ResponseEntity<ExceptionDetails> handleDocumentSigningException(SignatureVerificationFailedException e, WebRequest request) {
-		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exceptionDetails);
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetails);
 	}
 	
 	@ExceptionHandler(StatementNotFoundException.class)

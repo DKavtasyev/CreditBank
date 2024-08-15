@@ -9,6 +9,9 @@ import ru.neoflex.neostudy.deal.entity.Client;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Интерфейс для работы с сущностью Client с использованием Java Persistence API.
+ */
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
 	/**

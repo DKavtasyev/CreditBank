@@ -2,6 +2,9 @@ package ru.neoflex.neostudy.common.constants;
 
 import lombok.Getter;
 
+/**
+ * Значения семейного положения клиента.
+ */
 @Getter
 public enum MaritalStatus {
 	MARRIED("женат/замужем"),

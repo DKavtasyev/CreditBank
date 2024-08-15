@@ -6,6 +6,9 @@ import ru.neoflex.neostudy.deal.entity.Credit;
 
 import java.util.UUID;
 
+/**
+ * Класс, использующийся для маппинга объектов DTO и entity кредита.
+ */
 @Component
 public class CreditMapper implements Mapper<Credit, CreditDto> {
 	

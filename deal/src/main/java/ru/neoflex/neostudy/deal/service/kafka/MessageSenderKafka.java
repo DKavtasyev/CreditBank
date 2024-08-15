@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 
+/**
+ * Сервис уровня business objects для отправки сообщений по MQ Kafka.
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

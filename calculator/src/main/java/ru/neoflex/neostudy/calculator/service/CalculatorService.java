@@ -13,7 +13,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Главный сервис калькулятора для предварительного расчёта кредита и расчёта графиков платежей по кредиту.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class CalculatorService {
 	
 	/**
 	 * Возвращает кредитное предложение, рассчитанное в соответствии параметрами метода, базовой процентной ставкой.
-	 * Осуществляет корректировку процентной ставки в соотвествии с кредитными опциями {@code isInsuranceEnabled},
+	 * Осуществляет корректировку процентной ставки в соответствии с кредитными опциями {@code isInsuranceEnabled},
 	 * {@code isSalaryClient}, которые представляют собой значения {@code boolean}. Если параметр {@code isInsuranceEnabled}
 	 * активен, тогда к общей сумме кредита {@code amount} добавляется страховка, составляющая определённый процент от
 	 * кредита. Процент задаётся в виде множителя в параметре {@code INSURANCE_PERCENT} и равен количеству сотых
@@ -65,7 +67,7 @@ public class CalculatorService {
 	 * Далее высчитывается ежемесячный платёж и формируется и возвращается кредитное предложение.
 	 * @param loanStatementRequest данные запроса кредита от пользователя.
 	 * @param isInsuranceEnabled параметр страховки кредита.
-	 * @param isSalaryClient параметр запрлатный кредит.
+	 * @param isSalaryClient параметр зарплатный клиент.
 	 * @return кредитное предложение типа {@code LoanOfferDto}
 	 */
 	private LoanOfferDto generateOffer(LoanStatementRequestDto loanStatementRequest, boolean isInsuranceEnabled, boolean isSalaryClient) {

@@ -20,6 +20,9 @@ import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import java.net.URI;
 import java.util.UUID;
 
+/**
+ * Сервис, осуществляющий запросы к МС Deal.
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2

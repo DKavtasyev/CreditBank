@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Пользовательсткие данные для расчёта кредита")
+@Schema(description = "Пользовательские данные для расчёта кредита")
 public class ScoringDataDto {
 	@NotNull
 	@DecimalMin(value = "30000")

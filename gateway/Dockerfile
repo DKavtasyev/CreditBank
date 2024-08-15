@@ -45,6 +45,6 @@ COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"
 
 WORKDIR /app
 COPY --from=maven_builder /build/gateway/target/gateway-0.0.1-SNAPSHOT.jar /app/
-EXPOSE 8085
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "gateway-0.0.1-SNAPSHOT.jar"]
 

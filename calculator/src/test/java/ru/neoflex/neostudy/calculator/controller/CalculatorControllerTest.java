@@ -204,7 +204,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfBirthdate {
 				@ParameterizedTest
 				@MethodSource("invalidArgsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenBirthdateIsInvalid_thenReturns400(LocalDate date) throws Exception {
+				void calculationOfPossibleLoanTerms_whenBirthdateIsInvalid_thenReturns500(LocalDate date) throws Exception {
 					loanStatementRequest.setBirthDate(date);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -236,7 +236,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfPassportSeries {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenPassportSeriesIsInvalid_thenReturns400(String argument) throws Exception {
+				void calculationOfPossibleLoanTerms_whenPassportSeriesIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportSeries(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -254,7 +254,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfPassportNumber {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns400(String argument) throws Exception {
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportNumber(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
