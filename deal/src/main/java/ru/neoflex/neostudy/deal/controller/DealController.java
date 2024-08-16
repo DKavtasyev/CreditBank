@@ -50,9 +50,6 @@ public class DealController implements DealControllerInterface {
 	
 	@Override
 	public ResponseEntity<Void> calculateCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId, BindingResult bindingResult) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
-		if (bindingResult.hasErrors()) {
-			throw new InternalMicroserviceException("MS deal: invalid input parameters of FinishingRegistrationRequestDto");
-		}
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
 		kafkaService.sendCreatingDocumentsRequest(statement);

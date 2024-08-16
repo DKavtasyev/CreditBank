@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import ru.neoflex.neostudy.common.exception.*;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 
 import java.net.URI;
 import java.util.Objects;

@@ -2,10 +2,12 @@ package ru.neoflex.neostudy.deal.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import ru.neoflex.neostudy.common.exception.*;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -45,10 +47,17 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED).body(exceptionDetails);
 	}
 	
-	
 	@ExceptionHandler(InternalMicroserviceException.class)
 	private ResponseEntity<ExceptionDetails> handleLoanRefusalException(InternalMicroserviceException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage() + ": " + e.getCause(), request.getDescription(true));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionDetails);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	private ResponseEntity<?> handleInvalidFinishingRegistrationRequestParametersException(WebRequest request)
+	{
+		String message = "MS deal: invalid input parameters of FinishingRegistrationRequestDto";
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, request.getDescription(false));
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionDetails);
 	}
 }

@@ -13,7 +13,7 @@ import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
-import ru.neoflex.neostudy.common.exception.ExceptionDetails;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 

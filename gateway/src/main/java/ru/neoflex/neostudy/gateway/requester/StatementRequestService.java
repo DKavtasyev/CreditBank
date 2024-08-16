@@ -12,6 +12,7 @@ import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.exception.*;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 
 import java.net.URI;
 import java.util.ArrayList;

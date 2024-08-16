@@ -13,7 +13,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
-import ru.neoflex.neostudy.common.exception.ExceptionDetails;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 

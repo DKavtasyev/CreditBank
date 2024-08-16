@@ -1,4 +1,4 @@
-package ru.neoflex.neostudy.common.exception;
+package ru.neoflex.neostudy.common.exception.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

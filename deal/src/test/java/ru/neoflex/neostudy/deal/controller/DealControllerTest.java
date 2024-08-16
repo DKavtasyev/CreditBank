@@ -10,17 +10,18 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
-import ru.neoflex.neostudy.common.exception.LoanRefusalException;
+import ru.neoflex.neostudy.common.exception.*;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
-import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.service.DataService;
 import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 import ru.neoflex.neostudy.deal.service.PreScoringService;
@@ -75,7 +76,7 @@ public class DealControllerTest {
 		@DisplayName("Тестирование прослушивания HTTP запросов")
 		class TestingListeningHttpRequests {
 			@Test
-			void getLoanOffers_whenValidInput_returns200() throws Exception {
+			void createStatement_whenValidInput_returns200() throws Exception {
 				mockMvc.perform(post("/deal/statement")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -83,7 +84,7 @@ public class DealControllerTest {
 			}
 			
 			@Test
-			void getLoanOffers_whenNotAllowedMethod_returns405() throws Exception {
+			void createStatement_whenNotAllowedMethod_returns405() throws Exception {
 				mockMvc.perform(get("/deal/statement")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -98,7 +99,7 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля amount")
 			class TestingValidationOfAmount {
 				@Test
-				void getLoanOffers_whenAmountIsNull_thenReturns500() throws Exception {
+				void createStatement_whenAmountIsNull_thenReturns500() throws Exception {
 					loanStatementRequest.setAmount(null);
 					
 					mockMvc.perform(post("/deal/statement")
@@ -108,7 +109,7 @@ public class DealControllerTest {
 				}
 				
 				@Test
-				void getLoanOffers_whenAmountLess30000_thenReturns500() throws Exception {
+				void createStatement_whenAmountLess30000_thenReturns500() throws Exception {
 					loanStatementRequest.setAmount(BigDecimal.valueOf(29_999));
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -121,7 +122,7 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля term")
 			class TestingValidationOfTerm {
 				@Test
-				void getLoanOffers_whenTermIsNull_thenReturns500() throws Exception {
+				void createStatement_whenTermIsNull_thenReturns500() throws Exception {
 					loanStatementRequest.setTerm(null);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -130,7 +131,7 @@ public class DealControllerTest {
 				}
 				
 				@Test
-				void getLoanOffers_whenTermLess6_thenReturns500() throws Exception {
+				void createStatement_whenTermLess6_thenReturns500() throws Exception {
 					loanStatementRequest.setTerm(5);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -144,7 +145,7 @@ public class DealControllerTest {
 			class TestingValidationOfFirstName {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void getLoanOffers_whenFirstNameIsInvalid_thenReturns500(String firstName) throws Exception {
+				void createStatement_whenFirstNameIsInvalid_thenReturns500(String firstName) throws Exception {
 					loanStatementRequest.setFirstName(firstName);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -162,7 +163,7 @@ public class DealControllerTest {
 			class TestingValidationOfLastName {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void getLoanOffers_whenLastNameIsInvalid_thenReturns500(String lastName) throws Exception {
+				void createStatement_whenLastNameIsInvalid_thenReturns500(String lastName) throws Exception {
 					loanStatementRequest.setLastName(lastName);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -179,7 +180,7 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля middleName")
 			class TestingValidationOfMiddleName {
 				@Test
-				void getLoanOffers_whenMiddleNameLessTwo_thenReturns500() throws Exception {
+				void createStatement_whenMiddleNameLessTwo_thenReturns500() throws Exception {
 					loanStatementRequest.setMiddleName("A");
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -188,7 +189,7 @@ public class DealControllerTest {
 				}
 				
 				@Test
-				void getLoanOffers_whenMiddleNameMoreThirty_thenReturns500() throws Exception {
+				void createStatement_whenMiddleNameMoreThirty_thenReturns500() throws Exception {
 					loanStatementRequest.setMiddleName("1234567890123456789012345678901");
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -202,7 +203,7 @@ public class DealControllerTest {
 			class TestingValidationOfEmail {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void getLoanOffers_whenEmailIsInvalid_thenReturns500(String argument) throws Exception {
+				void createStatement_whenEmailIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setEmail(argument);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -220,7 +221,7 @@ public class DealControllerTest {
 			class TestingValidationOfBirthdate {
 				@ParameterizedTest
 				@MethodSource("invalidArgsProvidedFactory")
-				void getLoanOffers_whenBirthdateIsInvalidOrInappropriate_thenReturns500(LocalDate argument) throws Exception {
+				void createStatement_whenBirthdateIsInvalidOrInappropriate_thenReturns500(LocalDate argument) throws Exception {
 					loanStatementRequest.setBirthDate(argument);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -234,7 +235,7 @@ public class DealControllerTest {
 				
 				@ParameterizedTest
 				@MethodSource("validArgsProvidedFactory")
-				void getLoanOffers_whenAgeIsIsEqualsOrMoreThanEighteen_thenReturns200(LocalDate argument) throws Exception {
+				void createStatement_whenAgeIsIsEqualsOrMoreThanEighteen_thenReturns200(LocalDate argument) throws Exception {
 					loanStatementRequest.setBirthDate(argument);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -253,7 +254,7 @@ public class DealControllerTest {
 				
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void getLoanOffers_whenPassportSeriesIsInvalid_thenReturns500(String argument) throws Exception {
+				void createStatement_whenPassportSeriesIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportSeries(argument);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -272,7 +273,7 @@ public class DealControllerTest {
 				
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void getLoanOffers_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
+				void createStatement_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportNumber(argument);
 					mockMvc.perform(post("/deal/statement")
 									.contentType("application/json")
@@ -300,6 +301,7 @@ public class DealControllerTest {
 				assertAll(() -> {
 					verify(dataService, times(1)).prepareData(loanStatementRequestDtoCaptor.capture());
 					verify(preScoringService, times(1)).getOffers(loanStatementRequestDtoCaptor.capture(), statementCaptor.capture());
+					verify(dataService, times(1)).updateStatement(statementCaptor.capture(), any(ApplicationStatus.class), any(ChangeType.class));
 					assertThat(loanStatementRequestDtoCaptor.getValue().getAmount()).isEqualByComparingTo(loanStatementRequest.getAmount());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getTerm()).isEqualTo(loanStatementRequest.getTerm());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getFirstName()).isEqualTo(loanStatementRequest.getFirstName());
@@ -317,7 +319,7 @@ public class DealControllerTest {
 		@DisplayName("Тестирование сериализации посчитанных предложений")
 		class TestingSerializationOfLoanOfferDtoList {
 			@Test
-			void getLoanOffers_whenValidInput_thenMapsToBusinessModel() throws Exception {
+			void createStatement_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				List<LoanOfferDto> offers = DtoInitializer.initOffers();
 				Statement statement = new Statement();
 				when(dataService.prepareData(any(LoanStatementRequestDto.class))).thenReturn(statement);
@@ -335,12 +337,22 @@ public class DealControllerTest {
 		@DisplayName("Тестирование обработки исключений")
 		class TestingExceptions {
 			@Test
-			void getLoanOffers_whenPassportDataIsInvalid_thenReturn400() throws Exception {
+			void createStatement_whenPassportDataIsInvalid_thenReturn400() throws Exception {
 				doThrow(InvalidPassportDataException.class).when(dataService).prepareData(any(LoanStatementRequestDto.class));
 				mockMvc.perform(post("/deal/statement")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
 						.andExpect(status().isBadRequest());
+			}
+			
+			@Test
+			void createStatement_whenRequestSendingError_thenReturn500() throws Exception {
+				when(dataService.prepareData(any(LoanStatementRequestDto.class))).thenReturn(new Statement());
+				doThrow(InternalMicroserviceException.class).when(preScoringService).getOffers(any(LoanStatementRequestDto.class), any(Statement.class));
+				mockMvc.perform(post("/deal/statement")
+								.contentType(MediaType.APPLICATION_JSON_VALUE)
+								.content(objectMapper.writeValueAsString(loanStatementRequest)))
+						.andExpect(status().isInternalServerError());
 			}
 		}
 	}
@@ -409,23 +421,35 @@ public class DealControllerTest {
 								.content(objectMapper.writeValueAsString(loanOfferDto)))
 						.andExpect(status().isNotFound());
 			}
+			
+			@Test
+			void applyOffer_whenMessageSendingError_thenThrowInternalMicroserviceException() throws Exception {
+				doThrow(InternalMicroserviceException.class).when(kafkaService).sendFinishRegistrationRequest(loanOfferDto.getStatementId());
+				mockMvc.perform(post("/deal/offer/select")
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(loanOfferDto)))
+						.andExpect(status().isInternalServerError());
+			}
 		}
 	}
 	
 	@Nested
 	@DisplayName("Тестирование метода DealController:calculateCredit()")
 	class TestingCalculateCreditMethod {
+		
+		UUID statementId;
+		
 		@BeforeEach
 		void initFinishingRegistrationRequest() {
 			finishingRegistrationRequest = DtoInitializer.initFinishingRegistrationRequest();
+			statementId = UUID.randomUUID();
 		}
 		
 		@Nested
 		@DisplayName("Тестирование прослушивания HTTP запросов")
 		class TestingListeningHttpRequests {
 			@Test
-			void calculateLoanParameters_whenValidInput_returns200() throws Exception {
-				UUID statementId = UUID.randomUUID();
+			void calculateCredit_whenValidInput_returns200() throws Exception {
 				mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -433,8 +457,7 @@ public class DealControllerTest {
 			}
 			
 			@Test
-			void calculateLoanParameters_whenNotAllowedMethod_returns405() throws Exception {
-				UUID statementId = UUID.randomUUID();
+			void calculateCredit_whenNotAllowedMethod_returns405() throws Exception {
 				mockMvc.perform(get("/deal/calculate/{statementId}", statementId)
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequest)))
@@ -449,10 +472,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля gender")
 			class TestingValidationOfGender {
 				@Test
-				void calculateLoanParameters_whenGenderIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenGenderIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setGender(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId.toString())
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -464,10 +486,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля maritalStatus")
 			class TestingValidationOfMaritalStatus {
 				@Test
-				void calculateLoanParameters_whenMaritalStatusIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenMaritalStatusIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setMaritalStatus(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -479,10 +500,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля dependentAmount")
 			class TestingValidationOfDependentAmount {
 				@Test
-				void calculateLoanParameters_whenDependentAmountIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenDependentAmountIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setDependentAmount(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -490,10 +510,9 @@ public class DealControllerTest {
 				}
 				
 				@Test
-				void calculateLoanParameters_whenDependentAmountIsNegative_thenReturns500() throws Exception {
+				void calculateCredit_whenDependentAmountIsNegative_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setDependentAmount(-5);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -505,10 +524,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля passportIssueDate")
 			class TestingValidationOfPassportIssueDate {
 				@Test
-				void calculateLoanParameters_whenPassportIssueDateIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenPassportIssueDateIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setPassportIssueDate(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -520,10 +538,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля passportIssueBranch")
 			class TestingValidationOfPassportIssueBranch {
 				@Test
-				void calculateLoanParameters_whenPassportIssueBranchIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenPassportIssueBranchIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setPassportIssueBranch(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -535,10 +552,9 @@ public class DealControllerTest {
 			@DisplayName("Тестирование валидации поля employment")
 			class TestingValidationOfEmployment {
 				@Test
-				void calculateLoanParameters_whenEmploymentIsNull_thenReturns500() throws Exception {
+				void calculateCredit_whenEmploymentIsNull_thenReturns500() throws Exception {
 					finishingRegistrationRequest.setEmployment(null);
 					
-					UUID statementId = UUID.randomUUID();
 					mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -549,10 +565,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля employmentStatus")
 				class TestingValidationOfEmploymentStatus {
 					@Test
-					void calculateLoanParameters_whenEmploymentStatusIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenEmploymentStatusIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setEmploymentStatus(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -564,10 +579,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля employmentINN")
 				class TestingValidationOfEmploymentINN {
 					@Test
-					void calculateLoanParameters_whenEmploymentInnIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenEmploymentInnIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setEmploymentINN(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -576,10 +590,9 @@ public class DealControllerTest {
 					
 					@ParameterizedTest
 					@ValueSource(strings = {"wrong", "   ", "12345678901", "1234567890123", "123412341234a", " 123412341234", "123412341234!"})
-					void calculateLoanParameters_whenEmploymentInnIsInvalid_thenReturns500(String employmentINN) throws Exception {
+					void calculateCredit_whenEmploymentInnIsInvalid_thenReturns500(String employmentINN) throws Exception {
 						finishingRegistrationRequest.getEmployment().setEmploymentINN(employmentINN);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -591,10 +604,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля salary")
 				class TestingValidationOfSalary {
 					@Test
-					void calculateLoanParameters_whenSalaryIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenSalaryIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setSalary(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -602,10 +614,9 @@ public class DealControllerTest {
 					}
 					
 					@Test
-					void calculateLoanParameters_whenSalaryIsNegative_thenReturns500() throws Exception {
+					void calculateCredit_whenSalaryIsNegative_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setSalary(new BigDecimal(-5));
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -617,10 +628,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля position")
 				class TestingValidationOfPosition {
 					@Test
-					void calculateLoanParameters_whenPositionIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenPositionIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setPosition(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -632,10 +642,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля workExperienceTotal")
 				class TestingValidationOfWorkExperienceTotal {
 					@Test
-					void calculateLoanParameters_whenWorkExperienceTotalIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenWorkExperienceTotalIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setWorkExperienceTotal(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -643,10 +652,9 @@ public class DealControllerTest {
 					}
 					
 					@Test
-					void calculateLoanParameters_whenWorkExperienceTotalIsNegative_thenReturns500() throws Exception {
+					void calculateCredit_whenWorkExperienceTotalIsNegative_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setWorkExperienceTotal(-5);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -658,10 +666,9 @@ public class DealControllerTest {
 				@DisplayName("Тестирование валидации поля workExperienceCurrent")
 				class TestingValidationOfWorkExperienceCurrent {
 					@Test
-					void calculateLoanParameters_whenWorkExperienceCurrentIsNull_thenReturns500() throws Exception {
+					void calculateCredit_whenWorkExperienceCurrentIsNull_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setWorkExperienceCurrent(null);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -669,10 +676,9 @@ public class DealControllerTest {
 					}
 					
 					@Test
-					void calculateLoanParameters_whenWorkExperienceCurrentIsNegative_thenReturns500() throws Exception {
+					void calculateCredit_whenWorkExperienceCurrentIsNegative_thenReturns500() throws Exception {
 						finishingRegistrationRequest.getEmployment().setWorkExperienceCurrent(-5);
 						
-						UUID statementId = UUID.randomUUID();
 						mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 										.contentType("application/json")
 										.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
@@ -688,8 +694,7 @@ public class DealControllerTest {
 		@DisplayName("Тестирование десериализации входных данных и вызова методов сервисов")
 		class TestingDeserialization {
 			@Test
-			void getLoanOffers_whenValidInput_thenMapsToBusinessModel() throws Exception {
-				UUID statementId = UUID.randomUUID();
+			void createStatement_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				Statement statement = new Statement();
 				statement.setStatementId(statementId);
 				
@@ -725,9 +730,9 @@ public class DealControllerTest {
 		@Nested
 		@DisplayName("Тестирование обработки исключений")
 		class TestingExceptions {
+			
 			@Test
-			void calculateLoanParameters_whenStatementNotFound_thenReturn404() throws Exception {
-				UUID statementId = UUID.randomUUID();
+			void calculateCredit_whenStatementNotFound_thenReturn404() throws Exception {
 				doThrow(StatementNotFoundException.class).when(dataService).findStatement(statementId);
 				mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
 								.contentType("application/json")
@@ -736,8 +741,7 @@ public class DealControllerTest {
 			}
 			
 			@Test
-			void calculateLoanParameters_whenLoanRefused_thenReturn406() throws Exception {
-				UUID statementId = UUID.randomUUID();
+			void calculateCredit_whenLoanRefused_thenReturn406() throws Exception {
 				Statement statement = new Statement();
 				statement.setStatementId(statementId);
 				when(dataService.findStatement(statementId)).thenReturn(statement);
@@ -746,6 +750,92 @@ public class DealControllerTest {
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
 						.andExpect(status().isNotAcceptable());
+			}
+			
+			@Test
+			void calculateCredit_whenPreApprovalHasNotExecuted_thenReturn428() throws Exception {
+				Statement statement = new Statement();
+				statement.setStatementId(statementId);
+				when(dataService.findStatement(statementId)).thenReturn(statement);
+				doThrow(InvalidPreApproveException.class).when(scoringService).scoreAndSaveCredit(any(FinishingRegistrationRequestDto.class), any(Statement.class));
+				mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
+						.andExpect(status().isPreconditionRequired());
+			}
+			
+			@Test
+			void calculateCredit_whenConnectionErrorToMSCalculator_thenReturn500() throws Exception {
+				Statement statement = new Statement();
+				statement.setStatementId(statementId);
+				when(dataService.findStatement(statementId)).thenReturn(statement);
+				doThrow(InternalMicroserviceException.class).when(scoringService).scoreAndSaveCredit(any(FinishingRegistrationRequestDto.class), any(Statement.class));
+				mockMvc.perform(post("/deal/calculate/{statementId}", statementId)
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(finishingRegistrationRequest)))
+						.andExpect(status().isInternalServerError());
+			}
+		}
+	}
+	
+	@Nested
+	@DisplayName("Тестирование метода DealController:denyOffer()")
+	class TestingDenyOfferMethod {
+		UUID statementId;
+		
+		@BeforeEach
+		void init() {
+			statementId = UUID.randomUUID();
+		}
+		
+		
+		@Nested
+		@DisplayName("Тестирование прослушивания HTTP запросов")
+		class TestingListeningHttpRequests {
+			@Test
+			void denyOffer_whenValidInput_returns200() throws Exception {
+				mockMvc.perform(get("/deal/offer/deny/{statementId}", statementId)).andExpect(status().isOk());
+			}
+			
+			@Test
+			void denyOffer_whenNotAllowedMethod_returns405() throws Exception {
+				mockMvc.perform(post("/deal/offer/deny/{statementId}", statementId)).andExpect(status().isMethodNotAllowed());
+			}
+		}
+		
+		@Nested
+		@DisplayName("Тестирование десериализации входных данных и вызова методов сервисов")
+		class TestingDeserialization {
+			@Test
+			void denyOffer_whenValidInput_thenMapsToBusinessModel() throws Exception {
+				mockMvc.perform(get("/deal/offer/deny/{statementId}", statementId));
+				
+				ArgumentCaptor<UUID> statementIdCaptor = ArgumentCaptor.forClass(UUID.class);
+				ArgumentCaptor<Statement> statementCaptor = ArgumentCaptor.forClass(Statement.class);
+				ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+				assertAll(() -> {
+					verify(dataService, times(1)).denyOffer(statementIdCaptor.capture());
+					verify(kafkaService, times(1)).sendDenial(statementCaptor.capture(), messageCaptor.capture());
+				});
+			}
+		}
+		
+		@Nested
+		@DisplayName("Тестирование обработки исключений")
+		class TestingExceptions {
+			@Test
+			void createStatement_whenPassportDataIsInvalid_thenReturn400() throws Exception {
+				doThrow(StatementNotFoundException.class).when(dataService).denyOffer(statementId);
+				mockMvc.perform(get("/deal/offer/deny/{statementId}", statementId))
+						.andExpect(status().isNotFound());
+			}
+			
+			@Test
+			void createStatement_whenRequestSendingError_thenReturn500() throws Exception {
+				when(dataService.denyOffer(statementId)).thenReturn(new Statement());
+				doThrow(InternalMicroserviceException.class).when(kafkaService).sendDenial(any(Statement.class), anyString());
+				mockMvc.perform(get("/deal/offer/deny/{statementId}", statementId))
+						.andExpect(status().isInternalServerError());
 			}
 		}
 	}
