@@ -27,7 +27,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTE
 @Getter
 @ToString
 @Table(schema = "public", name = "statement")
-@Accessors(chain = true)
+@Accessors(chain = true)	// todo добавить билдер
 public class Statement {
 	@Id
 	@Column(name = "statement_id", nullable = false)

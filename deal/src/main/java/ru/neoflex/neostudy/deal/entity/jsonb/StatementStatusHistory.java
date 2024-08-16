@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTERN;
 
 @Data
-@Accessors(chain = true)
+@Accessors(chain = true) // todo добавить билдер
 public class StatementStatusHistory implements Serializable {
 	private ApplicationStatus status;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATETIME_PATTERN)

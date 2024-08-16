@@ -13,7 +13,7 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 import java.util.UUID;
 
 /**
- * Класс, использующийся для сбора данных и создания объекта с данными от клиента для оформления кредита.
+ * Класс, использующийся для сбора данных и создания объекта DTO с данными от клиента для оформления кредита.
  */
 @Component
 public class ScoringDataMapper {

@@ -329,7 +329,7 @@ public class DealControllerTest {
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(loanStatementRequest)));
 				
-				response.andExpect(responseBody().containsListAsJson(offers, LoanOfferDto.class));
+				response.andExpect(responseBody(objectMapper).containsListAsJson(offers, LoanOfferDto.class));
 			}
 		}
 		
