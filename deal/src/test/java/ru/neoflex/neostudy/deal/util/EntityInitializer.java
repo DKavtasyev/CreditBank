@@ -1,6 +1,8 @@
 package ru.neoflex.neostudy.deal.util;
 
 import lombok.experimental.UtilityClass;
+import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.constants.Gender;
 import ru.neoflex.neostudy.common.constants.MaritalStatus;
 import ru.neoflex.neostudy.common.dto.CreditDto;
@@ -12,9 +14,11 @@ import ru.neoflex.neostudy.deal.entity.Credit;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.entity.jsonb.Employment;
 import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
+import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.UUID;
 
 @UtilityClass
@@ -77,5 +81,32 @@ public class EntityInitializer {
 				.setCredit(initCredit())
 				.setCreationDate(LocalDateTime.now())
 				.setAppliedOffer(DtoInitializer.initLoanOfferDto());
+	}
+	
+	public static Statement initFullStatement() {
+		StatementStatusHistory statementStatusHistory1 = new StatementStatusHistory()
+				.setStatus(ApplicationStatus.PREPARE_DOCUMENTS)
+				.setTime(LocalDateTime.now())
+				.setChangeType(ChangeType.AUTOMATIC);
+		StatementStatusHistory statementStatusHistory2 = new StatementStatusHistory()
+				.setStatus(ApplicationStatus.APPROVED)
+				.setTime(LocalDateTime.now())
+				.setChangeType(ChangeType.MANUAL);
+		
+		LinkedList<StatementStatusHistory> statusHistories = new LinkedList<>();
+		statusHistories.add(statementStatusHistory1);
+		statusHistories.add(statementStatusHistory2);
+		
+		return new Statement()
+				.setClient(initClient())
+				.setCredit(initCredit())
+				.setCreationDate(LocalDateTime.now())
+				.setAppliedOffer(DtoInitializer.initLoanOfferDto())
+				.setStatus(ApplicationStatus.DOCUMENT_CREATED)
+				.setCreationDate(LocalDateTime.now())
+				.setSignDate(LocalDateTime.now())
+				.setSessionCode(UUID.randomUUID().toString())
+				.setStatementStatusHistory(statusHistories)
+				.setPdfFile("Test bytes for testing statement".getBytes());
 	}
 }

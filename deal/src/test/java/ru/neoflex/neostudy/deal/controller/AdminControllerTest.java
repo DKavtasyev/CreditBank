@@ -15,20 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
-import ru.neoflex.neostudy.common.dto.CreditDto;
-import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
-import ru.neoflex.neostudy.common.dto.LoanOfferDto;
-import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
-import ru.neoflex.neostudy.common.util.DtoInitializer;
-import ru.neoflex.neostudy.deal.entity.Client;
-import ru.neoflex.neostudy.deal.entity.Credit;
 import ru.neoflex.neostudy.deal.entity.Statement;
-import ru.neoflex.neostudy.deal.entity.jsonb.StatementStatusHistory;
-import ru.neoflex.neostudy.deal.mapper.CreditMapper;
-import ru.neoflex.neostudy.deal.mapper.PreScoreClientPersonalIdentificationInformationMapper;
-import ru.neoflex.neostudy.deal.mapper.ScoringDataMapper;
 import ru.neoflex.neostudy.deal.service.DataService;
+import ru.neoflex.neostudy.deal.util.EntityInitializer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,10 +39,6 @@ class AdminControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private ObjectMapper objectMapper;
-	
-	private final CreditMapper creditMapper = new CreditMapper();
-	private final PreScoreClientPersonalIdentificationInformationMapper clientMapper = new PreScoreClientPersonalIdentificationInformationMapper();
-	private final ScoringDataMapper scoringDataMapper = new ScoringDataMapper();
 	
 	@MockBean
 	private DataService dataService;
@@ -173,39 +159,9 @@ class AdminControllerTest {
 		class TestingSerializationOfLoanOfferDtoList {
 			@Test
 			void getStatement_whenValidInput_thenMapsToBusinessModel() throws Exception {
-				CreditDto creditDto = DtoInitializer.initCreditDto();
-				Credit credit = creditMapper.dtoToEntity(creditDto);
-				LoanStatementRequestDto loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
-				Client client = clientMapper.dtoToEntity(loanStatementRequestDto);
-				LoanOfferDto loanOfferDto = DtoInitializer.initLoanOfferDto();
-				Statement statement = new Statement();
-				statement.setStatementId(statementId);
-				statement.setCredit(credit);
-				statement.setClient(client);
-				statement.setAppliedOffer(loanOfferDto);
-				FinishingRegistrationRequestDto finishingRegistrationRequestDto = DtoInitializer.initFinishingRegistrationRequest();
-				scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement);
-				statement.setStatus(ApplicationStatus.DOCUMENT_CREATED);
-				statement.setCreationDate(LocalDateTime.now());
-				statement.setSignDate(LocalDateTime.now());
-				statement.setSessionCode(UUID.randomUUID().toString());
-				StatementStatusHistory statementStatusHistory1 = new StatementStatusHistory();
-				statementStatusHistory1.setStatus(ApplicationStatus.PREPARE_DOCUMENTS);
-				statementStatusHistory1.setTime(LocalDateTime.now());
-				statementStatusHistory1.setChangeType(ChangeType.AUTOMATIC);
-				StatementStatusHistory statementStatusHistory2 = new StatementStatusHistory();
-				statementStatusHistory2.setStatus(ApplicationStatus.APPROVED);
-				statementStatusHistory2.setTime(LocalDateTime.now());
-				statementStatusHistory2.setChangeType(ChangeType.MANUAL);
-				statement.getStatementStatusHistory().add(statementStatusHistory1);
-				statement.getStatementStatusHistory().add(statementStatusHistory2);
-				byte[] pdfFile = "Test bytes for testing statement".getBytes();
-				statement.setPdfFile(pdfFile);
-				
+				Statement statement = EntityInitializer.initFullStatement();
 				when(dataService.findStatement(statementId)).thenReturn(statement);
-				
 				ResultActions response = mockMvc.perform(get("/deal/admin/statement/{statementId}", statementId));
-				
 				response.andExpect(responseBody(objectMapper).containsObjectAsJson(statement, Statement.class));
 			}
 		}
@@ -262,46 +218,16 @@ class AdminControllerTest {
 		class TestingSerializationOfLoanOfferDtoList {
 			@Test
 			void getStatement_whenValidInput_thenMapsToBusinessModel() throws Exception {
-				CreditDto creditDto = DtoInitializer.initCreditDto();
-				Credit credit = creditMapper.dtoToEntity(creditDto);
-				LoanStatementRequestDto loanStatementRequestDto = DtoInitializer.initLoanStatementRequest();
-				Client client = clientMapper.dtoToEntity(loanStatementRequestDto);
-				LoanOfferDto loanOfferDto = DtoInitializer.initLoanOfferDto();
-				Statement statement1 = new Statement();
-				statement1.setStatementId(statementId);
-				statement1.setCredit(credit);
-				statement1.setClient(client);
-				statement1.setAppliedOffer(loanOfferDto);
-				FinishingRegistrationRequestDto finishingRegistrationRequestDto = DtoInitializer.initFinishingRegistrationRequest();
-				scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement1);
-				statement1.setStatus(ApplicationStatus.DOCUMENT_CREATED);
-				statement1.setCreationDate(LocalDateTime.now());
-				statement1.setSignDate(LocalDateTime.now());
-				statement1.setSessionCode(UUID.randomUUID().toString());
-				StatementStatusHistory statementStatusHistory1 = new StatementStatusHistory();
-				statementStatusHistory1.setStatus(ApplicationStatus.PREPARE_DOCUMENTS);
-				statementStatusHistory1.setTime(LocalDateTime.now());
-				statementStatusHistory1.setChangeType(ChangeType.AUTOMATIC);
-				StatementStatusHistory statementStatusHistory2 = new StatementStatusHistory();
-				statementStatusHistory2.setStatus(ApplicationStatus.APPROVED);
-				statementStatusHistory2.setTime(LocalDateTime.now());
-				statementStatusHistory2.setChangeType(ChangeType.MANUAL);
-				statement1.getStatementStatusHistory().add(statementStatusHistory1);
-				statement1.getStatementStatusHistory().add(statementStatusHistory2);
-				byte[] pdfFile = "Test bytes for testing statement".getBytes();
-				statement1.setPdfFile(pdfFile);
 				
-				Statement statement2 = new Statement();
+				Statement statement1 = EntityInitializer.initFullStatement();
+				statement1.setStatementId(statementId);
+				
+				Statement statement2 = EntityInitializer.initFullStatement();
 				statement2.setStatementId(UUID.randomUUID());
-				statement2.setClient(client);
-				statement2.setCredit(credit);
 				statement2.setStatus(ApplicationStatus.CC_DENIED);
 				statement2.setCreationDate(LocalDateTime.now().minusDays(15));
-				statement2.setAppliedOffer(loanOfferDto);
 				statement2.setSignDate(LocalDateTime.now().minusNanos(1928735698172634L));
 				statement2.setSessionCode("81762345817623");
-				statement2.getStatementStatusHistory().add(statementStatusHistory2);
-				statement2.getStatementStatusHistory().add(statementStatusHistory1);
 				statement2.setPdfFile("This is example string text for second statement field pdfFile".getBytes());
 				
 				List<Statement> statements = new ArrayList<>();
