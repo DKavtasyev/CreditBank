@@ -1,6 +1,7 @@
 package ru.neoflex.neostudy.statement.aspect;
 
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,10 +14,12 @@ import java.util.List;
 
 @Aspect
 @Component
-@Log4j2
 public class LoggingAspect {
+	Logger log;
+	
 	@Around("ru.neoflex.neostudy.statement.aspect.Pointcuts.allControllerMethods()")
 	public Object aroundStatementControllerMethodsLoggingAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		log = LogManager.getLogger(proceedingJoinPoint.getTarget().getClass());
 		MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 		String methodName = methodSignature.getName();
 		Object[] arguments = proceedingJoinPoint.getArgs();
@@ -36,6 +39,7 @@ public class LoggingAspect {
 	
 	@Around("ru.neoflex.neostudy.statement.aspect.Pointcuts.requestLoanOffersMethod()")
 	private Object aroundRequestLoanOfferMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		log = LogManager.getLogger(proceedingJoinPoint.getTarget().getClass());
 		MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 		String methodName = methodSignature.getName();
 		
@@ -46,7 +50,8 @@ public class LoggingAspect {
 	
 	@SuppressWarnings("AroundAdviceStyleInspection")
 	@Around("ru.neoflex.neostudy.statement.aspect.Pointcuts.sendChosenOfferMethod()")
-	private void aroundSendChosenOfferMethodMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	public void aroundSendChosenOfferMethodMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		log = LogManager.getLogger(proceedingJoinPoint.getTarget().getClass());
 		MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 		String methodName = methodSignature.getName();
 		Object[] args = proceedingJoinPoint.getArgs();
@@ -56,6 +61,7 @@ public class LoggingAspect {
 	}
 	
 	private Object proceedMethod(ProceedingJoinPoint pjp, String methodName) throws Throwable {
+		log = LogManager.getLogger(pjp.getTarget().getClass());
 		Object targetMethodResult;
 		try {
 			targetMethodResult = pjp.proceed();
@@ -91,7 +97,7 @@ public class LoggingAspect {
 			}
 		}
 		catch (Exception e) {
-			log.error("Logging error: " + e);
+			log.error("Logging error: {} {}", e, e.getMessage());
 		}
 		return sb;
 	}

@@ -22,14 +22,14 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "ed67eb27-48ab-4b8a-994a-9f158d4bbebc",
-  "requestedAmount": 1000000,
-  "totalAmount": 1163679.5531268244456968,
-  "term": 24,
-  "monthlyPayment": 48486.6480469510185707,
-  "rate": 0.15,
+  "statementId": "67dc30ab-abab-49a7-84f6-1fb5f3370ca6",
+  "requestedAmount": 100000,
+  "totalAmount": 108877.08,
+  "term": 12,
+  "monthlyPayment": 9073.09,
+  "rate": 16,
   "isInsuranceEnabled": false,
-  "isSalaryClient": true
+  "isSalaryClient": false
 }
 
 ### Finish registration
