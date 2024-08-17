@@ -31,7 +31,12 @@ public class DealRequestService {
 	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto) throws InvalidPassportDataException, InternalMicroserviceException {
 		ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
 		List<LoanOfferDto> offers = new ArrayList<>();
-		offers = getLoanOffers(loanStatementRequestDto, responseType, offers);
+		try {
+			offers = getLoanOffers(loanStatementRequestDto, responseType, offers);
+		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
+		}
 		return offers;
 	}
 	
@@ -51,14 +56,21 @@ public class DealRequestService {
 				throw new InternalMicroserviceException(exceptionDetails.getMessage());
 			}
 		}
-		catch (RestClientException e) {
-			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
-		}
 		return offers;
 	}
 	
 	public void sendChosenOffer(LoanOfferDto loanOfferDto) throws StatementNotFoundException, InternalMicroserviceException {
 		ParameterizedTypeReference<Void> responseType = new ParameterizedTypeReference<>() {};
+		try {
+			sendChosenOffer(loanOfferDto, responseType);
+		}
+		catch (RestClientException e) {
+			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
+		}
+		
+	}
+	
+	private void sendChosenOffer(LoanOfferDto loanOfferDto, ParameterizedTypeReference<Void> responseType) throws StatementNotFoundException, InternalMicroserviceException {
 		try {
 			RequestEntity<LoanOfferDto> requestEntity = requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL);
 			requester.request(requestEntity, responseType);
@@ -72,9 +84,6 @@ public class DealRequestService {
 			else if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
 				throw new InternalMicroserviceException(exceptionDetails.getMessage());
 			}
-		}
-		catch (RestClientException e) {
-			throw new InternalMicroserviceException(CONNECTION_ERROR_TO_MS_DEAL, e);
 		}
 	}
 }

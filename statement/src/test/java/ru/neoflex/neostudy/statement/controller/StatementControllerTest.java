@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
@@ -324,6 +325,15 @@ public class StatementControllerTest {
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 						.andExpect(status().isBadRequest());
+			}
+			
+			@Test
+			void getLoanOffers_whenConnectionErrorToMsDeal_thenReturn500() throws Exception {
+				doThrow(InternalMicroserviceException.class).when(statementService).getLoanOffers(any(LoanStatementRequestDto.class));
+				mockMvc.perform(post("/statement")
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
+						.andExpect(status().isInternalServerError());
 			}
 		}
 	}
