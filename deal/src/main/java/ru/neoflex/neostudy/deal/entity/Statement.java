@@ -64,7 +64,7 @@ public class Statement {
 	
 	@JdbcTypeCode(value = SqlTypes.JSON)
 	@Column(name = "status_history")
-	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
+	private final LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
 	
 	@Column(name = "pdf_file")
 	private byte[] pdfFile;

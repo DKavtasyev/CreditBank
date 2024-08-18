@@ -104,7 +104,7 @@ public class EntityInitializer {
 		statusHistories.add(statementStatusHistory1);
 		statusHistories.add(statementStatusHistory2);
 		
-		return Statement.builder()
+		Statement statement = Statement.builder()
 				.client(initClient())
 				.credit(initCredit())
 				.creationDate(LocalDateTime.now())
@@ -113,8 +113,9 @@ public class EntityInitializer {
 				.creationDate(LocalDateTime.now())
 				.signDate(LocalDateTime.now())
 				.sessionCode(UUID.randomUUID().toString())
-				.statementStatusHistory(statusHistories)
 				.pdfFile("Test bytes for testing statement".getBytes())
 				.build();
+		statement.getStatementStatusHistory().addAll(statusHistories);
+		return statement;
 	}
 }

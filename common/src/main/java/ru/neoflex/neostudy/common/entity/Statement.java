@@ -33,7 +33,7 @@ public class Statement {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATETIME_PATTERN)
 	private LocalDateTime signDate;
 	private String sessionCode;
-	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
+	private final LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
 	
 	@Override
 	public boolean equals(Object o) {
