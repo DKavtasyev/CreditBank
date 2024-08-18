@@ -1,8 +1,6 @@
 package ru.neoflex.neostudy.common.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.PaymentScheduleElementDto;
 
@@ -16,7 +14,9 @@ import java.util.UUID;
  */
 @Setter
 @Getter
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Credit {
 	private UUID creditId;
 	private BigDecimal amount;

@@ -87,7 +87,13 @@
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
+							<goal>check</goal>
 						</goals>
+						<configuration>
+							<rules>
+
+							</rules>
+						</configuration>
 					</execution>
 					<execution>
 						<id>report</id>

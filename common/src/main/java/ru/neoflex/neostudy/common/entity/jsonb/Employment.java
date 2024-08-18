@@ -1,7 +1,9 @@
 package ru.neoflex.neostudy.common.entity.jsonb;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 import ru.neoflex.neostudy.common.constants.EmploymentPosition;
 import ru.neoflex.neostudy.common.constants.EmploymentStatus;
 
@@ -14,7 +16,9 @@ import java.util.UUID;
  * Entity class must match the same class in MS deal one-to-one.
  */
 @Data
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employment implements Serializable {
 	private UUID employmentUuid;
 	private EmploymentStatus status;

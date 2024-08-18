@@ -14,15 +14,16 @@ public class CreditMapper implements Mapper<Credit, CreditDto> {
 	
 	@Override
 	public Credit dtoToEntity(CreditDto creditDto) {
-		return new Credit()
-				.setCreditId(UUID.randomUUID())
-				.setAmount(creditDto.getAmount())
-				.setTerm(creditDto.getTerm())
-				.setMonthlyPayment(creditDto.getMonthlyPayment())
-				.setRate(creditDto.getRate())
-				.setPsk(creditDto.getPsk())
-				.setPaymentSchedule(creditDto.getPaymentSchedule())
-				.setInsuranceEnabled(creditDto.getIsInsuranceEnabled())
-				.setSalaryClient(creditDto.getIsSalaryClient());
+		return Credit.builder()
+				.creditId(UUID.randomUUID())
+				.amount(creditDto.getAmount())
+				.term(creditDto.getTerm())
+				.monthlyPayment(creditDto.getMonthlyPayment())
+				.rate(creditDto.getRate())
+				.psk(creditDto.getPsk())
+				.paymentSchedule(creditDto.getPaymentSchedule())
+				.insuranceEnabled(creditDto.getIsInsuranceEnabled())
+				.salaryClient(creditDto.getIsSalaryClient())
+				.build();
 	}
 }

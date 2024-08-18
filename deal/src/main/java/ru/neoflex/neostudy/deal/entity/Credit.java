@@ -1,9 +1,7 @@
 package ru.neoflex.neostudy.deal.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -19,8 +17,10 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(schema = "public", name = "credit")
-@Accessors(chain = true)
 public class Credit {
 	@Id
 	@Column(name = "credit_id", nullable = false)

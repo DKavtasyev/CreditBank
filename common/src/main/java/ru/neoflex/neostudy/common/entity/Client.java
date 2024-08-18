@@ -1,9 +1,7 @@
 package ru.neoflex.neostudy.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.Gender;
 import ru.neoflex.neostudy.common.constants.MaritalStatus;
 import ru.neoflex.neostudy.common.entity.jsonb.Employment;
@@ -20,7 +18,9 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
  */
 @Setter
 @Getter
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
 	private UUID clientIdUuid;
 	private String lastName;

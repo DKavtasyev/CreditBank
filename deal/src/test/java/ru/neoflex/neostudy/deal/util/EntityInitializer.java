@@ -28,85 +28,93 @@ public class EntityInitializer {
 	private final CreditDto creditDto = DtoInitializer.initCreditDto();
 	
 	public static Client initClient() {
-		return new Client()
-				.setClientIdUuid(UUID.randomUUID())
-				.setLastName(loanStatementRequestDto.getLastName())
-				.setFirstName(loanStatementRequestDto.getFirstName())
-				.setMiddleName(loanStatementRequestDto.getMiddleName())
-				.setBirthdate(loanStatementRequestDto.getBirthDate())
-				.setEmail(loanStatementRequestDto.getEmail())
-				.setGender(Gender.MALE)
-				.setMaritalStatus(MaritalStatus.SINGLE)
-				.setDependentAmount(0)
-				.setPassport(initPassport())
-				.setEmployment(initEmployment())
-				.setAccountNumber("18923749187");
+		return Client.builder()
+				.clientIdUuid(UUID.randomUUID())
+				.lastName(loanStatementRequestDto.getLastName())
+				.firstName(loanStatementRequestDto.getFirstName())
+				.middleName(loanStatementRequestDto.getMiddleName())
+				.birthdate(loanStatementRequestDto.getBirthDate())
+				.email(loanStatementRequestDto.getEmail())
+				.gender(Gender.MALE)
+				.maritalStatus(MaritalStatus.SINGLE)
+				.dependentAmount(0)
+				.passport(initPassport())
+				.employment(initEmployment())
+				.accountNumber("18923749187")
+				.build();
 	}
 	
 	private static Passport initPassport() {
-		return new Passport()
-				.setPassportUuid(UUID.randomUUID())
-				.setSeries(loanStatementRequestDto.getPassportSeries())
-				.setNumber(loanStatementRequestDto.getPassportNumber())
-				.setIssueBranch("ГУ МВД ПО Г. МОСКВА")
-				.setIssueDate(LocalDate.now().minusYears(5).minusMonths(3));
+		return Passport.builder()
+				.passportUuid(UUID.randomUUID())
+				.series(loanStatementRequestDto.getPassportSeries())
+				.number(loanStatementRequestDto.getPassportNumber())
+				.issueBranch("ГУ МВД ПО Г. МОСКВА")
+				.issueDate(LocalDate.now().minusYears(5).minusMonths(3))
+				.build();
 	}
 	
 	private static Employment initEmployment() {
-		return new Employment()
-				.setEmploymentUuid(UUID.randomUUID())
-				.setStatus(employmentDto.getEmploymentStatus())
-				.setEmployerInn(employmentDto.getEmploymentINN())
-				.setSalary(employmentDto.getSalary())
-				.setPosition(employmentDto.getPosition())
-				.setWorkExperienceTotal(employmentDto.getWorkExperienceTotal())
-				.setWorkExperienceCurrent(employmentDto.getWorkExperienceCurrent());
+		return Employment.builder()
+				.employmentUuid(UUID.randomUUID())
+				.status(employmentDto.getEmploymentStatus())
+				.employerInn(employmentDto.getEmploymentINN())
+				.salary(employmentDto.getSalary())
+				.position(employmentDto.getPosition())
+				.workExperienceTotal(employmentDto.getWorkExperienceTotal())
+				.workExperienceCurrent(employmentDto.getWorkExperienceCurrent())
+				.build();
 	}
 	
 	public static Credit initCredit() {
-		return new Credit()
-				.setAmount(creditDto.getAmount())
-				.setTerm(creditDto.getTerm())
-				.setMonthlyPayment(creditDto.getMonthlyPayment())
-				.setRate(creditDto.getRate())
-				.setPsk(creditDto.getPsk())
-				.setPaymentSchedule(creditDto.getPaymentSchedule())
-				.setInsuranceEnabled(creditDto.getIsInsuranceEnabled())
-				.setSalaryClient(creditDto.getIsSalaryClient());
+		return Credit.builder()
+				.amount(creditDto.getAmount())
+				.term(creditDto.getTerm())
+				.monthlyPayment(creditDto.getMonthlyPayment())
+				.rate(creditDto.getRate())
+				.psk(creditDto.getPsk())
+				.paymentSchedule(creditDto.getPaymentSchedule())
+				.insuranceEnabled(creditDto.getIsInsuranceEnabled())
+				.salaryClient(creditDto.getIsSalaryClient())
+				.build();
 	}
 	
 	public static Statement initStatement() {
-		return new Statement()
-				.setClient(initClient())
-				.setCredit(initCredit())
-				.setCreationDate(LocalDateTime.now())
-				.setAppliedOffer(DtoInitializer.initLoanOfferDto());
+		return Statement.builder()
+				.client(initClient())
+				.credit(initCredit())
+				.creationDate(LocalDateTime.now())
+				.appliedOffer(DtoInitializer.initLoanOfferDto())
+				.build();
 	}
 	
 	public static Statement initFullStatement() {
-		StatementStatusHistory statementStatusHistory1 = new StatementStatusHistory()
-				.setStatus(ApplicationStatus.PREPARE_DOCUMENTS)
-				.setTime(LocalDateTime.now())
-				.setChangeType(ChangeType.AUTOMATIC);
-		StatementStatusHistory statementStatusHistory2 = new StatementStatusHistory()
-				.setStatus(ApplicationStatus.APPROVED)
-				.setTime(LocalDateTime.now())
-				.setChangeType(ChangeType.MANUAL);
+		StatementStatusHistory statementStatusHistory1 = StatementStatusHistory.builder()
+				.status(ApplicationStatus.PREPARE_DOCUMENTS)
+				.time(LocalDateTime.now())
+				.changeType(ChangeType.AUTOMATIC)
+				.build();
+		StatementStatusHistory statementStatusHistory2 = StatementStatusHistory.builder()
+				.status(ApplicationStatus.APPROVED)
+				.time(LocalDateTime.now())
+				.changeType(ChangeType.MANUAL)
+				.build();
 		
 		LinkedList<StatementStatusHistory> statusHistories = new LinkedList<>();
 		statusHistories.add(statementStatusHistory1);
 		statusHistories.add(statementStatusHistory2);
 		
-		return new Statement()
-				.setClient(initClient())
-				.setCredit(initCredit())
-				.setCreationDate(LocalDateTime.now())
-				.setAppliedOffer(DtoInitializer.initLoanOfferDto())
-				.setStatus(ApplicationStatus.DOCUMENT_CREATED)
-				.setCreationDate(LocalDateTime.now())
-				.setSignDate(LocalDateTime.now())
-				.setSessionCode(UUID.randomUUID().toString())
-				.setStatementStatusHistory(statusHistories)
-				.setPdfFile("Test bytes for testing statement".getBytes());
+		return Statement.builder()
+				.client(initClient())
+				.credit(initCredit())
+				.creationDate(LocalDateTime.now())
+				.appliedOffer(DtoInitializer.initLoanOfferDto())
+				.status(ApplicationStatus.DOCUMENT_CREATED)
+				.creationDate(LocalDateTime.now())
+				.signDate(LocalDateTime.now())
+				.sessionCode(UUID.randomUUID().toString())
+				.statementStatusHistory(statusHistories)
+				.pdfFile("Test bytes for testing statement".getBytes())
+				.build();
 	}
 }

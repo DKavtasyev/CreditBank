@@ -59,10 +59,11 @@ public class StatementEntityService {
 	 */
 	public void setStatus(Statement statement, ApplicationStatus status, ChangeType changeType) {
 		statement.setStatus(status);
-		statement.getStatementStatusHistory().add(new StatementStatusHistory()
-				.setStatus(statement.getStatus())
-				.setTime(LocalDateTime.now())
-				.setChangeType(changeType));
+		statement.getStatementStatusHistory().add(StatementStatusHistory.builder()
+				.status(statement.getStatus())
+				.time(LocalDateTime.now())
+				.changeType(changeType)
+				.build());
 	}
 	
 	/**

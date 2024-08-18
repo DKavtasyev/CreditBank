@@ -44,3 +44,36 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
           name: codecov-umbrella
+
+      - name: Generate JaCoCo Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2.11.0
+        with:
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+
+      - name: Log coverage percentage
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.output.branches }}"
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.9.0
+        if: github.event_name == 'pull_request'
+        with:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          recreate: true
+          message: "# Hello world! \n coverage = ${{ steps.jacoco.outputs.coverage }}"
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4.3.6
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
+#      - name: Analyze with SonarCloud
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: |
+#          mvn verify sonar:sonar \
+#          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+#          -Dsonar.organization=${{ secrets.SONAR_ORG }} \
+#          -Dsonar.host.url=https://sonarcloud.io

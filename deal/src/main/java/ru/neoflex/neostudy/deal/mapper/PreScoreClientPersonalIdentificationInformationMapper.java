@@ -16,18 +16,20 @@ public class PreScoreClientPersonalIdentificationInformationMapper implements Ma
 	
 	@Override
 	public Client dtoToEntity(LoanStatementRequestDto loanStatementRequestDto) {
-		Passport passport = new Passport()
-				.setPassportUuid(UUID.randomUUID())
-				.setSeries(loanStatementRequestDto.getPassportSeries())
-				.setNumber(loanStatementRequestDto.getPassportNumber());
+		Passport passport = Passport.builder()
+				.passportUuid(UUID.randomUUID())
+				.series(loanStatementRequestDto.getPassportSeries())
+				.number(loanStatementRequestDto.getPassportNumber())
+				.build();
 		
-		return new Client()
-				.setClientIdUuid(UUID.randomUUID())
-				.setLastName(loanStatementRequestDto.getLastName())
-				.setFirstName(loanStatementRequestDto.getFirstName())
-				.setMiddleName(loanStatementRequestDto.getMiddleName())
-				.setBirthdate(loanStatementRequestDto.getBirthDate())
-				.setEmail(loanStatementRequestDto.getEmail())
-				.setPassport(passport);
+		return Client.builder()
+				.clientIdUuid(UUID.randomUUID())
+				.lastName(loanStatementRequestDto.getLastName())
+				.firstName(loanStatementRequestDto.getFirstName())
+				.middleName(loanStatementRequestDto.getMiddleName())
+				.birthdate(loanStatementRequestDto.getBirthDate())
+				.email(loanStatementRequestDto.getEmail())
+				.passport(passport)
+				.build();
 	}
 }
