@@ -22,19 +22,19 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "d0be427a-8de6-4381-8765-44eabeebc488",
+  "statementId": "6911722c-11ba-489b-8865-5f4f3a57fa46",
   "requestedAmount": 1000000,
-  "totalAmount": 1044202.8612807381502446,
+  "totalAmount": 1032327.2853558058770738,
   "term": 6,
-  "monthlyPayment": 174033.8102134563583741,
-  "rate": 0.15,
+  "monthlyPayment": 172054.5475593009795123,
+  "rate": 0.11,
   "isInsuranceEnabled": false,
   "isSalaryClient": true
 }
 
 ### Оформление условий кредита
 ### В URL установить корректный statementId
-POST http://localhost:8082/deal/calculate/d0be427a-8de6-4381-8765-44eabeebc488
+POST http://localhost:8082/deal/calculate/6911722c-11ba-489b-8865-5f4f3a57fa46
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -46,7 +46,7 @@ Cache-Control: no-store
   "passportIssueBranch": "ГУ МВД ПО Г. МОСКВА",
   "employment": {
 	"employmentStatus": "EMPLOYED",
-	"employmentINN": "12341",
+	"employmentINN": "123456789012",
 	"salary": 150000,
 	"position": "WORKER",
 	"workExperienceTotal": 60,

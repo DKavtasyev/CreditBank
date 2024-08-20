@@ -3,12 +3,14 @@ package ru.neoflex.neostudy.dossier.service.mail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.UserDocumentException;
-import ru.neoflex.neostudy.common.util.UrlFormatter;
+import ru.neoflex.neostudy.common.util.UrlBuilder;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Сервис для формирования и отправки пользователю информации по электронной почте.
@@ -65,8 +67,14 @@ public class MailService {
 	 */
 	public void sendSesCodeEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
 		var params = paramsService.getParams(emailMessage);
-		URI uri = UrlFormatter.substituteUrlValue((String)params.get(ParamsService.KEY_URL), emailMessage.getStatementId().toString());
-		uri = UrlFormatter.addQueryParameter(uri.toString(), "code", emailMessage.getMessage());
+		
+		UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString((String) params.get(ParamsService.KEY_URL));
+		componentsBuilder.uriVariables(Map.of("statementId", emailMessage.getStatementId().toString()));
+		URI uri = UrlBuilder.builder()
+				.init(componentsBuilder)
+				.addQueryParameter("code", emailMessage.getMessage())
+				.build();
+		
 		paramsService.updateUrl(params, uri.toString());
 		
 		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)

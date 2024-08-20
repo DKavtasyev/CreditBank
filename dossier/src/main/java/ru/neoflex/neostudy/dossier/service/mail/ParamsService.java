@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
+import ru.neoflex.neostudy.common.util.UrlBuilder;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -24,8 +25,10 @@ public class ParamsService {
 	public static final String KEY_BUTTON_TEXT = "buttonText";
 	public static final String KEY_URL = "url";
 	
-	@Value("${app.bank.url}")
-	private String bankUrl;
+	@Value("${app.bank.host}")
+	private String bankHost;
+	@Value("${app.bank.port}")
+	private String bankPort;
 	
 	/**
 	 * Формирует и возвращает {@code Map<String, Object>}, содержащую в себе параметры, необходимые для отправки и
@@ -38,12 +41,11 @@ public class ParamsService {
 		UriComponentsBuilder builder = theme.getPath();
 		
 		String url = null;
-		if (builder != null) {
-			String host = builder.build().getHost();
-			String[] array = bankUrl.split("(://)|(:)");
-			url = host != null && host.equalsIgnoreCase("ya.ru")
-					? builder.encode().build().toUriString()
-					: builder.scheme(array[0]).host(array[1]).port(array[2]).encode().build().toUriString();
+		if (builder != null){
+			if (builder.build().getHost() == null) {
+				builder.scheme("http").host(bankHost).port(bankPort);
+			}
+			url = UrlBuilder.builder().init(builder).build().toString();
 		}
 		
 		Map<String, Object> params = new HashMap<>();

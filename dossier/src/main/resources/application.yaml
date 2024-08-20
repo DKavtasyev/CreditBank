@@ -23,8 +23,15 @@ spring:
     test-connection: true
 
 app:
+  rest:
+    request:
+      deal:
+        host: ${DEAL_HOST:localhost}
+        port: 8082
+        status-path: /deal/admin/statement/{statementId}/status
   bank:
-    url: http://localhost:8080
+    host: localhost
+    port: 8080
     official-name: CreditBank
 
 server:
