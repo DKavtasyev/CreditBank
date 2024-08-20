@@ -10,6 +10,12 @@ server:
 app:
   rest:
     prefix: /statement
+    request:
+      deal:
+        host: ${DEAL_HOST:localhost}
+        port: 8082
+        offers-path: /deal/statement
+        apply-offer-path: /deal/offer/select
 
 logging:
   level:

@@ -6,12 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
@@ -23,21 +23,23 @@ import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ActiveProfiles("test")
 class DealRequestServiceTest {
 	
-	@Mock
-	private Requester requester;
-	
-	@InjectMocks
+	@Autowired
 	private DealRequestService dealRequestService;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	@MockBean
+	private Requester requester;
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	private LoanStatementRequestDto loanStatementRequestDto;
 	private List<LoanOfferDto> expectedOffers;
@@ -63,7 +65,7 @@ class DealRequestServiceTest {
 			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
 			
 			ResponseEntity<List<LoanOfferDto>> response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(expectedOffers);
-			when(requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL)).thenReturn(requestEntity);
+			when(requester.getRequestEntity(loanStatementRequestDto, URI.create(DEAL_OFFERS_URL))).thenReturn(requestEntity);
 			when(requester.request(requestEntity, responseType)).thenReturn(response);
 			List<LoanOfferDto> actualOffers = dealRequestService.requestLoanOffers(loanStatementRequestDto);
 			assertThat(actualOffers).isSameAs(expectedOffers);
@@ -75,7 +77,7 @@ class DealRequestServiceTest {
 					.post("")
 					.body(loanStatementRequestDto);
 			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
-			when(requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL)).thenReturn(requestEntity);
+			when(requester.getRequestEntity(loanStatementRequestDto, URI.create(DEAL_OFFERS_URL))).thenReturn(requestEntity);
 			
 			ExceptionDetails exceptionDetails = new ExceptionDetails(400, "Bad Request", "details");
 			
@@ -103,7 +105,7 @@ class DealRequestServiceTest {
 					.post("")
 					.body(loanStatementRequestDto);
 			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
-			when(requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL)).thenReturn(requestEntity);
+			when(requester.getRequestEntity(loanStatementRequestDto, URI.create(DEAL_OFFERS_URL))).thenReturn(requestEntity);
 			
 			ExceptionDetails exceptionDetails = new ExceptionDetails(500, "Internal Server Error", "details");
 			
@@ -131,7 +133,7 @@ class DealRequestServiceTest {
 					.post("")
 					.body(loanStatementRequestDto);
 			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
-			when(requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL)).thenReturn(requestEntity);
+			when(requester.getRequestEntity(loanStatementRequestDto, URI.create(DEAL_OFFERS_URL))).thenReturn(requestEntity);
 			
 			ExceptionDetails exceptionDetails = new ExceptionDetails(500, "Internal Server Error", "details");
 			
@@ -169,7 +171,7 @@ class DealRequestServiceTest {
 					.post("")
 					.body(loanOfferDto);
 			
-			when(requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL)).thenReturn(requestEntity);
+			when(requester.getRequestEntity(loanOfferDto, URI.create(DEAL_APPLY_OFFER_URL))).thenReturn(requestEntity);
 			
 			dealRequestService.sendChosenOffer(loanOfferDto);
 			verify(requester, times(1)).request(any(), any());
@@ -194,7 +196,7 @@ class DealRequestServiceTest {
 			
 			@Test
 			void requestLoanOffers_whenStatus404Received_thenThrowStatementNotFoundException() throws IOException {
-				when(requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL)).thenReturn(requestEntity);
+				when(requester.getRequestEntity(loanOfferDto, URI.create(DEAL_APPLY_OFFER_URL))).thenReturn(requestEntity);
 				
 				byte[] body = objectMapper.writeValueAsString(exceptionDetails).getBytes();
 				HttpHeaders headers = new HttpHeaders();
@@ -216,7 +218,7 @@ class DealRequestServiceTest {
 			
 			@Test
 			void requestLoanOffers_whenStatus500Received_thenThrowInternalMicroserviceException() throws IOException {
-				when(requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL)).thenReturn(requestEntity);
+				when(requester.getRequestEntity(loanOfferDto, URI.create(DEAL_APPLY_OFFER_URL))).thenReturn(requestEntity);
 				
 				byte[] body = objectMapper.writeValueAsString(exceptionDetails).getBytes();
 				HttpHeaders headers = new HttpHeaders();
@@ -238,7 +240,7 @@ class DealRequestServiceTest {
 			
 			@Test
 			void requestLoanOffers_whenResponseBodyIsCorrupted_thenThrowInternalMicroserviceException() throws IOException {
-				when(requester.getRequestEntity(loanOfferDto, DEAL_APPLY_OFFER_URL)).thenReturn(requestEntity);
+				when(requester.getRequestEntity(loanOfferDto, URI.create(DEAL_APPLY_OFFER_URL))).thenReturn(requestEntity);
 				
 				byte[] body = objectMapper.writeValueAsString(exceptionDetails).getBytes();
 				HttpHeaders headers = new HttpHeaders();

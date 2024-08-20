@@ -32,6 +32,12 @@ app:
     admin:
       prefix: /deal/admin
     page-size: 10
+    request:
+      calculator:
+        host: ${CALCULATOR_HOST:localhost}
+        port: 8081
+        offers-path: /calculator/offers
+        credit-path: /calculator/calc
   font:
     path: fonts/times.ttf
   date:

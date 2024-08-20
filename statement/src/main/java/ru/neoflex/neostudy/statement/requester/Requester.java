@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+
 /**
  * Сервис нижнего уровня, осуществляющий формирование запросов к другим МС и их выполнение.
  */
@@ -39,7 +41,7 @@ public class Requester {
 	 * @return сформированный объект {@code RequestEntity<T>}.
 	 * @param <T> тип тела запроса.
 	 */
-	public <T> RequestEntity<T> getRequestEntity(T t, String url) {
+	public <T> RequestEntity<T> getRequestEntity(T t, URI url) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		

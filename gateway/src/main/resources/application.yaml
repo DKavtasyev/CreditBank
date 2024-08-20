@@ -13,19 +13,23 @@ app:
       statement: /statement
       document: /document
       admin: /admin
-    url:
+    request:
       statement:
-        create-loan-statement:    http://localhost:8083/statement
-        apply-offer:              http://localhost:8083/statement/offer
+        host: ${STATEMENT_HOST:localhost}
+        port: 8083
+        create-loan-statement-path:    /statement
+        apply-offer-path:              /statement/offer
       deal:
-        calculate-credit:         http://localhost:8082/deal/calculate/{statementId}
-        deny-offer:               http://localhost:8082/deal/offer/deny/{statementId}
-        create-documents:         http://localhost:8082/deal/document/{statementId}/send
-        sign-documents:           http://localhost:8082/deal/document/{statementId}/sign
-        verify-signature:         http://localhost:8082/deal/document/{statementId}/code
-        update-statement-status:  http://localhost:8082/deal/admin/statement/{statementId}/status
-        get-statement:            http://localhost:8082/deal/admin/statement/{statementId}
-        get-all-statements:       http://localhost:8082/deal/admin/statement
+        host:                           ${DEAL_HOST:localhost}
+        port:                           8082
+        calculate-credit-path:          /deal/calculate/{statementId}
+        deny-offer-path:                /deal/offer/deny/{statementId}
+        create-documents-path:          /deal/document/{statementId}/send
+        sign-document-path:             /deal/document/{statementId}/sign
+        verify-signature-path:          /deal/document/{statementId}/code
+        update-statement-status-path:   /deal/admin/statement/{statementId}/status
+        get-statement-path:             /deal/admin/statement/{statementId}
+        get-all-statements-path:        /deal/admin/statement
 
 logging:
   level:

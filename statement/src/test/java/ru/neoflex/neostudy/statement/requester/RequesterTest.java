@@ -57,19 +57,19 @@ class RequesterTest {
 		
 		
 		@Test
-		void request_whenRequestLoanOfferDto_thenReturn200() throws Exception {
+		void request_whenRequestLoanOfferDto_thenReturn200() {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			
 			RequestEntity<LoanOfferDto> requestEntity = RequestEntity
-					.post(DEAL_APPLY_OFFER_URL)
+					.post(URI.create(DEAL_APPLY_OFFER_URL))
 					.headers(headers)
 					.body(loanOfferDto);
 			
 			ParameterizedTypeReference<List<LoanOfferDto>> responseType = new ParameterizedTypeReference<>() {};
 			
 			mockServer.expect(ExpectedCount.once(),
-							requestTo(new URI(DEAL_APPLY_OFFER_URL)))
+							requestTo(URI.create(DEAL_APPLY_OFFER_URL)))
 					.andExpect(method(HttpMethod.POST))
 					.andRespond(withSuccess());
 			
@@ -83,7 +83,7 @@ class RequesterTest {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			
 			RequestEntity<LoanStatementRequestDto> requestEntity = RequestEntity
-					.post(DEAL_OFFERS_URL)
+					.post(URI.create(DEAL_OFFERS_URL))
 					.headers(headers)
 					.body(loanStatementRequestDto);
 			
@@ -91,7 +91,7 @@ class RequesterTest {
 			String expectedResponse = mapper.writeValueAsString(expectedOffers);
 			
 			mockServer.expect(ExpectedCount.once(),
-							requestTo(new URI(DEAL_OFFERS_URL)))
+							requestTo(URI.create(DEAL_OFFERS_URL)))
 					.andExpect(method(HttpMethod.POST))
 					.andRespond(withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
 			
@@ -111,11 +111,11 @@ class RequesterTest {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			
 			RequestEntity<LoanStatementRequestDto> expectedRequestEntity = RequestEntity
-					.post(DEAL_OFFERS_URL)
+					.post(URI.create(DEAL_OFFERS_URL))
 					.headers(headers)
 					.body(loanStatementRequestDto);
 			
-			RequestEntity<LoanStatementRequestDto> actualRequestEntity = requester.getRequestEntity(loanStatementRequestDto, DEAL_OFFERS_URL);
+			RequestEntity<LoanStatementRequestDto> actualRequestEntity = requester.getRequestEntity(loanStatementRequestDto, URI.create(DEAL_OFFERS_URL));
 			assertThat(actualRequestEntity).isEqualTo(expectedRequestEntity);
 		}
 	}
