@@ -8,6 +8,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.neoflex.neostudy.common.dto.CreditDto;
@@ -21,6 +22,7 @@ import ru.neoflex.neostudy.common.util.UrlBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Сервис для формирования и отправки запросов в МС Calculator.
@@ -62,8 +64,10 @@ public class CalculatorRequester {
 		try {
 			responseEntity = restTemplate.exchange(requestEntity, responseType);
 		}
-		catch (HttpClientErrorException e) {
-			throw new InternalMicroserviceException("Calculator error", e);
+		catch (HttpServerErrorException e) {
+			ExceptionDetails exceptionDetails = e.getResponseBodyAs(ExceptionDetails.class);
+			Objects.requireNonNull(exceptionDetails);
+			throw new InternalMicroserviceException(exceptionDetails.getMessage());
 		}
 		catch (RestClientException e) {
 			throw new InternalMicroserviceException("Connection error to MS calculator", e);
@@ -138,13 +142,13 @@ public class CalculatorRequester {
 			responseEntity = restTemplate.exchange(requestEntity, String.class);
 			creditDto = objectMapper.readValue(responseEntity.getBody(), CreditDto.class);
 		}
-		catch (HttpClientErrorException e) {
+		catch (HttpClientErrorException | HttpServerErrorException e) {
+			ExceptionDetails exceptionDetails = e.getResponseBodyAs(ExceptionDetails.class);
+			Objects.requireNonNull(exceptionDetails);
 			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(406))) {
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
 				throw new LoanRefusalException(exceptionDetails.getMessage());
 			}
 			if (e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(500))) {
-				ExceptionDetails exceptionDetails = objectMapper.readValue(e.getResponseBodyAsString(), ExceptionDetails.class);
 				throw new InternalMicroserviceException(exceptionDetails.getMessage());
 			}
 		}

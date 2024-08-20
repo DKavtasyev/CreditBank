@@ -1,4 +1,34 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: test
+spring:
+  config:
+    activate:
+      on-profile: test
+  liquibase:
+    enabled: false
+  kafka:
+    listener:
+      observation-enabled: false
+    template:
+      observation-enabled: false
+
+app:
+  rest:
+    deal:
+      prefix: /deal
+    document:
+      prefix: /deal/document
+    admin:
+      prefix: /deal/admin
+    page-size: 10
+    request:
+      calculator:
+        host: ${CALCULATOR_HOST:localhost}
+        port: 8081
+        offers-path: /calculator/offers
+        credit-path: /calculator/calc
+  font:
+    path: fonts/times.ttf
+  date:
+    pattern: dd MMMM yyyy
+
+server:
+  port: 8082

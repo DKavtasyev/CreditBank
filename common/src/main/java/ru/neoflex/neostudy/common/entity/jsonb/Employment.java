@@ -38,7 +38,7 @@ public class Employment implements Serializable {
 		}
 		return status == that.status
 				&& Objects.equals(employerInn, that.employerInn)
-				&& salary.compareTo(that.salary) == 0
+				&& (Objects.equals(salary, that.salary) || salary.compareTo(that.salary) == 0)
 				&& position == that.position
 				&& Objects.equals(workExperienceTotal, that.workExperienceTotal)
 				&& Objects.equals(workExperienceCurrent, that.workExperienceCurrent);
