@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,15 @@ import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
+import ru.neoflex.neostudy.deal.controller.AdminController;
+import ru.neoflex.neostudy.deal.controller.DealController;
+import ru.neoflex.neostudy.deal.repository.ClientRepository;
+import ru.neoflex.neostudy.deal.repository.StatementRepository;
+import ru.neoflex.neostudy.deal.service.DataService;
+import ru.neoflex.neostudy.deal.service.ScoringService;
+import ru.neoflex.neostudy.deal.service.entity.ClientEntityService;
+import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
+import ru.neoflex.neostudy.deal.service.kafka.MessageSenderKafka;
 
 import java.net.URI;
 import java.util.List;
@@ -35,6 +45,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @SpringBootTest
 @ActiveProfiles("test")
+@MockBean(classes = {
+		DealController.class, ScoringService.class, KafkaService.class,
+		MessageSenderKafka.class, AdminController.class, DataService.class,
+		ClientEntityService.class, StatementRepository.class, ClientRepository.class})
 class CalculatorRequesterTest {
 	
 	@Autowired

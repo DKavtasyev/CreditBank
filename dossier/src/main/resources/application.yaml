@@ -12,7 +12,7 @@ spring:
     host: smtp.mail.ru
     port: 587
     username: creditbank.noreply@internet.ru
-    password: HgHeXKY46GZ5AAbqBcpk
+    password: ${EMAIL_PASSWORD}
     default-encoding: UTF-8
     properties:
       mail:
