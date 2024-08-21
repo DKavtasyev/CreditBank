@@ -21,6 +21,7 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<instruction.coveredratio.minimum_value>0.5</instruction.coveredratio.minimum_value>
+		<postgres_password>${env.POSTGRES_PASSWORD}</postgres_password>
 	</properties>
 
 	<dependencies>
@@ -87,7 +88,7 @@
 					<driver>org.postgresql.Driver</driver>
 					<url>jdbc:postgresql://localhost:5432/credit_bank</url>
 					<username>postgres</username>
-					<password>postgres</password>
+					<password>${postgres_password}</password>
 					<outputChangeLogFile>src/main/resources/liquibase-outputChangeLog.xml</outputChangeLogFile>
 				</configuration>
 				<executions>
