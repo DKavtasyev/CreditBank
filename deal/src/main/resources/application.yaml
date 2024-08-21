@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${WEB_HOST:localhost}:5432/credit_bank
     username: postgres
-    password: postgres
+    password: ${POSTGRES_PASSWORD}
   jpa:
     show-sql: false
     hibernate:
