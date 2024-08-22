@@ -33,9 +33,9 @@ public class CalculatorServiceTest {
 	private SchedulePaymentsCalculatorService schedulePaymentsCalculatorService;
 	
 	@Value("${rate.base-rate}")
-	BigDecimal RATE;
+	BigDecimal rate;
 	@Value("${credit.insurance-percent}")
-	BigDecimal INSURANCE_PERCENT;
+	BigDecimal insurancePercent;
 	
 	private ScoringDataDto scoringData;
 	private static LoanStatementRequestDto loanStatementRequest;
@@ -83,9 +83,9 @@ public class CalculatorServiceTest {
 			BigDecimal dailyRate = new BigDecimal("0.0003287671232877");
 			PaymentScheduleElementDto expectedFirstPaymentScheduleElement = expectedCredit.getPaymentSchedule().getFirst();
 			
-			when(personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE)).thenReturn(RATE);
-			when(personalRateCalculatorService.calculateDailyRate(RATE)).thenReturn(dailyRate);
-			when(monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), RATE)).thenReturn(DtoInitializer.OFFER_0_MONTHLY_PAYMENT);
+			when(personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE)).thenReturn(rate);
+			when(personalRateCalculatorService.calculateDailyRate(rate)).thenReturn(dailyRate);
+			when(monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate)).thenReturn(DtoInitializer.OFFER_0_MONTHLY_PAYMENT);
 			when(schedulePaymentsCalculatorService.calculatePaymentScheduleElement(1, scoringData.getAmount(), dailyRate, DtoInitializer.OFFER_0_MONTHLY_PAYMENT, LocalDate.now())).thenReturn(expectedFirstPaymentScheduleElement);
 			
 			ArgumentCaptor<PaymentScheduleElementDto> paymentScheduleCaptor = ArgumentCaptor.forClass(PaymentScheduleElementDto.class);
@@ -102,9 +102,9 @@ public class CalculatorServiceTest {
 				assertThat(actualCredit.getIsSalaryClient()).isEqualTo(expectedCredit.getIsSalaryClient());
 				assertThat(actualCredit.getPaymentSchedule().getFirst()).isEqualTo(expectedFirstPaymentScheduleElement);
 				verify(schedulePaymentsCalculatorService, times(1)).countPayment(paymentScheduleCaptor.capture(), anyList(), dailyRateCaptor.capture());
-				verify(personalRateCalculatorService, times(1)).countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-				verify(personalRateCalculatorService, times(1)).calculateDailyRate(RATE);
-				verify(monthlyPaymentCalculatorService, times(1)).calculate(scoringData.getAmount(), scoringData.getTerm(), RATE);
+				verify(personalRateCalculatorService, times(1)).countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+				verify(personalRateCalculatorService, times(1)).calculateDailyRate(rate);
+				verify(monthlyPaymentCalculatorService, times(1)).calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
 				verify(schedulePaymentsCalculatorService, times(1)).calculatePaymentScheduleElement(1, scoringData.getAmount(), dailyRate, DtoInitializer.OFFER_0_MONTHLY_PAYMENT, LocalDate.now());
 			});
 		}
@@ -114,14 +114,14 @@ public class CalculatorServiceTest {
 			CreditDto expectedCredit = DtoInitializer.initCreditDto();
 			expectedCredit.setIsInsuranceEnabled(true);
 			scoringData.setIsInsuranceEnabled(true);
-			BigDecimal amountWithInsurance = scoringData.getAmount().multiply(INSURANCE_PERCENT);
+			BigDecimal amountWithInsurance = scoringData.getAmount().multiply(insurancePercent);
 			
 			BigDecimal dailyRate = new BigDecimal("0.0003287671232877");
 			PaymentScheduleElementDto expectedFirstPaymentScheduleElement = expectedCredit.getPaymentSchedule().getFirst();
 			
-			when(personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE)).thenReturn(RATE);
-			when(personalRateCalculatorService.calculateDailyRate(RATE)).thenReturn(dailyRate);
-			when(monthlyPaymentCalculatorService.calculate(amountWithInsurance, scoringData.getTerm(), RATE)).thenReturn(DtoInitializer.OFFER_0_MONTHLY_PAYMENT);
+			when(personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE)).thenReturn(rate);
+			when(personalRateCalculatorService.calculateDailyRate(rate)).thenReturn(dailyRate);
+			when(monthlyPaymentCalculatorService.calculate(amountWithInsurance, scoringData.getTerm(), rate)).thenReturn(DtoInitializer.OFFER_0_MONTHLY_PAYMENT);
 			when(schedulePaymentsCalculatorService.calculatePaymentScheduleElement(1, amountWithInsurance, dailyRate, DtoInitializer.OFFER_0_MONTHLY_PAYMENT, LocalDate.now())).thenReturn(expectedFirstPaymentScheduleElement);
 			
 			ArgumentCaptor<PaymentScheduleElementDto> paymentScheduleCaptor = ArgumentCaptor.forClass(PaymentScheduleElementDto.class);
@@ -138,9 +138,9 @@ public class CalculatorServiceTest {
 				assertThat(actualCredit.getIsSalaryClient()).isEqualTo(expectedCredit.getIsSalaryClient());
 				assertThat(actualCredit.getPaymentSchedule().getFirst()).isEqualTo(expectedFirstPaymentScheduleElement);
 				verify(schedulePaymentsCalculatorService, times(1)).countPayment(paymentScheduleCaptor.capture(), anyList(), dailyRateCaptor.capture());
-				verify(personalRateCalculatorService, times(1)).countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-				verify(personalRateCalculatorService, times(1)).calculateDailyRate(RATE);
-				verify(monthlyPaymentCalculatorService, times(1)).calculate(scoringData.getAmount(), scoringData.getTerm(), RATE);
+				verify(personalRateCalculatorService, times(1)).countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+				verify(personalRateCalculatorService, times(1)).calculateDailyRate(rate);
+				verify(monthlyPaymentCalculatorService, times(1)).calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
 				verify(schedulePaymentsCalculatorService, times(1)).calculatePaymentScheduleElement(1, scoringData.getAmount(), dailyRate, DtoInitializer.OFFER_0_MONTHLY_PAYMENT, LocalDate.now());
 			});
 		}

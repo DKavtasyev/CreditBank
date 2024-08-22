@@ -21,7 +21,7 @@ public enum Theme {
 	}
 	
 	public String getTopicName() {
-		return topic.getValue();
+		return topic.getTopicName();
 	}
 	public String getSubject() {
 		return topic.getSubject();
@@ -37,14 +37,14 @@ public enum Theme {
 	}
 	
 	private abstract static class Topic{
-		protected String value;
+		protected String topic;
 		protected String subject;
 		protected String messageText;
 		protected String buttonText;
 		protected UriComponentsBuilder uriComponentsBuilder;
 		
-		String getValue(){
-			return value;
+		String getTopicName(){
+			return topic;
 		}
 		String getSubject() {
 			return subject;
@@ -67,7 +67,7 @@ public enum Theme {
 	
 	private static class FinishRegistrationTopic extends Topic {
 		public FinishRegistrationTopic() {
-			value = "finish-registration";
+			topic = "finish-registration";
 			subject = "Завершение оформления кредита";
 			messageText = "Закончите ранее начатое оформление кредита.";
 			buttonText = "Завершить оформление";
@@ -78,7 +78,7 @@ public enum Theme {
 	@Getter
 	private static class CreateDocumentsTopic extends Topic {
 		public CreateDocumentsTopic() {
-			value = "create-documents";
+			topic = "create-documents";
 			subject = "Оформление документов";
 			messageText = "Перейти к оформлению документов.";
 			buttonText = "Сформировать документы";
@@ -89,7 +89,7 @@ public enum Theme {
 	@Getter
 	private static class SendDocumentsTopic extends Topic {
 		public SendDocumentsTopic() {
-			value = "send-documents";
+			topic = "send-documents";
 			subject = "Документы на подпись";
 			messageText = "Ваши документы на кредит.";
 			buttonText = "Запрос на подписание документов";
@@ -100,7 +100,7 @@ public enum Theme {
 	@Getter
 	private static class SendSesTopic extends Topic {
 		public SendSesTopic() {
-			value = "send-ses";
+			topic = "send-ses";
 			subject = "Подписание документов";
 			messageText = "Для получения кредита необходимо подписать документы.";
 			buttonText = "Подписать документы";
@@ -111,7 +111,7 @@ public enum Theme {
 	@Getter
 	private static class CreditIssuedTopic extends Topic {
 		public CreditIssuedTopic() {
-			value = "credit-issued";
+			topic = "credit-issued";
 			subject = "Кредит оформлен";
 			messageText = "Кредит оформлен.";
 			buttonText = null;
@@ -122,7 +122,7 @@ public enum Theme {
 	@Getter
 	private static class StatementDeniedTopic extends Topic {
 		public StatementDeniedTopic() {
-			value = "statement-denied";
+			topic = "statement-denied";
 			subject = "Заявка отклонена";
 			messageText = "Заявка на получение кредита отклонена.";
 			buttonText = null;

@@ -17,15 +17,15 @@ import static ru.neoflex.neostudy.common.constants.EmploymentStatus.UNEMPLOYED;
 public class RefusalService {
 	
 	@Value("${refusal.ratio-of-amount-to-salary}")
-	private BigDecimal RATIO_OF_AMOUNT_TO_SALARY;
+	private BigDecimal ratioOfAmountToSalary;
 	@Value("${refusal.work-experience.min-total}")
-	private int MIN_TOTAL_WORK_EXPERIENCE;
+	private int minTotalWorkExperience;
 	@Value("${refusal.work-experience.min-current}")
-	private int MIN_CURRENT_WORK_EXPERIENCE;
+	private int minCurrentWorkExperience;
 	@Value("${refusal.min-age}")
-	private int MIN_AGE;
+	private int minAge;
 	@Value("${refusal.max-age}")
-	private int MAX_AGE;
+	private int maxAge;
 	
 	/**
 	 * Проверяет пользовательские данные на соответствие условиям выдачи кредита. В случае несоответствия какому-либо
@@ -47,11 +47,11 @@ public class RefusalService {
 	public void checkRefuseConditions(ScoringDataDto scoringData, int age) throws LoanRefusalException {
 		EmploymentDto employmentDto = scoringData.getEmployment();
 		
-		boolean inappropriateTotalWorkExperience = employmentDto.getWorkExperienceTotal() < MIN_TOTAL_WORK_EXPERIENCE;
-		boolean inappropriateCurrentWorkExperience = employmentDto.getWorkExperienceCurrent() < MIN_CURRENT_WORK_EXPERIENCE;
-		boolean ageIsTooSmall = age < MIN_AGE;
-		boolean ageIsTooBig = age > MAX_AGE;
-		boolean inappropriateAmount = scoringData.getAmount().compareTo(employmentDto.getSalary().multiply(RATIO_OF_AMOUNT_TO_SALARY)) > 0;
+		boolean inappropriateTotalWorkExperience = employmentDto.getWorkExperienceTotal() < minTotalWorkExperience;
+		boolean inappropriateCurrentWorkExperience = employmentDto.getWorkExperienceCurrent() < minCurrentWorkExperience;
+		boolean ageIsTooSmall = age < minAge;
+		boolean ageIsTooBig = age > maxAge;
+		boolean inappropriateAmount = scoringData.getAmount().compareTo(employmentDto.getSalary().multiply(ratioOfAmountToSalary)) > 0;
 		boolean isUnemployed = employmentDto.getEmploymentStatus().equals(UNEMPLOYED);
 		
 		if (inappropriateTotalWorkExperience || inappropriateCurrentWorkExperience || ageIsTooSmall || ageIsTooBig || inappropriateAmount || isUnemployed) {

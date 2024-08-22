@@ -22,7 +22,19 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<instruction.coveredratio.minimum_value>0.5</instruction.coveredratio.minimum_value>
 		<postgres_password>${env.POSTGRES_PASSWORD}</postgres_password>
+		<spring-cloud.version>2023.0.3</spring-cloud.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
