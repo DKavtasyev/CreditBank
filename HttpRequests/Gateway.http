@@ -22,19 +22,19 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "67dc30ab-abab-49a7-84f6-1fb5f3370ca6",
-  "requestedAmount": 100000,
-  "totalAmount": 108877.08,
-  "term": 12,
-  "monthlyPayment": 9073.09,
-  "rate": 16,
+  "statementId": "836002d9-bd30-47d2-81bd-c52154b2e7ef",
+  "requestedAmount": 1000000,
+  "totalAmount": 1118588.1167166018933096,
+  "term": 24,
+  "monthlyPayment": 46607.8381965250788879,
+  "rate": 0.11,
   "isInsuranceEnabled": false,
-  "isSalaryClient": false
+  "isSalaryClient": true
 }
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8080/statement/registration/ed67eb27-48ab-4b8a-994a-9f158d4bbebc
+POST http://localhost:8080/statement/registration/836002d9-bd30-47d2-81bd-c52154b2e7ef
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -46,7 +46,7 @@ Cache-Control: no-store
   "passportIssueBranch": "ГУ МВД ПО МОСКОВСКОЙ ОБЛАСТИ",
   "employment": {
 	"employmentStatus": "EMPLOYED",
-	"employmentINN": "12341234234",
+	"employmentINN": "123412342345",
 	"salary": 200000,
 	"position": "WORKER",
 	"workExperienceTotal": 96,
@@ -57,22 +57,22 @@ Cache-Control: no-store
 
 ### Denial of a loan
 ### В URL установить корректный statementId
-GET http://localhost:8080/statement/deny/ed67eb27-48ab-4b8a-994a-9f158d4bbebc
+GET http://localhost:8080/statement/deny/836002d9-bd30-47d2-81bd-c52154b2e7ef
 
 
 
 
 ### Create documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/ed67eb27-48ab-4b8a-994a-9f158d4bbebc
+POST http://localhost:8080/document/836002d9-bd30-47d2-81bd-c52154b2e7ef
 
 ### Sign documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/ed67eb27-48ab-4b8a-994a-9f158d4bbebc/sign
+POST http://localhost:8080/document/836002d9-bd30-47d2-81bd-c52154b2e7ef/sign
 
 ### Verify SES code request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/ed67eb27-48ab-4b8a-994a-9f158d4bbebc/sign/code?code=9fb71a5c-5b26-46ac-b974-3abbe0487dfb
+POST http://localhost:8080/document/836002d9-bd30-47d2-81bd-c52154b2e7ef/sign/code?code=9fb71a5c-5b26-46ac-b974-3abbe0487dfb
 
 
 

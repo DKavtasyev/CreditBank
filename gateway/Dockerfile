@@ -32,7 +32,7 @@ ENV JAVA_MINIMAL="/opt/java-minimal"
 RUN /usr/lib/jvm/java-21-openjdk/bin/jlink \
     --verbose \
     --add-modules \
-        java.base,java.desktop,java.logging,java.management,java.naming,java.security.jgss,java.instrument,java.sql,java.xml,jdk.unsupported \
+        java.base,java.desktop,java.logging,java.management,java.naming,java.security.jgss,java.security.sasl,java.net.http,java.instrument,java.sql,java.xml,jdk.unsupported,jdk.crypto.ec,jdk.crypto.cryptoki,jdk.naming.rmi,jdk.naming.dns \
     --compress=zip-6 --strip-debug --no-header-files --no-man-pages \
     --release-info="add:IMPLEMENTOR=radistao:IMPLEMENTOR_VERSION=radistao_JRE" \
     --output "$JAVA_MINIMAL"

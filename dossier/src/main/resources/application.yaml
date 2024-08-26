@@ -7,7 +7,7 @@ spring:
     consumer:
       auto-offset-reset: earliest
       group-id: "creditBankDossier"
-      bootstrap-servers: "localhost:9092"
+      bootstrap-servers: ${KAFKA_HOST:localhost}:9092
   mail:
     host: smtp.mail.ru
     port: 587
@@ -20,6 +20,7 @@ spring:
           auth: true
           starttls:
             enable: true
+            required: true
     test-connection: true
 
 app:

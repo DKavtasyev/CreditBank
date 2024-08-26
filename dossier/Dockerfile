@@ -32,13 +32,19 @@ ENV JAVA_MINIMAL="/opt/java-minimal"
 RUN /usr/lib/jvm/java-21-openjdk/bin/jlink \
     --verbose \
     --add-modules \
-        java.base,java.desktop,java.logging,java.management,java.naming,java.security.jgss,java.instrument,java.sql,java.xml,jdk.unsupported \
+        java.base,java.desktop,java.logging,java.management,java.naming,java.security.jgss,java.security.sasl,java.net.http,java.instrument,java.sql,java.xml,jdk.unsupported,jdk.crypto.ec,jdk.crypto.cryptoki,jdk.naming.rmi,jdk.naming.dns \
     --compress=zip-6 --strip-debug --no-header-files --no-man-pages \
     --release-info="add:IMPLEMENTOR=radistao:IMPLEMENTOR_VERSION=radistao_JRE" \
     --output "$JAVA_MINIMAL"
 
 FROM alpine:3.20.2@sha256:0a4eaa0eecf5f8c050e5bba433f58c052be7587ee8af3e8b3910ef9ab5fbe9f5
 LABEL maintainer="Dmitriy Kavtasyev"
+RUN apk add --no-cache \
+    curl \
+    openssl \
+    ca-certificates \
+    tzdata
+ENV TZ=Europe/Moscow
 ENV JAVA_HOME=/opt/java-minimal
 ENV PATH="$PATH:$JAVA_HOME/bin"
 COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"

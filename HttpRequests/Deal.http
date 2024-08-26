@@ -22,7 +22,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "6911722c-11ba-489b-8865-5f4f3a57fa46",
+  "statementId": "ec3c45b6-7aba-41ab-9dcd-a1db6f8a4bd0",
   "requestedAmount": 1000000,
   "totalAmount": 1032327.2853558058770738,
   "term": 6,
@@ -70,7 +70,7 @@ POST http://localhost:8082/deal/document/d0be427a-8de6-4381-8765-44eabeebc488/si
 ### Подписание документов
 ### В URL установить корректный statementId, добавить значение параметра запроса "code", равное подписи.
 ### Подпись нужно взять из параметра "code" ссылки, присылаемой в письме.
-POST http://localhost:8082/deal/document/53313926-b673-4789-afdd-37af66f316da/code?code=f94b8102-ce71-41be-aff6-fc993cfd8edc
+POST http://localhost:8082/deal/document/d0be427a-8de6-4381-8765-44eabeebc488/code?code=0484b91a-819b-46fc-875b-ebee388fb10e
 
 ### Установка статуса для заявки Statement
 PUT http://localhost:8082/deal/admin/statement/d0be427a-8de6-4381-8765-44eabeebc488/status

@@ -4,7 +4,7 @@ spring:
   profiles:
     active: default
   datasource:
-    url: jdbc:postgresql://${WEB_HOST:localhost}:5432/credit_bank
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/credit_bank
     username: postgres
     password: ${POSTGRES_PASSWORD}
   jpa:
@@ -16,7 +16,7 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: public
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
     consumer:
       auto-offset-reset: earliest
 

@@ -96,28 +96,40 @@ CreditBank — учебное приложение для автоматизир
 </tbody> 
 </table>
 
-[Подробное описание микросервиса dossier](statement/README.md)
+[Подробное описание микросервиса dossier](dossier/README.md)
 
 ### Gateway
 Маршрутизирует запросы от пользователя к соответствующим микросервисам.
 
 <table>
 <thead>
-    <tr><th>Метод</th><th>Путь</th><th>Описание</th></tr>
+    <tr><th>Метод</th><th>Путь</th><th>Описание</th><th>Маршрутизация</th></tr>
 </thead>
 <tbody>
-    <tr><td>POST</td><td>/statement</td> <td>Создание заявки</td></tr>
-    <tr><td>POST</td><td>/statement/select</td> <td>Выбор кредитного предложения</td></tr>
-    <tr><td>POST</td><td>/registration/{statementId}</td> <td>Расчёт кредита</td></tr>
-    <tr><td>GET</td><td>/deny/{statementId}</td> <td>Отказ пользователя от кредита</td></tr>
-    <tr><td>POST</td><td>/document/{statementId}</td> <td>Запрос на формирование и отправку документов</td></tr>
-    <tr><td>POST</td><td>/document/{statementId}/sign</td> <td>Запрос на подписание документов</td></tr>
-    <tr><td>POST</td><td>/document/{statementId}/sign/code</td> <td>Подписание документов</td></tr>
-    <tr><td>PUT</td><td>/admin/statement/{statementId}/status</td> <td>Установка статуса заявки</td></tr>
-    <tr><td>GET</td><td>/admin/statement/{statementId}</td> <td>Запрос заявки по её id</td></tr>
-    <tr><td>GET</td><td>/admin/statement</td> <td>Запрос всех заявок</td></tr>
+    <tr><td>POST</td><td>/statement</td> <td>Создание заявки</td><td>MS statement</td></tr>
+    <tr><td>POST</td><td>/statement/select</td> <td>Выбор кредитного предложения</td><td>MS statement</td></tr>
+    <tr><td>POST</td><td>/registration/{statementId}</td> <td>Расчёт кредита</td><td>MS deal</td></tr>
+    <tr><td>GET</td><td>/deny/{statementId}</td> <td>Отказ пользователя от кредита</td><td>MS deal</td></tr>
+    <tr><td>POST</td><td>/document/{statementId}</td> <td>Запрос на формирование и отправку документов</td><td>MS deal</td></tr>
+    <tr><td>POST</td><td>/document/{statementId}/sign</td> <td>Запрос на подписание документов</td><td>MS deal</td></tr>
+    <tr><td>POST</td><td>/document/{statementId}/sign/code</td> <td>Подписание документов</td><td>MS deal</td></tr>
+    <tr><td>PUT</td><td>/admin/statement/{statementId}/status</td> <td>Установка статуса заявки</td><td>MS deal</td></tr>
+    <tr><td>GET</td><td>/admin/statement/{statementId}</td> <td>Запрос заявки по её id</td><td>MS deal</td></tr>
+    <tr><td>GET</td><td>/admin/statement</td> <td>Запрос всех заявок</td><td>MS deal</td></tr>
 </tbody>
 </table>
 
+[Подробное описание микросервиса gateway](gateway/README.md)
 
+### Сборка приложения
 
+Порядок действий:
+- Установите Docker и docker-compose
+
+[//]: # (- Установите PostgreSQL, создайте базу данных "credit-bank" )
+- Добавьте следующие переменные окружения:
+  - Пароль от базы данных POSTGRES_PASSWORD
+  - Пароль от почтового ящика EMAIL_PASSWORD
+- Запустите приложение командой docker-compose up (Docker должен быть запущен)
+
+Пароль от почты EMAIL_PASSWORD необходимо получить у разработчика, пароль

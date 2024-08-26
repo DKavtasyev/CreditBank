@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
-import ru.neoflex.neostudy.common.util.UrlBuilder;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class ParamsService {
 			if (builder.build().getHost() == null) {
 				builder.scheme("http").host(bankHost).port(bankPort);
 			}
-			url = UrlBuilder.builder().init(builder).build().toString();
+			url = builder.build(false).toString();
 		}
 		
 		Map<String, Object> params = new HashMap<>();
