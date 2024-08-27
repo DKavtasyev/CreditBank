@@ -44,9 +44,9 @@ RUN apk add --no-cache \
     openssl \
     ca-certificates \
     tzdata
-ENV TZ=Europe/Moscow
 ENV JAVA_HOME=/opt/java-minimal
 ENV PATH="$PATH:$JAVA_HOME/bin"
+ENV TZ=Europe/Samara
 COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"
 
 WORKDIR /app

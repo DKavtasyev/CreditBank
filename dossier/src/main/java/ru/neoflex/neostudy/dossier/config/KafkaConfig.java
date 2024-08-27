@@ -13,6 +13,7 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
@@ -45,6 +46,7 @@ public class KafkaConfig {
 	public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, EmailMessage>> listenerContainerFactory(ConsumerFactory<String, EmailMessage> consumerFactory) {
 		var factory = new ConcurrentKafkaListenerContainerFactory<String, EmailMessage>();
 		factory.setConsumerFactory(consumerFactory);
+		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 		return factory;
 	}
 	

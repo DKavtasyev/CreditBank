@@ -41,6 +41,7 @@ FROM alpine:3.20.2@sha256:0a4eaa0eecf5f8c050e5bba433f58c052be7587ee8af3e8b3910ef
 LABEL maintainer="Dmitriy Kavtasyev"
 ENV JAVA_HOME=/opt/java-minimal
 ENV PATH="$PATH:$JAVA_HOME/bin"
+ENV TZ=Europe/Samara
 COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"
 
 WORKDIR /app
