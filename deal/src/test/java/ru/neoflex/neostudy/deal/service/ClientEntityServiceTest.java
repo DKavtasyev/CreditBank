@@ -13,6 +13,7 @@ import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Client;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.deal.repository.ClientRepository;
+import ru.neoflex.neostudy.deal.service.entity.ClientEntityService;
 import ru.neoflex.neostudy.deal.util.EntityInitializer;
 
 import java.util.Optional;

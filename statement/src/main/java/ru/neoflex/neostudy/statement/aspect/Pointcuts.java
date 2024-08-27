@@ -6,9 +6,9 @@ public class Pointcuts {
 	@Pointcut("execution(* ru.neoflex.neostudy.statement.controller.StatementController.*(..))")
 	public void allControllerMethods() {}
 	
-	@Pointcut("execution(* ru.neoflex.neostudy.statement.requester.DealRequester.requestLoanOffers(..))")
+	@Pointcut("execution(* ru.neoflex.neostudy.statement.requester.DealRequestService.requestLoanOffers(..))")
 	public void requestLoanOffersMethod() {}
 	
-	@Pointcut("execution(* ru.neoflex.neostudy.statement.requester.DealRequester.sendChosenOffer(..))")
+	@Pointcut("execution(* ru.neoflex.neostudy.statement.requester.DealRequestService.sendChosenOffer(..))")
 	public void sendChosenOfferMethod() {}
 }

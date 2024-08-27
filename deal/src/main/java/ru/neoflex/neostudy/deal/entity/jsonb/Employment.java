@@ -2,8 +2,8 @@ package ru.neoflex.neostudy.deal.entity.jsonb;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import ru.neoflex.neostudy.common.constants.EmploymentStatus;
 import ru.neoflex.neostudy.common.constants.EmploymentPosition;
+import ru.neoflex.neostudy.common.constants.EmploymentStatus;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -8,7 +8,7 @@ spring:
     username: postgres
     password: postgres
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: validate
   liquibase:
@@ -31,7 +31,32 @@ app:
       prefix: /deal/document
     admin:
       prefix: /deal/admin
+    page-size: 10
+  font:
+    path: fonts/times.ttf
+  date:
+    pattern: dd MMMM yyyy
 
 logging:
   level:
     root: info
+    # noinspection SpellCheckingInspection
+    ru.neoflex.neostudy.deal: info
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

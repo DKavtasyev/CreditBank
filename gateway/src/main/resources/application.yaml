@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: default
+
+server:
+  port: 8085
+
+app:
+  rest:
+    prefix:
+      statement: /statement
+      document: /document
+      admin: /admin
+    url:
+      statement:
+        create-loan-statement:    http://localhost:8083/statement
+        apply-offer:              http://localhost:8083/statement/offer
+      deal:
+        calculate-credit:         http://localhost:8082/deal/calculate/{statementId}
+        deny-offer:               http://localhost:8082/deal/offer/deny/{statementId}
+        create-documents:         http://localhost:8082/deal/document/{statementId}/send
+        sign-documents:           http://localhost:8082/deal/document/{statementId}/sign
+        verify-signature:         http://localhost:8082/deal/document/{statementId}/code
+        update-statement-status:  http://localhost:8082/deal/admin/statement/{statementId}/status
+        get-statement:            http://localhost:8082/deal/admin/statement/{statementId}
+        get-all-statements:       http://localhost:8082/deal/admin/statement
+
+logging:
+  level:
+    root: info
+    # noinspection SpellCheckingInspection
+    ru.neoflex.neostudy.gateway: info
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -23,11 +23,10 @@ class MonthlyPaymentCalculatorServiceTest {
 			"100000000, 120, 0.12, 1434709.4840258737728000",
 			"3000000, 24, 0.9, 273150.2384166466631238",
 			"3000000, 24, 2.3, 583678.7846867152477770",
-			"3000000, 24, 0.005, 125652.0813065728360767",
-		
+			"3000000, 24, 0.005, 125652.0813065728360767"
 	})
 	void calculate_whenStatementParametersReceived_thenReturnMonthlyPaymentValue(String amount, Integer term, String rate, String expectedRate) {
 		BigDecimal actualRate = monthlyPaymentCalculatorService.calculate(new BigDecimal(amount), term, new BigDecimal(rate));
-		assertThat(actualRate.toString()).isEqualTo(expectedRate);
+		assertThat(actualRate).isEqualTo(expectedRate);
 	}
 }

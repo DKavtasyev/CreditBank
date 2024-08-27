@@ -11,17 +11,32 @@ app:
   rest:
     prefix: /calculator
 
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 logging:
   level:
-    root: warn
+    root: info
     # noinspection SpellCheckingInspection
     ru.neoflex.neostudy.calculator: debug
 
 credit:
   insurance-percent: 1.05
-  # noinspection SpellCheckingInspection
-  min-amount: 30000
-  min-term: 6
 
 rate:
   base-rate: 0.16

@@ -1,6 +1,7 @@
 package ru.neoflex.neostudy.common.util;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.context.annotation.Profile;
 import ru.neoflex.neostudy.common.constants.EmploymentPosition;
 import ru.neoflex.neostudy.common.constants.EmploymentStatus;
 import ru.neoflex.neostudy.common.constants.Gender;
@@ -15,8 +16,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Утилитный класс, используется для создания и инициализации сущностей entity и dto, которые содержат в себе
+ * пользовательские данные. Используется при проведении unit-тестирования микросервисов для инициализации ожидаемых
+ * объектов, с которыми сравниваются результаты тестирования.
+ */
 @UtilityClass
+@Profile("test")
 public class DtoInitializer {
+	public static final BigDecimal BASE_RATE = new BigDecimal("0.12");
+	public static final BigDecimal OFFER_0_TOTAL_AMOUNT = new BigDecimal("1035290.2002652885215750");
+	public static final BigDecimal OFFER_0_MONTHLY_PAYMENT = new BigDecimal("172548.3667108814202625");
+	public static final BigDecimal OFFER_1_MONTHLY_PAYMENT = new BigDecimal("172054.5475593009795123");
+	public static final BigDecimal OFFER_2_MONTHLY_PAYMENT = new BigDecimal("179622.3528220476265425");
+	public static final BigDecimal OFFER_3_MONTHLY_PAYMENT = new BigDecimal("179105.9426200903968720");
+	public static final LocalDate DATE = LocalDate.of(2024, Month.JULY, 10);
+	public static final int AGE = 25;
+	
+	/**
+	 * Инициализирует LoanStatementRequestDto.
+	 * @return initialized LoanStatementRequestDto
+	 */
 	public static LoanStatementRequestDto initLoanStatementRequest() {
 		return LoanStatementRequestDto.builder()
 				.amount(BigDecimal.valueOf(1_000_000))
@@ -25,58 +45,66 @@ public class DtoInitializer {
 				.lastName("Ivanov")
 				.middleName("Vasilievich")
 				.email("ivanov@mail.ru")
-				.birthDate(LocalDate.now().minusYears(25))
+				.birthDate(LocalDate.now().minusYears(AGE))
 				.passportSeries("1234")
 				.passportNumber("123456")
 				.build();
 	}
 	
+	/**
+	 * Инициализирует список из четырёх предложений кредита LoanOfferDto.
+	 * @return List, содержащий четыре предложения LoanOfferDto.
+	 */
 	public static List<LoanOfferDto> initOffers() {
-		LoanOfferDto loanOfferOne = new LoanOfferDto()
-				.setStatementId(UUID.randomUUID())
-				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
-				.setTotalAmount(new BigDecimal("1035290.2002652885215750"))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("172548.3667108814202625"))
-				.setRate(new BigDecimal("0.12"))
-				.setIsInsuranceEnabled(false)
-				.setIsSalaryClient(false);
+		LoanOfferDto loanOfferOne = LoanOfferDto.builder()
+				.requestedAmount(BigDecimal.valueOf(1_000_000))
+				.totalAmount(OFFER_0_TOTAL_AMOUNT)
+				.term(6)
+				.monthlyPayment(OFFER_0_MONTHLY_PAYMENT)
+				.rate(BASE_RATE)
+				.isInsuranceEnabled(false)
+				.isSalaryClient(false)
+				.build();
 		
-		LoanOfferDto loanOfferTwo = new LoanOfferDto()
-				.setStatementId(UUID.randomUUID())
-				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
-				.setTotalAmount(new BigDecimal("1032327.2853558058770738"))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("172054.5475593009795123"))
-				.setRate(new BigDecimal("0.11"))
-				.setIsInsuranceEnabled(false)
-				.setIsSalaryClient(true);
+		LoanOfferDto loanOfferTwo = LoanOfferDto.builder()
+				.requestedAmount(BigDecimal.valueOf(1_000_000))
+				.totalAmount(new BigDecimal("1032327.2853558058770738"))
+				.term(6)
+				.monthlyPayment(OFFER_1_MONTHLY_PAYMENT)
+				.rate(new BigDecimal("0.11"))
+				.isInsuranceEnabled(false)
+				.isSalaryClient(true)
+				.build();
 		
-		LoanOfferDto loanOfferThree = new LoanOfferDto()
-				.setStatementId(UUID.randomUUID())
-				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
-				.setTotalAmount(new BigDecimal("1077734.1169322857592550"))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("179622.3528220476265425"))
-				.setRate(new BigDecimal("0.09"))
-				.setIsInsuranceEnabled(true)
-				.setIsSalaryClient(false);
+		LoanOfferDto loanOfferThree = LoanOfferDto.builder()
+				.requestedAmount(BigDecimal.valueOf(1_000_000))
+				.totalAmount(new BigDecimal("1077734.1169322857592550"))
+				.term(6)
+				.monthlyPayment(OFFER_2_MONTHLY_PAYMENT)
+				.rate(new BigDecimal("0.09"))
+				.isInsuranceEnabled(true)
+				.isSalaryClient(false)
+				.build();
 		
-		LoanOfferDto loanOfferFour = new LoanOfferDto()
-				.setStatementId(UUID.randomUUID())
-				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
-				.setTotalAmount(new BigDecimal("1074635.6557205423812320"))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("179105.9426200903968720"))
-				.setRate(new BigDecimal("0.08"))
-				.setIsInsuranceEnabled(true)
-				.setIsSalaryClient(true);
+		LoanOfferDto loanOfferFour = LoanOfferDto.builder()
+				.requestedAmount(BigDecimal.valueOf(1_000_000))
+				.totalAmount(new BigDecimal("1074635.6557205423812320"))
+				.term(6)
+				.monthlyPayment(OFFER_3_MONTHLY_PAYMENT)
+				.rate(new BigDecimal("0.08"))
+				.isInsuranceEnabled(true)
+				.isSalaryClient(true)
+				.build();
 		
 		List<LoanOfferDto> offers = new ArrayList<>();
 		Collections.addAll(offers, loanOfferOne, loanOfferTwo, loanOfferThree, loanOfferFour);
 		return offers;
 	}
 	
+	/**
+	 * Инициализирует данные, необходимые для оценки условий кредита.
+	 * @return ScoringDataDto.
+	 */
 	public static ScoringDataDto initScoringData() {
 		EmploymentDto employment = initEmploymentDto();
 		
@@ -87,7 +115,7 @@ public class DtoInitializer {
 				.lastName("Ivanov")
 				.middleName("Vasilievich")
 				.gender(Gender.MALE)
-				.birthdate(LocalDate.now().minusYears(25))
+				.birthdate(LocalDate.now().minusYears(AGE))
 				.passportSeries("1234")
 				.passportNumber("123456")
 				.passportIssueDate(LocalDate.now().minusYears(5))
@@ -101,6 +129,10 @@ public class DtoInitializer {
 				.build();
 	}
 	
+	/**
+	 * Инициализирует dto с информацией о месте работы пользователя.
+	 * @return EmploymentDto
+	 */
 	public static EmploymentDto initEmploymentDto() {
 		return EmploymentDto.builder()
 				.employmentStatus(EmploymentStatus.EMPLOYED)
@@ -112,55 +144,65 @@ public class DtoInitializer {
 				.build();
 	}
 	
+	/**
+	 * Инициализирует dto, содержащее полную информацию о графике и суммах платежей по кредиту. По причине разного
+	 * количества дней в месяцах, для успешного прохождения тестов указана фиксированная дата взятия кредита.
+	 * @return CreditDto.
+	 */
 	public CreditDto initCreditDto() {
-		LocalDate date = LocalDate.of(2024, Month.JULY, 10);
-		PaymentScheduleElementDto paymentScheduleElementOne = new PaymentScheduleElementDto()
-				.setNumber(1)
-				.setDate(date.plusMonths(1))
-				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("9863.0136986310000000"))
-				.setDebtPayment(new BigDecimal("162685.3530122504202625"))
-				.setRemainingDebt(new BigDecimal("837314.6469877495797375"));
+		PaymentScheduleElementDto paymentScheduleElementOne = PaymentScheduleElementDto.builder()
+				.number(1)
+				.date(DATE.plusMonths(1))
+				.totalPayment(OFFER_0_MONTHLY_PAYMENT)
+				.interestPayment(new BigDecimal("9863.0136986310000000"))
+				.debtPayment(new BigDecimal("162685.3530122504202625"))
+				.remainingDebt(new BigDecimal("837314.6469877495797375"))
+				.build();
 		
-		PaymentScheduleElementDto paymentScheduleElementTwo = new PaymentScheduleElementDto()
-				.setNumber(2)
-				.setDate(date.plusMonths(2))
-				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("8533.7273610813725549"))
-				.setDebtPayment(new BigDecimal("164014.6393498000477076"))
-				.setRemainingDebt(new BigDecimal("673300.0076379495320299"));
+		PaymentScheduleElementDto paymentScheduleElementTwo = PaymentScheduleElementDto.builder()
+				.number(2)
+				.date(DATE.plusMonths(2))
+				.totalPayment(OFFER_0_MONTHLY_PAYMENT)
+				.interestPayment(new BigDecimal("8533.7273610813725549"))
+				.debtPayment(new BigDecimal("164014.6393498000477076"))
+				.remainingDebt(new BigDecimal("673300.0076379495320299"))
+				.build();
 		
-		PaymentScheduleElementDto paymentScheduleElementThree = new PaymentScheduleElementDto()
-				.setNumber(3)
-				.setDate(date.plusMonths(3))
-				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("6640.7671986214531639"))
-				.setDebtPayment(new BigDecimal("165907.5995122599670986"))
-				.setRemainingDebt(new BigDecimal("507392.4081256895649313"));
+		PaymentScheduleElementDto paymentScheduleElementThree = PaymentScheduleElementDto.builder()
+				.number(3)
+				.date(DATE.plusMonths(3))
+				.totalPayment(OFFER_0_MONTHLY_PAYMENT)
+				.interestPayment(new BigDecimal("6640.7671986214531639"))
+				.debtPayment(new BigDecimal("165907.5995122599670986"))
+				.remainingDebt(new BigDecimal("507392.4081256895649313"))
+				.build();
 		
-		PaymentScheduleElementDto paymentScheduleElementFour = new PaymentScheduleElementDto()
-				.setNumber(4)
-				.setDate(date.plusMonths(4))
-				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("5171.2322143225488706"))
-				.setDebtPayment(new BigDecimal("167377.1344965588713919"))
-				.setRemainingDebt(new BigDecimal("340015.2736291306935394"));
+		PaymentScheduleElementDto paymentScheduleElementFour = PaymentScheduleElementDto.builder()
+				.number(4)
+				.date(DATE.plusMonths(4))
+				.totalPayment(OFFER_0_MONTHLY_PAYMENT)
+				.interestPayment(new BigDecimal("5171.2322143225488706"))
+				.debtPayment(new BigDecimal("167377.1344965588713919"))
+				.remainingDebt(new BigDecimal("340015.2736291306935394"))
+				.build();
 		
-		PaymentScheduleElementDto paymentScheduleElementFive = new PaymentScheduleElementDto()
-				.setNumber(5)
-				.setDate(date.plusMonths(5))
-				.setTotalPayment(new BigDecimal("172548.3667108814202625"))
-				.setInterestPayment(new BigDecimal("3353.5753015478838399"))
-				.setDebtPayment(new BigDecimal("169194.7914093335364226"))
-				.setRemainingDebt(new BigDecimal("170820.4822197971571168"));
+		PaymentScheduleElementDto paymentScheduleElementFive = PaymentScheduleElementDto.builder()
+				.number(5)
+				.date(DATE.plusMonths(5))
+				.totalPayment(OFFER_0_MONTHLY_PAYMENT)
+				.interestPayment(new BigDecimal("3353.5753015478838399"))
+				.debtPayment(new BigDecimal("169194.7914093335364226"))
+				.remainingDebt(new BigDecimal("170820.4822197971571168"))
+				.build();
 		
-		PaymentScheduleElementDto paymentScheduleElementSix = new PaymentScheduleElementDto()
-				.setNumber(6)
-				.setDate(date.plusMonths(6))
-				.setTotalPayment(new BigDecimal("172561.4471344757900662"))
-				.setInterestPayment(new BigDecimal("1740.9649146786329494"))
-				.setDebtPayment(new BigDecimal("170807.4017962027873131"))
-				.setRemainingDebt(new BigDecimal("13.0804235943698037"));
+		PaymentScheduleElementDto paymentScheduleElementSix = PaymentScheduleElementDto.builder()
+				.number(6)
+				.date(DATE.plusMonths(6))
+				.totalPayment(new BigDecimal("172561.4471344757900662"))
+				.interestPayment(new BigDecimal("1740.9649146786329494"))
+				.debtPayment(new BigDecimal("170807.4017962027873131"))
+				.remainingDebt(new BigDecimal("13.0804235943698037"))
+				.build();
 		
 		List<PaymentScheduleElementDto> scheduleOfPayments = new ArrayList<>();
 		Collections.addAll(scheduleOfPayments,
@@ -171,37 +213,48 @@ public class DtoInitializer {
 				paymentScheduleElementFive,
 				paymentScheduleElementSix);
 		
-		return new CreditDto()
-				.setAmount(BigDecimal.valueOf(1_000_000))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("172548.3667108814202625"))
-				.setRate(new BigDecimal("0.12"))
-				.setPsk(new BigDecimal("1035417.8805246017999105"))
-				.setIsInsuranceEnabled(false)
-				.setIsSalaryClient(false)
-				.setPaymentSchedule(scheduleOfPayments);
+		return CreditDto.builder()
+				.amount(BigDecimal.valueOf(1_000_000))
+				.term(6)
+				.monthlyPayment(OFFER_0_MONTHLY_PAYMENT)
+				.rate(BASE_RATE)
+				.psk(new BigDecimal("1035417.8805246017999105"))
+				.isInsuranceEnabled(false)
+				.isSalaryClient(false)
+				.paymentSchedule(scheduleOfPayments)
+				.build();
 	}
 	
+	/**
+	 * Инициализирует один экземплят LoanOfferDto.
+	 * @return LoanOfferDto.
+	 */
 	public static LoanOfferDto initLoanOfferDto() {
-		return new LoanOfferDto()
-				.setStatementId(UUID.randomUUID())
-				.setRequestedAmount(BigDecimal.valueOf(1_000_000))
-				.setTotalAmount(new BigDecimal("1032327.2853558058770738"))
-				.setTerm(6)
-				.setMonthlyPayment(new BigDecimal("172054.5475593009795123"))
-				.setRate(new BigDecimal("0.11"))
-				.setIsInsuranceEnabled(false)
-				.setIsSalaryClient(true);
+		return LoanOfferDto.builder()
+				.statementId(UUID.randomUUID())
+				.requestedAmount(BigDecimal.valueOf(1_000_000))
+				.totalAmount(new BigDecimal("1032327.2853558058770738"))
+				.term(6)
+				.monthlyPayment(OFFER_1_MONTHLY_PAYMENT)
+				.rate(new BigDecimal("0.11"))
+				.isInsuranceEnabled(false)
+				.isSalaryClient(true)
+				.build();
 	}
 	
+	/**
+	 * Инициализирует dto, содержащий информацию для конечного оформления кредита.
+	 * @return FinishingRegistrationRequestDto.
+	 */
 	public static FinishingRegistrationRequestDto initFinishingRegistrationRequest() {
-		return new FinishingRegistrationRequestDto()
-				.setGender(Gender.MALE)
-				.setMaritalStatus(MaritalStatus.SINGLE)
-				.setDependentAmount(0)
-				.setPassportIssueDate(LocalDate.now().minusYears(5))
-				.setPassportIssueBranch("ГУ МВД ПО Г. МОСКВА")
-				.setEmployment(initEmploymentDto())
-				.setAccountNumber("1234151234");
+		return FinishingRegistrationRequestDto.builder()
+				.gender(Gender.MALE)
+				.maritalStatus(MaritalStatus.SINGLE)
+				.dependentAmount(0)
+				.passportIssueDate(LocalDate.now().minusYears(5))
+				.passportIssueBranch("ГУ МВД ПО Г. МОСКВА")
+				.employment(initEmploymentDto())
+				.accountNumber("1234151234")
+				.build();
 	}
 }

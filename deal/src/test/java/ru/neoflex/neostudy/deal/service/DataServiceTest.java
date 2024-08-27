@@ -15,6 +15,8 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.deal.mapper.PreScoreClientPersonalIdentificationInformationMapper;
+import ru.neoflex.neostudy.deal.service.entity.ClientEntityService;
+import ru.neoflex.neostudy.deal.service.entity.StatementEntityService;
 
 import java.util.Optional;
 import java.util.UUID;

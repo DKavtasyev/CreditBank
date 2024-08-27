@@ -15,10 +15,20 @@ import java.util.List;
 public class PreScoringService {
 	private final CalculatorRequester calculatorRequester;
 	
+	/**
+	 * Возвращает список кредитных предложений. В каждый элемент кредитного предложения устанавливает идентификатор
+	 * заявки {@code Statement}, для которой возвращаются кредитные выражения, и сортирует их по возрастанию от
+	 * "худшего" к "лучшему".
+	 * @param loanStatementRequest данные запроса кредита от пользователя.
+	 * @param statement объект-entity, содержащий все данные по кредиту.
+	 * @return список с кредитными предложениями {@code LoanOfferDto}.
+	 * @throws InternalMicroserviceException если при запросе возникла ошибка или МС calculator недоступен.
+	 */
+	@SuppressWarnings("all") // Подавляет замечание в связи с использованием метода peek (кроме него ничего не подходит).
 	public List<LoanOfferDto> getOffers(LoanStatementRequestDto loanStatementRequest, Statement statement) throws InternalMicroserviceException {
 		return calculatorRequester.requestLoanOffers(loanStatementRequest)
 				.stream()
-				.map(offer -> offer.setStatementId(statement.getStatementId()))
+				.peek(offer -> offer.setStatementId(statement.getStatementId()))
 				.sorted((s1, s2) -> s2.getTotalAmount().compareTo(s1.getTotalAmount()))
 				.toList();
 	}

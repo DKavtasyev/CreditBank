@@ -3,17 +3,20 @@ package ru.neoflex.neostudy.common.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.DateTimeFormat;
 import ru.neoflex.neostudy.common.validation.CheckAge;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(description = "Пользовательский запрос кредита")
 public class LoanStatementRequestDto {
 	@NotNull(message = "Запрашиваемая сумма не может быть пустой")
 	@DecimalMin(value = "30000", message = "Запрашиваемая сумма должна быть не менее 30000")
@@ -51,12 +54,12 @@ public class LoanStatementRequestDto {
 	private LocalDate birthDate;
 	
 	@NotNull(message = "Номер паспорта не может быть пустым")
-	@Pattern(regexp = "^([1-9][0-9]{3})$", message = "Серия паспорта должна состоять из четырёх цифр")
+	@Pattern(regexp = "^([1-9]\\d{3})$", message = "Серия паспорта должна состоять из четырёх цифр")
 	@Schema(description = "Серия паспорта", example = "1234")
 	private String passportSeries;
 	
 	@NotNull(message = "Серия паспорта не может быть пустой")
-	@Pattern(regexp = "^([1-9][0-9]{5})$", message = "Номер паспорта должен состоять из шести цифр")
+	@Pattern(regexp = "^([1-9]\\d{5})$", message = "Номер паспорта должен состоять из шести цифр")
 	@Schema(description = "Номер паспорта", example = "123456")
 	private String passportNumber;
 }

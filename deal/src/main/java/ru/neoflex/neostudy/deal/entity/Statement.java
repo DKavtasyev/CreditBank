@@ -67,6 +67,9 @@ public class Statement {
 	@Column(name = "status_history")
 	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
 	
+	@Column(name = "pdf_file")
+	private byte[] pdfFile;
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

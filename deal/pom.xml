@@ -14,6 +14,14 @@
 	<name>deal</name>
 	<description>deal</description>
 
+	<properties>
+		<itext-core>8.0.4</itext-core>
+		<common.version>1.0.0</common.version>
+		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -24,29 +32,19 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-
-		<!--	jackson JSR310	-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.17.1</version>
 		</dependency>
-
-		<!--	Common module	-->
 		<dependency>
 			<groupId>ru.neoflex.neostudy</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0.0</version>
+			<version>${common.version}</version>
 		</dependency>
-
-		<!-- 	liquibase	 -->
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.28.0</version>
 		</dependency>
-
-		<!--	Kafka	-->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
@@ -56,6 +54,12 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-core</artifactId>
+			<version>${itext-core}</version>
+			<type>pom</type>
 		</dependency>
 
 	</dependencies>
@@ -77,7 +81,6 @@
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>4.28.0</version>
 				<configuration>
 					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
 					<driver>org.postgresql.Driver</driver>

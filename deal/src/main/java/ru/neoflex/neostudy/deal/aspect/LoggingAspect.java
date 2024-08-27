@@ -22,6 +22,8 @@ import java.util.UUID;
 @Log4j2
 public class LoggingAspect {
 	
+	public static final String METHOD = "Method: ";
+	
 	@Around("ru.neoflex.neostudy.deal.aspect.Pointcuts.allControllerMethods()")
 	public Object aroundControllerMethodsLoggingAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -41,15 +43,15 @@ public class LoggingAspect {
 		return targetMethodResult;
 	}
 	
-	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.ClientEntityService.findClientByPassport(..))", returning = "optionalClient")
+	@AfterReturning(pointcut = "execution(* ru.neoflex.neostudy.deal.service.entity.ClientEntityService.findClientByPassport(..))", returning = "optionalClient")
 	private void afterReturningFindClientByPassport(Optional<Client> optionalClient) {
 		optionalClient.ifPresentOrElse(client -> log.info(getLoggingText(client, "checkAndSaveClient", "Client was found in DB: ", true)), () -> log.info("Method: checkAndSaveClient; creating new Client..."));
 	}
 	
-	@AfterThrowing(pointcut = "execution(* ru.neoflex.neostudy.deal.service.ClientEntityService.checkAndSaveClient(..))", throwing = "exception")
+	@AfterThrowing(pointcut = "execution(* ru.neoflex.neostudy.deal.service.entity.ClientEntityService.checkAndSaveClient(..))", throwing = "exception")
 	private void aroundCheckAndSaveClientMethod(Throwable exception) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Method: ").append("checkAndSaveClient").append("; ").append(exception);
+		sb.append(METHOD).append("checkAndSaveClient").append("; ").append(exception);
 		log.warn(sb);
 	}
 	
@@ -68,7 +70,7 @@ public class LoggingAspect {
 		}
 	}
 	
-	@After("execution(* ru.neoflex.neostudy.deal.service.StatementEntityService.setStatus(..))")
+	@After("execution(* ru.neoflex.neostudy.deal.service.entity.StatementEntityService.setStatus(..))")
 	private void afterSetStatusMethod(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
 		String statementId = ((Statement) args[0]).getStatementId().toString();
@@ -126,7 +128,7 @@ public class LoggingAspect {
 		}
 		catch (Throwable e) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Method: ").append(methodName).append("; ").append(e);
+			sb.append(METHOD).append(methodName).append("; ").append(e);
 			if (e.getCause() != null) {
 				sb.append(", cause: ").append(e.getCause());
 			}
@@ -139,7 +141,7 @@ public class LoggingAspect {
 	private StringBuilder getLoggingText(Object arg, String methodName, String joinPoint, boolean withArgs) {
 		StringBuilder sb = new StringBuilder();
 		try {
-			sb.append("Method: ")
+			sb.append(METHOD)
 					.append(methodName)
 					.append("; ")
 					.append(joinPoint);
@@ -157,7 +159,7 @@ public class LoggingAspect {
 				}
 			}
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			log.error("Logging error: " + e);
 		}
 		return sb;

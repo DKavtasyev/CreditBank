@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Используется для передачи пользователю по REST-протоколу информации о возникшем исключении.
+ * @author Dmitriy Kavtasyev
+ */
 @AllArgsConstructor
 @Getter
 @Setter
