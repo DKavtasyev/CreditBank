@@ -9,6 +9,9 @@ import ru.neoflex.neostudy.deal.entity.Client;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Интерфейс для работы с сущностью Client с использованием Java Persistence API.
+ */
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
 	/**
@@ -18,5 +21,5 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 	 * @return {@code Optional<Client>}
 	 */
 	@Query(value = "SELECT * FROM client c WHERE c.passport ->> 'series' = :passport_series and c.passport ->> 'number' = :passport_number", nativeQuery = true)
-	Optional<Client> findClientByPassportSeriesAndPassportNumber(@Param("passport_series") String passportSeries, @Param("passport_number") String passportNumber);
+	Optional<Client> findClientByPassportSeriesAndPassportNumber(@Param("passport_series") String passportSeries, @Param("passport_number") String passportNumber);		// TODO сделать тестирование базы данных
 }

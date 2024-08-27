@@ -13,6 +13,9 @@ import java.util.UUID;
 
 import static ru.neoflex.neostudy.common.constants.Theme.*;
 
+/**
+ * Сервис уровня business services для отправки сообщений по MQ Kafka.
+ */
 @Service
 @RequiredArgsConstructor
 public class KafkaService {

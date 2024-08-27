@@ -1,0 +1,28 @@
+flag_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: 50%
+        threshold: 1%
+  individual_flags:
+    - name: calculator
+      paths:
+        - ./calculator/src
+      statuses:
+        - type: project
+          target: 90%
+          threshold: 1%
+    - name: deal
+      paths:
+        - ./deal/src
+      statuses:
+        - type: project
+          target: 50%
+          threshold: 1%
+    - name: statement
+      paths:
+        - ./statement/src
+      statuses:
+        - type: project
+          target: 80%
+          threshold: 1%

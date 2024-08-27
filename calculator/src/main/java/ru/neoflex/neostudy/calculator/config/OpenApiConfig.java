@@ -12,8 +12,7 @@ import org.springframework.context.annotation.Configuration;
 				version = "0.0.1-SNAPSHOT",
 				description = """
 						Калькулятор кредита с ежемесячной фиксированной процентной ставкой,
-						с аннуитетным ежемесячным платежом, со страховкой
-						5 % от суммы кредита при сниженной ставке на 3 %
+						с аннуитетным ежемесячным платежом.
 						""",
 				contact = @Contact(url = "https://t.me/dkavtasyev", email = "dkavtasyev@gmail.com")
 		),

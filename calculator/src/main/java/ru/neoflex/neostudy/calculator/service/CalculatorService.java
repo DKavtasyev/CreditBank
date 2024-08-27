@@ -13,7 +13,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Главный сервис калькулятора для предварительного расчёта кредита и расчёта графиков платежей по кредиту.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -24,13 +26,13 @@ public class CalculatorService {
 	private final RefusalService refusalService;
 	
 	@Value("${rate.base-rate}")
-	private BigDecimal BASE_RATE;
+	private BigDecimal baseRate;
 	@Value("${credit.insurance-percent}")
-	private BigDecimal INSURANCE_PERCENT;
+	private BigDecimal insurancePercent;
 	@Value("${rate.insurance-enabled}")
-	private BigDecimal INSURANCE_ENABLED;
+	private BigDecimal insuranceEnabled;
 	@Value("${rate.salary-client}")
-	private BigDecimal SALARY_CLIENT;
+	private BigDecimal salaryClient;
 	
 	/**
 	 * Возвращает List с посчитанными кредитными предложениями в зависимости от кредитных опций. Опции
@@ -56,7 +58,7 @@ public class CalculatorService {
 	
 	/**
 	 * Возвращает кредитное предложение, рассчитанное в соответствии параметрами метода, базовой процентной ставкой.
-	 * Осуществляет корректировку процентной ставки в соотвествии с кредитными опциями {@code isInsuranceEnabled},
+	 * Осуществляет корректировку процентной ставки в соответствии с кредитными опциями {@code isInsuranceEnabled},
 	 * {@code isSalaryClient}, которые представляют собой значения {@code boolean}. Если параметр {@code isInsuranceEnabled}
 	 * активен, тогда к общей сумме кредита {@code amount} добавляется страховка, составляющая определённый процент от
 	 * кредита. Процент задаётся в виде множителя в параметре {@code INSURANCE_PERCENT} и равен количеству сотых
@@ -65,19 +67,19 @@ public class CalculatorService {
 	 * Далее высчитывается ежемесячный платёж и формируется и возвращается кредитное предложение.
 	 * @param loanStatementRequest данные запроса кредита от пользователя.
 	 * @param isInsuranceEnabled параметр страховки кредита.
-	 * @param isSalaryClient параметр запрлатный кредит.
+	 * @param isSalaryClient параметр зарплатный клиент.
 	 * @return кредитное предложение типа {@code LoanOfferDto}
 	 */
 	private LoanOfferDto generateOffer(LoanStatementRequestDto loanStatementRequest, boolean isInsuranceEnabled, boolean isSalaryClient) {
-		BigDecimal rate = BASE_RATE;
+		BigDecimal rate = baseRate;
 		BigDecimal amount = loanStatementRequest.getAmount();
 		
 		if (isInsuranceEnabled) {
-			amount = amount.multiply(INSURANCE_PERCENT);
-			rate = rate.add(INSURANCE_ENABLED);
+			amount = amount.multiply(insurancePercent);
+			rate = rate.add(insuranceEnabled);
 		}
 		if (isSalaryClient) {
-			rate = rate.add(SALARY_CLIENT);
+			rate = rate.add(salaryClient);
 		}
 		
 		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(amount, loanStatementRequest.getTerm(), rate);
@@ -113,7 +115,7 @@ public class CalculatorService {
 		refusalService.checkRefuseConditions(scoringData, age);
 		
 		List<PaymentScheduleElementDto> scheduleOfPayments = new ArrayList<>();
-		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, BASE_RATE, age);
+		BigDecimal rate = personalRateCalculatorService.countPersonalRate(scoringData, baseRate, age);
 		BigDecimal dailyRate = personalRateCalculatorService.calculateDailyRate(rate);
 		BigDecimal monthlyPayment = monthlyPaymentCalculatorService.calculate(scoringData.getAmount(), scoringData.getTerm(), rate);
 		
@@ -142,7 +144,7 @@ public class CalculatorService {
 	private void addInsuranceIfRequired(ScoringDataDto scoringData) {
 		boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();
 		if (isInsuranceEnabled) {
-			scoringData.setAmount(scoringData.getAmount().multiply(INSURANCE_PERCENT));
+			scoringData.setAmount(scoringData.getAmount().multiply(insurancePercent));
 		}
 	}
 }

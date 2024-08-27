@@ -1,5 +1,8 @@
 package ru.neoflex.neostudy.common.constants;
 
+/**
+ * Значения статусов заявки на кредит.
+ */
 public enum ApplicationStatus {
 	PREAPPROVAL,
 	APPROVED,

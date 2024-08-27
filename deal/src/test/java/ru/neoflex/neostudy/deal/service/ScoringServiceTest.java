@@ -20,10 +20,12 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.mapper.CreditMapper;
 import ru.neoflex.neostudy.deal.mapper.ScoringDataMapper;
 import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
+import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +41,9 @@ class ScoringServiceTest {
 	
 	@Mock
 	DataService dataService;
+	
+	@Mock
+	KafkaService kafkaService;
 	
 	@InjectMocks
 	ScoringService scoringService;
@@ -68,7 +73,7 @@ class ScoringServiceTest {
 			when(calculatorRequester.requestCalculatedCredit(scoringDataDto)).thenReturn(creditDto);
 			when(creditMapper.dtoToEntity(creditDto)).thenReturn(credit);
 			scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
-			Assertions.assertAll(() -> {
+			assertAll(() -> {
 				verify(scoringDataMapper, times(1)).formScoringDataDto(finishingRegistrationRequestDto, statement);
 				verify(calculatorRequester, times(1)).requestCalculatedCredit(scoringDataDto);
 				verify(creditMapper, times(1)).dtoToEntity(creditDto);
@@ -76,6 +81,23 @@ class ScoringServiceTest {
 				assertThat(statement.getCredit()).isSameAs(credit);
 				verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
 			});
+		}
+		
+		@Test
+		void scoreAndSaveCredit_whenConditionsAreNotMet_thenThrowLoanRefusalException() throws LoanRefusalException, InternalMicroserviceException {
+			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenReturn(scoringDataDto);
+			when(calculatorRequester.requestCalculatedCredit(scoringDataDto)).thenThrow(LoanRefusalException.class);
+			assertAll(() -> {
+				assertThrows(LoanRefusalException.class, () -> scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement));
+				verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
+				verify(kafkaService, times(1)).sendDenial(statement, "Вам отказано в получении кредита");
+			});
+		}
+		
+		@Test
+		void scoreAndSaveCredit_whenPreApproveHasNotExecuted_thenThrowInvalidPreApproveException() {
+			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenThrow(NullPointerException.class);
+			assertThrows(InvalidPreApproveException.class, () -> scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement));
 		}
 	}
 }

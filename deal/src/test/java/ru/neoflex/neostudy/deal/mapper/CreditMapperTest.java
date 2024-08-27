@@ -28,11 +28,11 @@ class CreditMapperTest {
 		void dtoToEntity_whenGivenCreditDto_thenReturnCredit() {
 			Credit actualCredit = creditMapper.dtoToEntity(creditDto);
 			assertAll(() -> {
-				assertThat(actualCredit.getAmount().compareTo(creditDto.getAmount()) == 0).isTrue();
+				assertThat(actualCredit.getAmount()).isEqualByComparingTo(creditDto.getAmount());
 				assertThat(actualCredit.getTerm()).isEqualTo(creditDto.getTerm());
-				assertThat(actualCredit.getMonthlyPayment().compareTo(creditDto.getMonthlyPayment()) == 0).isTrue();
-				assertThat(actualCredit.getRate().compareTo(creditDto.getRate()) == 0).isTrue();
-				assertThat(actualCredit.getPsk().compareTo(creditDto.getPsk()) == 0).isTrue();
+				assertThat(actualCredit.getMonthlyPayment()).isEqualByComparingTo(creditDto.getMonthlyPayment());
+				assertThat(actualCredit.getRate()).isEqualByComparingTo(creditDto.getRate());
+				assertThat(actualCredit.getPsk()).isEqualByComparingTo(creditDto.getPsk());
 				assertThat(actualCredit.getPaymentSchedule()).isEqualTo(creditDto.getPaymentSchedule());
 				assertThat(actualCredit.isInsuranceEnabled()).isEqualTo(creditDto.getIsInsuranceEnabled());
 				assertThat(actualCredit.isSalaryClient()).isEqualTo(creditDto.getIsSalaryClient());

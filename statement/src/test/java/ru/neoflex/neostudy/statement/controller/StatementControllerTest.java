@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.InvalidPassportDataException;
 import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
@@ -25,6 +26,7 @@ import ru.neoflex.neostudy.statement.service.StatementService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -130,80 +132,36 @@ public class StatementControllerTest {
 			@Nested
 			@DisplayName("Тестирование валидации поля firstName")
 			class TestingValidationOfFirstName {
-				@Test
-				void getLoanOffers_whenFirstNameIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setFirstName(null);
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void getLoanOffers_whenFirstNameIsInvalid_thenReturns400(String firstName) throws Exception {
+					loanStatementRequestDto.setFirstName(firstName);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 							.andExpect(status().isBadRequest());
 				}
 				
-				@Test
-				void getLoanOffers_whenFirstNameIsBlank_thenReturns400() throws Exception {
-					loanStatementRequestDto.setFirstName("               ");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenFirstNameLessTwo_thenReturns400() throws Exception {
-					loanStatementRequestDto.setFirstName("A");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenFirstNameMoreThirty_thenReturns400() throws Exception {
-					loanStatementRequestDto.setFirstName("1234567890123456789012345678901");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "               ", "A", "1234567890123456789012345678901");
 				}
 			}
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля lastName")
 			class TestingValidationOfLastName {
-				@Test
-				void getLoanOffers_whenLastNameIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setLastName(null);
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void getLoanOffers_whenLastNameIsInvalid_thenReturns400(String lastName) throws Exception {
+					loanStatementRequestDto.setLastName(lastName);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 							.andExpect(status().isBadRequest());
 				}
 				
-				@Test
-				void getLoanOffers_whenLastNameIsBlank_thenReturns400() throws Exception {
-					loanStatementRequestDto.setLastName("               ");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenLastNameLessTwo_thenReturns400() throws Exception {
-					loanStatementRequestDto.setLastName("A");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenLastNameMoreThirty_thenReturns400() throws Exception {
-					loanStatementRequestDto.setLastName("1234567890123456789012345678901");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "               ", "A", "1234567890123456789012345678901");
 				}
 			}
 			
@@ -232,63 +190,59 @@ public class StatementControllerTest {
 			@Nested
 			@DisplayName("Тестирование валидации поля email")
 			class TestingValidationOfEmail {
-				@Test
-				void getLoanOffers_whenEmailIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setEmail(null);
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
 				@ParameterizedTest
-				@ValueSource(strings = {"    ", "1234", "fake", "vasya@", "@mail", "vasya@mail!", "vas @mail"})
-				void getLoanOffers_whenEmailIsInvalid_thenReturns400(String argument) throws Exception {
+				@MethodSource("argsProvidedFactory")
+				void getLoanOffers_whenEmailIsNull_thenReturns400(String argument) throws Exception {
 					loanStatementRequestDto.setEmail(argument);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 							.andExpect(status().isBadRequest());
 				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "    ", "1234", "fake", "vasya@", "@mail", "vasya@mail!", "vas @mail");
+				}
 			}
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля birthdate")
 			class TestingValidationOfBirthdate {
-				@Test
-				void getLoanOffers_whenBirthdateIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setBirthDate(null);
+				@ParameterizedTest
+				@MethodSource("invalidArgsProvidedFactory")
+				void getLoanOffers_whenBirthdateIsInvalidOrInappropriate_thenReturns400(LocalDate argument) throws Exception {
+					loanStatementRequestDto.setBirthDate(argument);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 							.andExpect(status().isBadRequest());
 				}
 				
-				@Test
-				void getLoanOffers_whenAgeIsLessThanEighteen_thenReturns400() throws Exception {
-					loanStatementRequestDto.setBirthDate(LocalDate.now().minusYears(18).plusDays(1));
+				static Stream<LocalDate> invalidArgsProvidedFactory() {
+					return Stream.of(null, LocalDate.now().minusYears(18).plusDays(1), LocalDate.now().minusYears(17), LocalDate.now());
+				}
+				
+				@ParameterizedTest
+				@MethodSource("validArgsProvidedFactory")
+				void getLoanOffers_whenAgeIsLessThanEighteen_thenReturns400(LocalDate argument) throws Exception {
+					loanStatementRequestDto.setBirthDate(argument);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
 									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
+							.andExpect(status().isOk());
+				}
+				
+				static Stream<LocalDate> validArgsProvidedFactory() {
+					return Stream.of(LocalDate.now().minusYears(18), LocalDate.now().minusYears(19), LocalDate.now().minusYears(150));
 				}
 			}
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля passportSeries")
 			class TestingValidationOfPassportSeries {
-				@Test
-				void getLoanOffers_whenPassportSeriesIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportSeries(null);
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
 				@ParameterizedTest
-				@ValueSource(strings = {"    ", "12as", "as12", "fake"})
-				void getLoanOffers_whenPassportSeriesIsNotDigits_thenReturns400(String argument) throws Exception {
+				@MethodSource("argsProvidedFactory")
+				void getLoanOffers_whenPassportSeriesIsInvalid_thenReturns400(String argument) throws Exception {
 					loanStatementRequestDto.setPassportSeries(argument);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
@@ -296,40 +250,17 @@ public class StatementControllerTest {
 							.andExpect(status().isBadRequest());
 				}
 				
-				@Test
-				void getLoanOffers_whenPassportSeriesLessFour_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportSeries("123");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenPassportSeriesMoreFour_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportSeries("12345");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "    ", "123", "12as", "as12", "fake", "12345");
 				}
 			}
 			
 			@Nested
 			@DisplayName("Тестирование валидации поля passportNumber")
 			class TestingValidationOfPassportNumber {
-				@Test
-				void getLoanOffers_whenPassportNumberIsNull_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportNumber(null);
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
 				@ParameterizedTest
-				@ValueSource(strings = {"      ", "12as12", "as1234", "number"})
-				void getLoanOffers_whenPassportNumberIsNotDigits_thenReturns400(String argument) throws Exception {
+				@MethodSource("argsProvidedFactory")
+				void getLoanOffers_whenPassportNumberIsNull_thenReturns400(String argument) throws Exception {
 					loanStatementRequestDto.setPassportNumber(argument);
 					mockMvc.perform(post("/statement")
 									.contentType("application/json")
@@ -337,22 +268,8 @@ public class StatementControllerTest {
 							.andExpect(status().isBadRequest());
 				}
 				
-				@Test
-				void getLoanOffers_whenPassportNumberLessFour_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportNumber("12345");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
-				}
-				
-				@Test
-				void getLoanOffers_whenPassportNumberMoreFour_thenReturns400() throws Exception {
-					loanStatementRequestDto.setPassportNumber("1234567");
-					mockMvc.perform(post("/statement")
-									.contentType("application/json")
-									.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
-							.andExpect(status().isBadRequest());
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "      ", "12as12", "as1234", "number", "12345", "1234567");
 				}
 			}
 		}
@@ -369,13 +286,13 @@ public class StatementControllerTest {
 				ArgumentCaptor<LoanStatementRequestDto> loanStatementRequestDtoCaptor = ArgumentCaptor.forClass(LoanStatementRequestDto.class);
 				assertAll(() -> {
 					verify(statementService, times(1)).getLoanOffers(loanStatementRequestDtoCaptor.capture());
-					assertThat(loanStatementRequestDtoCaptor.getValue().getAmount().compareTo(loanStatementRequestDto.getAmount())).isEqualTo(0);
+					assertThat(loanStatementRequestDtoCaptor.getValue().getAmount()).isEqualByComparingTo(loanStatementRequestDto.getAmount());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getTerm()).isEqualTo(loanStatementRequestDto.getTerm());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getFirstName()).isEqualTo(loanStatementRequestDto.getFirstName());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getLastName()).isEqualTo(loanStatementRequestDto.getLastName());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getMiddleName()).isEqualTo(loanStatementRequestDto.getMiddleName());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getEmail()).isEqualTo(loanStatementRequestDto.getEmail());
-					assertThat(loanStatementRequestDtoCaptor.getValue().getBirthDate().equals(loanStatementRequestDto.getBirthDate())).isTrue();
+					assertThat(loanStatementRequestDtoCaptor.getValue().getBirthDate()).isEqualTo(loanStatementRequestDto.getBirthDate());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getPassportSeries()).isEqualTo(loanStatementRequestDto.getPassportSeries());
 					assertThat(loanStatementRequestDtoCaptor.getValue().getPassportNumber()).isEqualTo(loanStatementRequestDto.getPassportNumber());
 				});
@@ -408,6 +325,15 @@ public class StatementControllerTest {
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
 						.andExpect(status().isBadRequest());
+			}
+			
+			@Test
+			void getLoanOffers_whenConnectionErrorToMsDeal_thenReturn500() throws Exception {
+				doThrow(InternalMicroserviceException.class).when(statementService).getLoanOffers(any(LoanStatementRequestDto.class));
+				mockMvc.perform(post("/statement")
+								.contentType("application/json")
+								.content(objectMapper.writeValueAsString(loanStatementRequestDto)))
+						.andExpect(status().isInternalServerError());
 			}
 		}
 	}
@@ -452,12 +378,12 @@ public class StatementControllerTest {
 				ArgumentCaptor<LoanOfferDto> loanOfferDtoCaptor = ArgumentCaptor.forClass(LoanOfferDto.class);
 				assertAll(() -> {
 					verify(statementService, times(1)).applyChosenOffer(loanOfferDtoCaptor.capture());
-					assertThat(loanOfferDtoCaptor.getValue().getStatementId().toString()).isEqualTo(loanOfferDto.getStatementId().toString());
-					assertThat(loanOfferDtoCaptor.getValue().getRequestedAmount().compareTo(loanOfferDto.getRequestedAmount())).isEqualTo(0);
-					assertThat(loanOfferDtoCaptor.getValue().getTotalAmount().compareTo(loanOfferDto.getTotalAmount())).isEqualTo(0);
+					assertThat(loanOfferDtoCaptor.getValue().getStatementId()).isEqualTo(loanOfferDto.getStatementId());
+					assertThat(loanOfferDtoCaptor.getValue().getRequestedAmount()).isEqualByComparingTo(loanOfferDto.getRequestedAmount());
+					assertThat(loanOfferDtoCaptor.getValue().getTotalAmount()).isEqualByComparingTo(loanOfferDto.getTotalAmount());
 					assertThat(loanOfferDtoCaptor.getValue().getTerm()).isEqualTo(loanOfferDto.getTerm());
-					assertThat(loanOfferDtoCaptor.getValue().getMonthlyPayment().compareTo(loanOfferDto.getMonthlyPayment())).isEqualTo(0);
-					assertThat(loanOfferDtoCaptor.getValue().getRate().compareTo(loanOfferDto.getRate())).isEqualTo(0);
+					assertThat(loanOfferDtoCaptor.getValue().getMonthlyPayment()).isEqualByComparingTo(loanOfferDto.getMonthlyPayment());
+					assertThat(loanOfferDtoCaptor.getValue().getRate()).isEqualByComparingTo(loanOfferDto.getRate());
 					assertThat(loanOfferDtoCaptor.getValue().getIsInsuranceEnabled()).isEqualTo(loanOfferDto.getIsInsuranceEnabled());
 					assertThat(loanOfferDtoCaptor.getValue().getIsSalaryClient()).isEqualTo(loanOfferDto.getIsSalaryClient());
 				});

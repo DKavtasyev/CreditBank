@@ -11,6 +11,9 @@ import ru.neoflex.neostudy.statement.requester.DealRequestService;
 
 import java.util.List;
 
+/**
+ * Сервис выполняет перенаправление запросов с данными от пользователя для оформления кредита в другие микросервисы.
+ */
 @Service
 @RequiredArgsConstructor
 public class StatementService {

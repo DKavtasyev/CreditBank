@@ -1,0 +1,173 @@
+version: "3.9"
+
+networks:
+  credit-bank-net:
+    name: credit-bank-net
+    driver: bridge
+  monitoring:
+
+volumes:
+  bank-postgres:
+    name: CreditBank-postgres-data
+
+services:
+  zookeeper:
+    image: zookeeper:3.9.2@sha256:b34b773e67cf5139de0688f3e0caf2d0316db763d5dde8b8ee6af0bbd91c720c
+    container_name: zookeeper
+    restart: "no"
+    networks:
+      - credit-bank-net
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: obsidiandynamics/kafka   # TODO заменить
+    container_name: kafka
+    restart: "no"
+    networks:
+      - credit-bank-net
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://kafka:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HOST: kafka
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.0.2@sha256:b1a316d2c2e3ef783758ba2d253eb7cfa65c1bc8ae4c6cd3686942cdec7f96e7
+    container_name: kafdrop
+    restart: "no"
+    networks:
+      - credit-bank-net
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - kafka
+
+  postgres_db:
+    image: postgres:16@sha256:d0f363f8366fbc3f52d172c6e76bc27151c3d643b870e1062b4e8bfe65baf609
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    volumes:
+      - bank-postgres:/var/lib/postgresql/data
+    networks:
+      - credit-bank-net
+    environment:
+      POSTGRES_DB: credit_bank
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  grafana:
+    container_name: grafana
+    build: ./scripts/config/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./scripts/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./scripts/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./scripts/prometheus:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+
+  calculator:
+    container_name: calculator
+    build:
+      context: ./
+      dockerfile: ./calculator/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    networks:
+      - credit-bank-net
+
+  deal:
+    container_name: deal
+    build:
+      context: ./
+      dockerfile: ./deal/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres_db
+      - kafdrop
+      - calculator
+    ports:
+      - "8082:8082"
+    networks:
+      - credit-bank-net
+    environment:
+      CALCULATOR_HOST: calculator
+      KAFKA_HOST: kafka
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  dossier:
+    container_name: dossier
+    build:
+      context: ./
+      dockerfile: ./dossier/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - kafdrop
+    networks:
+      - credit-bank-net
+    ports:
+      - "8084:8084"
+    environment:
+      DEAL_HOST: deal
+      KAFKA_HOST: kafka
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./
+      dockerfile: ./gateway/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - credit-bank-net
+    environment:
+      DEAL_HOST: deal
+      STATEMENT_HOST: statement
+
+  statement:
+    container_name: statement
+    build:
+      context: ./
+      dockerfile: ./statement/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    networks:
+      - credit-bank-net
+    environment:
+      DEAL_HOST: deal

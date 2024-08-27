@@ -16,39 +16,43 @@ import static ru.neoflex.neostudy.common.constants.EmploymentStatus.SELF_EMPLOYE
 import static ru.neoflex.neostudy.common.constants.MaritalStatus.DIVORCED;
 import static ru.neoflex.neostudy.common.constants.MaritalStatus.MARRIED;
 
+/**
+ * Сервис осуществляет расчёт персональной процентной ставки по кредиту в зависимости от значений значимых для расчёта
+ * кредита параметров, которые были указаны пользователем.
+ */
 @Service
 public class PersonalRateCalculatorService {
 	
 	@Value("${rate.employment-status.self-employed}")
-	private BigDecimal SELF_EMPLOYED_POINTS;
+	private BigDecimal selfEmployedPoints;
 	@Value("${rate.employment-status.business-owner}")
-	private BigDecimal BUSINESS_OWNER_POINTS;
+	private BigDecimal businessOwnerPoints;
 	@Value("${rate.position.middle-manager}")
-	private BigDecimal MIDDLE_MANAGER_POINTS;
+	private BigDecimal middleManagerPoints;
 	@Value("${rate.position.top-manager}")
-	private BigDecimal TOP_MANAGER_POINTS;
+	private BigDecimal topManagerPoints;
 	@Value("${rate.marital-status.married}")
-	private BigDecimal MARRIED_POINTS;
+	private BigDecimal marriedPoints;
 	@Value("${rate.marital-status.divorced}")
-	private BigDecimal DIVORCED_POINTS;
+	private BigDecimal divorcedPoints;
 	@Value("${rate.woman.rate}")
-	private BigDecimal WOMAN_POINTS;
+	private BigDecimal womanPoints;
 	@Value("${rate.man.rate}")
-	private BigDecimal MAN_POINTS;
+	private BigDecimal manPoints;
 	@Value("${rate.non-binary.rate}")
-	private BigDecimal NON_BINARY_POINTS;
+	private BigDecimal nonBinaryPoints;
 	@Value("${rate.insurance-enabled}")
-	private BigDecimal INSURANCE_ENABLED;
+	private BigDecimal insuranceEnabled;
 	@Value("${rate.salary-client}")
-	private BigDecimal SALARY_CLIENT;
+	private BigDecimal salaryClient;
 	@Value("${rate.woman.age-from}")
-	private int WOMAN_AGE_FROM;
+	private int womanAgeFrom;
 	@Value("${rate.woman.age-to}")
-	private int WOMAN_AGE_TO;
+	private int womanAgeTo;
 	@Value("${rate.man.age-from}")
-	private int MAN_AGE_FROM;
+	private int manAgeFrom;
 	@Value("${rate.man.age-to}")
-	private int MAN_AGE_TO;
+	private int manAgeTo;
 	
 	/**
 	 * Производит расчёт и возвращает значение персональной процентной ставки в формате {@code BigDecimal} в зависимости
@@ -62,43 +66,43 @@ public class PersonalRateCalculatorService {
 		EmploymentDto employmentDto = scoringData.getEmployment();
 		
 		if (employmentDto.getEmploymentStatus().equals(SELF_EMPLOYED)) {
-			rate = rate.add(SELF_EMPLOYED_POINTS);
+			rate = rate.add(selfEmployedPoints);
 		}
 		else if (employmentDto.getEmploymentStatus().equals(BUSINESS_OWNER)) {
-			rate = rate.add(BUSINESS_OWNER_POINTS);
+			rate = rate.add(businessOwnerPoints);
 		}
 		
 		if (employmentDto.getPosition().equals(MID_MANAGER)) {
-			rate = rate.add(MIDDLE_MANAGER_POINTS);
+			rate = rate.add(middleManagerPoints);
 		}
 		else if (employmentDto.getPosition().equals(TOP_MANAGER)) {
-			rate = rate.add(TOP_MANAGER_POINTS);
+			rate = rate.add(topManagerPoints);
 		}
 		
 		if (scoringData.getMaritalStatus().equals(MARRIED)) {
-			rate = rate.add(MARRIED_POINTS);
+			rate = rate.add(marriedPoints);
 		}
 		else if (scoringData.getMaritalStatus().equals(DIVORCED)) {
-			rate = rate.add(DIVORCED_POINTS);
+			rate = rate.add(divorcedPoints);
 		}
 		
-		if ((scoringData.getGender().equals(Gender.FEMALE) && age > WOMAN_AGE_FROM && age < WOMAN_AGE_TO)) {
-			rate = rate.add(WOMAN_POINTS);
+		if ((scoringData.getGender().equals(Gender.FEMALE) && age > womanAgeFrom && age < womanAgeTo)) {
+			rate = rate.add(womanPoints);
 		}
-		else if (scoringData.getGender().equals(Gender.MALE) && age > MAN_AGE_FROM && age < MAN_AGE_TO) {
-			rate = rate.add(MAN_POINTS);
+		else if (scoringData.getGender().equals(Gender.MALE) && age > manAgeFrom && age < manAgeTo) {
+			rate = rate.add(manPoints);
 		}
 		else if (scoringData.getGender().equals(Gender.NON_BINARY)) {
-			rate = rate.add(NON_BINARY_POINTS);
+			rate = rate.add(nonBinaryPoints);
 		}
 		
 		boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();
 		if (isInsuranceEnabled) {
-			rate = rate.add(INSURANCE_ENABLED);
+			rate = rate.add(insuranceEnabled);
 		}
 		boolean isSalaryClient = scoringData.getIsSalaryClient();
 		if (isSalaryClient) {
-			rate = rate.add(SALARY_CLIENT);
+			rate = rate.add(salaryClient);
 		}
 		
 		return rate.max(BigDecimal.ZERO);

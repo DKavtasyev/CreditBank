@@ -31,7 +31,7 @@ class PersonalRateCalculatorServiceTest {
 	private static final BigDecimal SEVEN_POINTS = BigDecimal.valueOf(0.07);
 	
 	@Value("${rate.base-rate}")
-	public BigDecimal RATE;
+	public BigDecimal rate;
 	
 	@Autowired
 	private PersonalRateCalculatorService personalRateCalculatorService;
@@ -49,80 +49,80 @@ class PersonalRateCalculatorServiceTest {
 		@Test
 		void score_whenSelfEmployed_thenRateIsIncreasedByOne() {
 			scoringData.getEmployment().setEmploymentStatus(EmploymentStatus.SELF_EMPLOYED);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.add(ONE_POINT));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.add(ONE_POINT));
 		}
 		
 		@Test
 		void score_whenBusinessOwner_thenRateIsIncreasedByTwo() {
 			scoringData.getEmployment().setEmploymentStatus(EmploymentStatus.BUSINESS_OWNER);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.add(TWO_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.add(TWO_POINTS));
 		}
 		
 		@Test
 		void score_whenMiddleManager_thenRateIsDecreasedByTwo() {
 			scoringData.getEmployment().setPosition(EmploymentPosition.MID_MANAGER);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.subtract(TWO_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.subtract(TWO_POINTS));
 		}
 		
 		@Test
 		void score_whenTopManager_thenRateIsDecreasedByThree() {
 			scoringData.getEmployment().setPosition(EmploymentPosition.TOP_MANAGER);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.subtract(THREE_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.subtract(THREE_POINTS));
 		}
 		
 		@Test
 		void score_whenMarried_thenRateIsDecreasedByThree() {
 			scoringData.setMaritalStatus(MaritalStatus.MARRIED);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.subtract(THREE_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.subtract(THREE_POINTS));
 		}
 		
 		@Test
 		void score_whenDivorced_thenRateIsIncreasedByOne() {
 			scoringData.setMaritalStatus(MaritalStatus.DIVORCED);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.add(ONE_POINT));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.add(ONE_POINT));
 		}
 		
 		@Test
 		void score_whenFemaleAndAgeBetween32And60_thenRateIsDecreasedByThree() {
 			scoringData.setGender(Gender.FEMALE);
 			scoringData.setBirthdate(LocalDate.now().minusYears(33));
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, 33);
-			assertThat(actualRate).isEqualTo(RATE.subtract(THREE_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, 33);
+			assertThat(actualRate).isEqualTo(rate.subtract(THREE_POINTS));
 		}
 		
 		@Test
 		void score_whenMaleAndAgeBetween30And55_thenRateIsDecreasedByThree() {
 			scoringData.setGender(Gender.MALE);
 			scoringData.setBirthdate(LocalDate.now().minusYears(33));
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, 33);
-			assertThat(actualRate).isEqualTo(RATE.subtract(THREE_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, 33);
+			assertThat(actualRate).isEqualTo(rate.subtract(THREE_POINTS));
 		}
 		
 		@Test
 		void score_whenNonBinary_thenRateIsIncreasedBySeven() {
 			scoringData.setGender(Gender.NON_BINARY);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.add(SEVEN_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.add(SEVEN_POINTS));
 		}
 		
 		@Test
 		void score_whenInsuranceEnabled_thenRateIsDecreasedByThree() {
 			scoringData.setIsInsuranceEnabled(true);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.subtract(THREE_POINTS));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.subtract(THREE_POINTS));
 		}
 		
 		@Test
 		void score_whenSalaryClient_thenRateIsDecreasedByOne() {
 			scoringData.setIsSalaryClient(true);
-			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, RATE, DtoInitializer.AGE);
-			assertThat(actualRate).isEqualTo(RATE.subtract(ONE_POINT));
+			BigDecimal actualRate = personalRateCalculatorService.countPersonalRate(scoringData, rate, DtoInitializer.AGE);
+			assertThat(actualRate).isEqualTo(rate.subtract(ONE_POINT));
 		}
 	}
 	

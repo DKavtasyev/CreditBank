@@ -3,14 +3,18 @@ package ru.neoflex.neostudy.dossier.service.mail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Сервис формирует из полученных данных параметры для выполнения шаблона thymeleaf и формирования html страницы для
+ * отправки по email пользователю.
+ */
 @Service
 @RequiredArgsConstructor
 public class ParamsService {
@@ -20,8 +24,10 @@ public class ParamsService {
 	public static final String KEY_BUTTON_TEXT = "buttonText";
 	public static final String KEY_URL = "url";
 	
-	@Value("${app.bank.url}")
-	private URI bankUrl;
+	@Value("${app.bank.host}")
+	private String bankHost;
+	@Value("${app.bank.port}")
+	private String bankPort;
 	
 	/**
 	 * Формирует и возвращает {@code Map<String, Object>}, содержащую в себе параметры, необходимые для отправки и
@@ -31,11 +37,14 @@ public class ParamsService {
 	 */
 	public Map<String, Object> getParams(EmailMessage emailMessage) {
 		Theme theme = emailMessage.getTheme();
-		URI path = theme.getPath();
+		UriComponentsBuilder builder = theme.getPath();
 		
-		URI uri = null;
-		if (path != null) {
-			uri = path.toString().contains("ya.ru") ? path : bankUrl.resolve(path);
+		String url = null;
+		if (builder != null){
+			if (builder.build().getHost() == null) {
+				builder.scheme("http").host(bankHost).port(bankPort);
+			}
+			url = builder.build(false).toString();
 		}
 		
 		Map<String, Object> params = new HashMap<>();
@@ -43,7 +52,7 @@ public class ParamsService {
 		params.put(KEY_CURRENT_DATE, LocalDate.now());
 		params.put(KEY_MESSAGE_TEXT, theme.getMessageText());
 		params.put(KEY_BUTTON_TEXT, theme.getButtonText());
-		params.put(KEY_URL, uri);
+		params.put(KEY_URL, url);
 		return params;
 	}
 	

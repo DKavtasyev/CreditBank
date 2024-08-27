@@ -16,6 +16,9 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Сервис для работы с .pdf форматом.
+ */
 @Service
 @RequiredArgsConstructor
 public class PdfDocumentCreator implements DocumentCreator {
@@ -30,6 +33,8 @@ public class PdfDocumentCreator implements DocumentCreator {
 	 * @param statement объект-entity, содержащий все данные по кредиту.
 	 * @return сформированный документ в виде массива байт.
 	 * @throws InternalMicroserviceException если шрифт, используемый в документе повреждён или не найден.
+	 * @throws UserDocumentException документ не может быть создан, если не получены все данные для оформления
+	 * кредита.
 	 */
 	@Override
 	public byte[] createDocument(Statement statement) throws InternalMicroserviceException, UserDocumentException {

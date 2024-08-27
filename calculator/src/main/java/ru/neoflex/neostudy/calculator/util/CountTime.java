@@ -5,6 +5,9 @@ import lombok.experimental.UtilityClass;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Утилитный класс для расчёта временных параметров.
+ */
 @UtilityClass
 public class CountTime {
 	
@@ -18,7 +21,7 @@ public class CountTime {
 	}
 	
 	/**
-	 * Высчитывает и возвращает количество дней между двумя переданными датами.
+	 * Высчитывает и возвращает количество календарных дней между двумя переданными датами.
 	 * @param startDate начальная дата.
 	 * @param finishDate конечная дата.
 	 * @return количество дней в формате int.

@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
@@ -31,9 +33,11 @@ public interface DealControllerInterface {
 					@ApiResponse(responseCode = "400", description = "Bad request"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	ResponseEntity<List<LoanOfferDto>> createStatement(@RequestBody
-															  @Parameter(description = "Пользовательские данные для предварительного расчёта кредита")
-															  LoanStatementRequestDto loanStatementRequest) throws InvalidPassportDataException, InternalMicroserviceException;
+	ResponseEntity<List<LoanOfferDto>> createStatement(@Valid
+													   @RequestBody
+													   @Parameter(description = "Пользовательские данные для предварительного расчёта кредита")
+													   LoanStatementRequestDto loanStatementRequest,
+													   BindingResult bindingResult) throws InvalidPassportDataException, InternalMicroserviceException;
 	
 	@PostMapping("/offer/select")
 	@Operation(
@@ -51,8 +55,8 @@ public interface DealControllerInterface {
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> applyOffer(@RequestBody
-										   @Parameter(description = "Выбранное пользователем предложение кредита")
-										   LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException;
+									@Parameter(description = "Выбранное пользователем предложение кредита")
+									LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException;
 	
 	@PostMapping("/calculate/{statementId}")
 	@Operation(
@@ -66,12 +70,14 @@ public interface DealControllerInterface {
 					@ApiResponse(responseCode = "428", description = "Precondition required"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
-	ResponseEntity<Void> calculateCredit(@RequestBody
-												@Parameter(description = "Пользовательские данные для расчёта и оформления кредита")
-												FinishingRegistrationRequestDto finishingRegistrationRequestDto,
-												@PathVariable("statementId")
-												@Parameter(description = "Идентификатор заявки Statement")
-												UUID statementId) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException;
+	ResponseEntity<Void> calculateCredit(@Valid
+										 @RequestBody
+										 @Parameter(description = "Пользовательские данные для расчёта и оформления кредита")
+										 FinishingRegistrationRequestDto finishingRegistrationRequestDto,
+										 @PathVariable("statementId")
+										 @Parameter(description = "Идентификатор заявки Statement")
+										 UUID statementId,
+										 BindingResult bindingResult) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException;
 	
 	@GetMapping("/offer/deny/{statementId}")
 	@Operation(
@@ -84,6 +90,6 @@ public interface DealControllerInterface {
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> denyOffer(@PathVariable("statementId")
-										  @Parameter(description = "Идентификатор заявки Statement")
-										  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException;
+								   @Parameter(description = "Идентификатор заявки Statement")
+								   UUID statementId) throws StatementNotFoundException, InternalMicroserviceException;
 }

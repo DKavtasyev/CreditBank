@@ -4,9 +4,9 @@ spring:
   profiles:
     active: default
   datasource:
-    url: jdbc:postgresql://localhost:5432/credit_bank
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/credit_bank
     username: postgres
-    password: postgres
+    password: ${POSTGRES_PASSWORD}
   jpa:
     show-sql: false
     hibernate:
@@ -16,7 +16,7 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: public
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
     consumer:
       auto-offset-reset: earliest
 
@@ -32,6 +32,12 @@ app:
     admin:
       prefix: /deal/admin
     page-size: 10
+    request:
+      calculator:
+        host: ${CALCULATOR_HOST:localhost}
+        port: 8081
+        offers-path: /calculator/offers
+        credit-path: /calculator/calc
   font:
     path: fonts/times.ttf
   date:

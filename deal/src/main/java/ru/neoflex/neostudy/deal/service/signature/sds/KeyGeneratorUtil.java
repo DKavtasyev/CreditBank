@@ -6,6 +6,9 @@ import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 
 import java.security.*;
 
+/**
+ * Сервис осуществляет генерацию пары приватного и публичного ключей.
+ */
 @Getter
 @Service
 public class KeyGeneratorUtil {

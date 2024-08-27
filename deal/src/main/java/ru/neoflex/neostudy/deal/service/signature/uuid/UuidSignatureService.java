@@ -7,8 +7,12 @@ import ru.neoflex.neostudy.common.exception.SignatureVerificationFailedException
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.signature.SignatureService;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Сервис осуществляет работу с подписью, имеющей формат UUID.
+ */
 @Service("uuidSignatureService")
 @Log4j2
 public class UuidSignatureService implements SignatureService {
@@ -62,6 +66,7 @@ public class UuidSignatureService implements SignatureService {
 				log.info("Method: UUID. Signature verification is failed. Method: UUID. Document is not original.");
 				throw new SignatureVerificationFailedException("Method: UUID. Signature verification is failed. Document is not original.");
 			}
+			statement.setSignDate(LocalDateTime.now());
 			log.info("Method: UUID. Signature verification is passed. Document is original.");
 		}
 		catch (IllegalArgumentException e) {

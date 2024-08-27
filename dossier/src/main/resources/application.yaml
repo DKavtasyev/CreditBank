@@ -7,12 +7,12 @@ spring:
     consumer:
       auto-offset-reset: earliest
       group-id: "creditBankDossier"
-      bootstrap-servers: "localhost:9092"
+      bootstrap-servers: ${KAFKA_HOST:localhost}:9092
   mail:
     host: smtp.mail.ru
     port: 587
     username: creditbank.noreply@internet.ru
-    password: HgHeXKY46GZ5AAbqBcpk
+    password: ${EMAIL_PASSWORD}
     default-encoding: UTF-8
     properties:
       mail:
@@ -20,11 +20,19 @@ spring:
           auth: true
           starttls:
             enable: true
+            required: true
     test-connection: true
 
 app:
+  rest:
+    request:
+      deal:
+        host: ${DEAL_HOST:localhost}
+        port: 8082
+        status-path: /deal/admin/statement/{statementId}/status
   bank:
-    url: http://localhost:8085
+    host: localhost
+    port: 8080
     official-name: CreditBank
 
 server:

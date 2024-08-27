@@ -2,10 +2,7 @@ package ru.neoflex.neostudy.deal.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -26,8 +23,10 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTE
 @Setter
 @Getter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(schema = "public", name = "statement")
-@Accessors(chain = true)
 public class Statement {
 	@Id
 	@Column(name = "statement_id", nullable = false)
@@ -65,7 +64,7 @@ public class Statement {
 	
 	@JdbcTypeCode(value = SqlTypes.JSON)
 	@Column(name = "status_history")
-	private LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
+	private final LinkedList<StatementStatusHistory> statementStatusHistory = new LinkedList<>();
 	
 	@Column(name = "pdf_file")
 	private byte[] pdfFile;

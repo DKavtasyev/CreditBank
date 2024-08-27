@@ -2,8 +2,7 @@ package ru.neoflex.neostudy.deal.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -23,7 +22,10 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
 @Entity
 @Setter
 @Getter
+@Builder
 @Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
 	@Id
 	@Column(name = "client_id", nullable = false)

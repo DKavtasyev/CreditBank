@@ -13,7 +13,9 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.EmailMessage;
 
 import java.util.Map;
@@ -44,59 +46,43 @@ public class KafkaConfig {
 	public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, EmailMessage>> listenerContainerFactory(ConsumerFactory<String, EmailMessage> consumerFactory) {
 		var factory = new ConcurrentKafkaListenerContainerFactory<String, EmailMessage>();
 		factory.setConsumerFactory(consumerFactory);
+		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 		return factory;
 	}
 	
-	
 	@Bean
 	public NewTopic finishRegistrationTopic() {
-		return TopicBuilder
-				.name(FINISH_REGISTRATION.getTopicName())
-				.partitions(1)
-				.replicas(1)
-				.build();
+		return buildTopicBuilder(FINISH_REGISTRATION);
 	}
 	
 	@Bean
 	public NewTopic createDocumentsTopic() {
-		return TopicBuilder
-				.name(CREATE_DOCUMENTS.getTopicName())
-				.partitions(1)
-				.replicas(1)
-				.build();
+		return buildTopicBuilder(CREATE_DOCUMENTS);
 	}
 	
 	@Bean
 	public NewTopic sendDocumentsTopic() {
-		return TopicBuilder
-				.name(SEND_DOCUMENTS.getTopicName())
-				.partitions(1)
-				.replicas(1)
-				.build();
+		return buildTopicBuilder(SEND_DOCUMENTS);
 	}
 	
 	@Bean
 	public NewTopic sendSesTopic() {
-		return TopicBuilder
-				.name(SEND_SES.getTopicName())
-				.partitions(1)
-				.replicas(1)
-				.build();
+		return buildTopicBuilder(SEND_SES);
 	}
 	
 	@Bean
 	public NewTopic creditIssuedTopic() {
-		return TopicBuilder
-				.name(CREDIT_ISSUED.getTopicName())
-				.partitions(1)
-				.replicas(1)
-				.build();
+		return buildTopicBuilder(CREDIT_ISSUED);
 	}
 	
 	@Bean
 	public NewTopic statementDeniedTopic() {
+		return buildTopicBuilder(STATEMENT_DENIED);
+	}
+	
+	private NewTopic buildTopicBuilder(Theme theme) {
 		return TopicBuilder
-				.name(STATEMENT_DENIED.getTopicName())
+				.name(theme.getTopicName())
 				.partitions(1)
 				.replicas(1)
 				.build();

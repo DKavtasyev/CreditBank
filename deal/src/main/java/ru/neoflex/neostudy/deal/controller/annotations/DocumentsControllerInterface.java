@@ -30,11 +30,12 @@ public interface DocumentsControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable Entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> sendDocuments(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException;
 	
 	@PostMapping("/{statementId}/sign")
 	@Operation(
@@ -45,11 +46,12 @@ public interface DocumentsControllerInterface {
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
+					@ApiResponse(responseCode = "422", description = "Unprocessable Entity"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> signDocuments(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, SignatureVerificationFailedException, DocumentSignatureException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, SignatureVerificationFailedException, DocumentSignatureException;
 	
 	@PostMapping("/{statementId}/code")
 	@Operation(
@@ -64,12 +66,12 @@ public interface DocumentsControllerInterface {
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),
+					@ApiResponse(responseCode = "401", description = "Unauthorized"),
 					@ApiResponse(responseCode = "404", description = "Not found"),
-					@ApiResponse(responseCode = "406", description = "Not acceptable"),
 					@ApiResponse(responseCode = "500", description = "Internal server error")
 			})
 	ResponseEntity<Void> verifySesCode(@PathVariable("statementId")
-											  @Parameter(description = "Идентификатор заявки Statement")
-											  UUID statementId,
-											  @RequestParam(value = "code") String signature) throws StatementNotFoundException, SignatureVerificationFailedException, InternalMicroserviceException, DocumentSignatureException;
+									   @Parameter(description = "Идентификатор заявки Statement")
+									   UUID statementId,
+									   @RequestParam(value = "code", required = false) String signature) throws StatementNotFoundException, SignatureVerificationFailedException, InternalMicroserviceException, DocumentSignatureException;
 }

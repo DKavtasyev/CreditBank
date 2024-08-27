@@ -2,6 +2,7 @@ package ru.neoflex.neostudy.dossier.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
@@ -11,6 +12,7 @@ import ru.neoflex.neostudy.common.exception.StatementNotFoundException;
 import ru.neoflex.neostudy.common.exception.UserDocumentException;
 import ru.neoflex.neostudy.dossier.requester.DealRequester;
 import ru.neoflex.neostudy.dossier.service.mail.MailService;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,33 +29,39 @@ public class KafkaConsumer {
 	public static final String STATEMENT_DENIED_TOPIC = "statement-denied";
 	
 	@KafkaListener(topics = FINISH_REGISTRATION_TOPIC, containerFactory = "listenerContainerFactory")
-	public void finishRegistrationListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void finishRegistrationListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws InternalMicroserviceException {
 		mailService.sendFinishRegistrationEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 	
 	@KafkaListener(topics = CREATE_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
-	public void createDocumentsListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void createDocumentsListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws InternalMicroserviceException {
 		mailService.sendCreateDocumentsEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 	
 	@KafkaListener(topics = SEND_DOCUMENTS_TOPIC, containerFactory = "listenerContainerFactory")
-	public void sendDocumentsListen(@Payload EmailMessage emailMessage) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException {
+	public void sendDocumentsListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws StatementNotFoundException, InternalMicroserviceException, UserDocumentException {
 		dealRequester.sendStatementStatus(emailMessage.getStatementId(), ApplicationStatus.DOCUMENT_CREATED);
 		mailService.sendDocumentsEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 	
 	@KafkaListener(topics = SEND_SES_TOPIC, containerFactory = "listenerContainerFactory")
-	public void sendSesListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void sendSesListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws InternalMicroserviceException {
 		mailService.sendSesCodeEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 	
 	@KafkaListener(topics = CREDIT_ISSUED_TOPIC, containerFactory = "listenerContainerFactory")
-	public void creditIssuedListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void creditIssuedListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws InternalMicroserviceException {
 		mailService.sendCreditIssuedEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 	
 	@KafkaListener(topics = STATEMENT_DENIED_TOPIC, containerFactory = "listenerContainerFactory")
-	public void statementDeniedListen(@Payload EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void statementDeniedListen(@Payload EmailMessage emailMessage, Acknowledgment acknowledgment) throws InternalMicroserviceException {
 		mailService.sendRejectionOfStatementEmail(emailMessage);
+		acknowledgment.acknowledge();
 	}
 }

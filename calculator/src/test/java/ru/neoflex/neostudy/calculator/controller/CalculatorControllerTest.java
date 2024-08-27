@@ -1,7 +1,10 @@
 package ru.neoflex.neostudy.calculator.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,7 +48,7 @@ public class CalculatorControllerTest {
 	private CalculatorService calculatorServiceMock;
 	
 	LoanStatementRequestDto loanStatementRequest;
-	static ScoringDataDto scoringData;
+	ScoringDataDto scoringDataDto;
 	
 	@Nested
 	@DisplayName("Тестирование метода CalculatorController:generateOffers()")
@@ -204,7 +207,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfBirthdate {
 				@ParameterizedTest
 				@MethodSource("invalidArgsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenBirthdateIsInvalid_thenReturns400(LocalDate date) throws Exception {
+				void calculationOfPossibleLoanTerms_whenBirthdateIsInvalid_thenReturns500(LocalDate date) throws Exception {
 					loanStatementRequest.setBirthDate(date);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -236,7 +239,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfPassportSeries {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenPassportSeriesIsInvalid_thenReturns400(String argument) throws Exception {
+				void calculationOfPossibleLoanTerms_whenPassportSeriesIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportSeries(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -254,7 +257,7 @@ public class CalculatorControllerTest {
 			class TestingValidationOfPassportNumber {
 				@ParameterizedTest
 				@MethodSource("argsProvidedFactory")
-				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns400(String argument) throws Exception {
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
 					loanStatementRequest.setPassportNumber(argument);
 					mockMvc.perform(post("/calculator/offers")
 									.contentType("application/json")
@@ -313,9 +316,9 @@ public class CalculatorControllerTest {
 	@Nested
 	@DisplayName("Тестирование метода CalculatorController:calculateCredit()")
 	class TestingCalculateCredit {
-		@BeforeAll
-		static void initScoringData() {
-			scoringData = DtoInitializer.initScoringData();
+		@BeforeEach
+		void initScoringData() {
+			scoringDataDto = DtoInitializer.initScoringData();
 		}
 		
 		@Nested
@@ -325,7 +328,7 @@ public class CalculatorControllerTest {
 			void fullCalculationOfLoanTerms_whenValidInput_returns200() throws Exception {
 				mockMvc.perform(post("/calculator/calc")
 								.contentType("application/json")
-								.content(objectMapper.writeValueAsString(scoringData)))
+								.content(objectMapper.writeValueAsString(scoringDataDto)))
 						.andExpect(status().isOk());
 			}
 			
@@ -333,8 +336,305 @@ public class CalculatorControllerTest {
 			void fullCalculationOfLoanTerms_whenNotAllowedMethod_returns405() throws Exception {
 				mockMvc.perform(get("/calculator/calc")
 								.contentType("application/json")
-								.content(objectMapper.writeValueAsString(scoringData)))
+								.content(objectMapper.writeValueAsString(scoringDataDto)))
 						.andExpect(status().isMethodNotAllowed());
+			}
+		}
+		
+		@Nested
+		@DisplayName("Тестирование валидации входных данных")
+		class TestingValidation {
+			@Nested
+			@DisplayName("Тестирование валидации поля amount")
+			class TestingValidationOfAmount {
+				@Test
+				void calculationOfPossibleLoanTerms_whenAmountIsNull_thenReturns400() throws Exception {
+					scoringDataDto.setAmount(null);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				@Test
+				void calculationOfPossibleLoanTerms_whenAmountLess30000_thenReturns400() throws Exception {
+					scoringDataDto.setAmount(BigDecimal.valueOf(29_999));
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				@Test
+				void calculationOfPossibleLoanTerms_whenAmountIs30000_thenReturns200() throws Exception {
+					scoringDataDto.setAmount(BigDecimal.valueOf(30_000));
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isOk());
+				}
+				
+				
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля term")
+			class TestingValidationOfTerm {
+				@Test
+				void calculationOfPossibleLoanTerms_whenTermIsNull_thenReturns400() throws Exception {
+					scoringDataDto.setTerm(null);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				@Test
+				void calculationOfPossibleLoanTerms_whenTermLess6_thenReturns400() throws Exception {
+					scoringDataDto.setTerm(5);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля firstName")
+			class TestingValidationOfFirstName {
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenFirstNameIsInvalid_thenReturns400(String firstName) throws Exception {
+					scoringDataDto.setFirstName(firstName);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "               ", "A", "1234567890123456789012345678901");
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля lastName")
+			class TestingValidationOfLastName {
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenLastNameIsInvalid_thenReturns400(String lastName) throws Exception {
+					scoringDataDto.setLastName(lastName);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "               ", "A", "1234567890123456789012345678901");
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля middleName")
+			class TestingValidationOfMiddleName {
+				@Test
+				void calculationOfPossibleLoanTerms_whenMiddleNameLessTwo_thenReturns400() throws Exception {
+					scoringDataDto.setMiddleName("A");
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				@Test
+				void calculationOfPossibleLoanTerms_whenMiddleNameMoreThirty_thenReturns400() throws Exception {
+					scoringDataDto.setMiddleName("1234567890123456789012345678901");
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля gender")
+			class TestingValidationOfGender {
+				@Test
+				void calculateCredit_whenGenderIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setGender(null);
+					
+					mockMvc.perform(post("/calculator/offers")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля birthdate")
+			class TestingValidationOfBirthdate {
+				@ParameterizedTest
+				@MethodSource("invalidArgsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenBirthdateIsInvalid_thenReturns500(LocalDate date) throws Exception {
+					scoringDataDto.setBirthdate(date);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<LocalDate> invalidArgsProvidedFactory() {
+					return Stream.of(null, LocalDate.now().minusYears(18).plusDays(1), LocalDate.now().minusYears(17), LocalDate.now());
+				}
+				
+				@ParameterizedTest
+				@MethodSource("validArgsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenAgeIsEqualsOrMoreThanEighteen_thenReturns200(LocalDate date) throws Exception {
+					scoringDataDto.setBirthdate(date);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isOk());
+				}
+				
+				static Stream<LocalDate> validArgsProvidedFactory() {
+					return Stream.of(LocalDate.now().minusYears(18), LocalDate.now().minusYears(19), LocalDate.now().minusYears(150));
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля passportSeries")
+			class TestingValidationOfPassportSeries {
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenPassportSeriesIsInvalid_thenReturns500(String argument) throws Exception {
+					scoringDataDto.setPassportSeries(argument);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "    ", "123", "12as", "as12", "fake", "12345");
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля passportNumber")
+			class TestingValidationOfPassportNumber {
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
+					scoringDataDto.setPassportNumber(argument);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "      ", "12as12", "as1234", "number", "12345", "1234567");
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля passportIssueDate")
+			class TestingValidationOfPassportIssueDate {
+				@Test
+				void calculateCredit_whenPassportIssueDateIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setPassportIssueDate(null);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля passportIssueBranch")
+			class TestingValidationOfPassportIssueBranch {
+				@Test
+				void calculateCredit_whenPassportIssueBranchIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setPassportIssueBranch(null);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля maritalStatus")
+			class TestingValidationOfMaritalStatus {
+				@Test
+				void calculateCredit_whenMaritalStatusIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setMaritalStatus(null);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля dependentAmount")
+			class TestingValidationOfDependentAmount {
+				@Test
+				void calculateCredit_whenDependentAmountIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setDependentAmount(null);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				@Test
+				void calculateCredit_whenDependentAmountIsNegative_thenReturns500() throws Exception {
+					scoringDataDto.setDependentAmount(-5);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля employment")
+			class TestingValidationOfEmployment {
+				@Test
+				void calculateCredit_whenEmploymentIsNull_thenReturns500() throws Exception {
+					scoringDataDto.setEmployment(null);
+					
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+			}
+			
+			@Nested
+			@DisplayName("Тестирование валидации поля accountNumber")
+			class TestingValidationOfAccountNumber {
+				@ParameterizedTest
+				@MethodSource("argsProvidedFactory")
+				void calculationOfPossibleLoanTerms_whenPassportNumberIsInvalid_thenReturns500(String argument) throws Exception {
+					scoringDataDto.setAccountNumber(argument);
+					mockMvc.perform(post("/calculator/calc")
+									.contentType("application/json")
+									.content(objectMapper.writeValueAsString(scoringDataDto)))
+							.andExpect(status().isInternalServerError());
+				}
+				
+				static Stream<String> argsProvidedFactory() {
+					return Stream.of(null, "      ", "12as12", "as1234", "number");
+				}
 			}
 		}
 		
@@ -345,33 +645,33 @@ public class CalculatorControllerTest {
 			void fullCalculationOfLoanTerms_whenValidInput_thenMapsToBusinessModel() throws Exception {
 				mockMvc.perform(post("/calculator/calc")
 						.contentType("application/json")
-						.content(objectMapper.writeValueAsString(scoringData)));
+						.content(objectMapper.writeValueAsString(scoringDataDto)));
 				
 				ArgumentCaptor<ScoringDataDto> creditCaptor = ArgumentCaptor.forClass(ScoringDataDto.class);
 				assertAll(() -> {
 					verify(calculatorServiceMock, times(1)).score(creditCaptor.capture());
-					assertThat(creditCaptor.getValue().getAmount()).isEqualTo(scoringData.getAmount());
-					assertThat(creditCaptor.getValue().getTerm()).isEqualTo(scoringData.getTerm());
-					assertThat(creditCaptor.getValue().getFirstName()).isEqualTo(scoringData.getFirstName());
-					assertThat(creditCaptor.getValue().getLastName()).isEqualTo(scoringData.getLastName());
-					assertThat(creditCaptor.getValue().getMiddleName()).isEqualTo(scoringData.getMiddleName());
-					assertThat(creditCaptor.getValue().getGender()).isEqualTo(scoringData.getGender());
-					assertThat(creditCaptor.getValue().getBirthdate()).isEqualTo(scoringData.getBirthdate());
-					assertThat(creditCaptor.getValue().getPassportSeries()).isEqualTo(scoringData.getPassportSeries());
-					assertThat(creditCaptor.getValue().getPassportNumber()).isEqualTo(scoringData.getPassportNumber());
-					assertThat(creditCaptor.getValue().getPassportIssueDate()).isEqualTo(scoringData.getPassportIssueDate());
-					assertThat(creditCaptor.getValue().getPassportIssueBranch()).isEqualTo(scoringData.getPassportIssueBranch());
-					assertThat(creditCaptor.getValue().getMaritalStatus()).isEqualTo(scoringData.getMaritalStatus());
-					assertThat(creditCaptor.getValue().getDependentAmount()).isEqualTo(scoringData.getDependentAmount());
-					assertThat(creditCaptor.getValue().getEmployment().getEmploymentStatus()).isEqualTo(scoringData.getEmployment().getEmploymentStatus());
-					assertThat(creditCaptor.getValue().getEmployment().getEmploymentINN()).isEqualTo(scoringData.getEmployment().getEmploymentINN());
-					assertThat(creditCaptor.getValue().getEmployment().getSalary()).isEqualTo(scoringData.getEmployment().getSalary());
-					assertThat(creditCaptor.getValue().getEmployment().getPosition()).isEqualTo(scoringData.getEmployment().getPosition());
-					assertThat(creditCaptor.getValue().getEmployment().getWorkExperienceTotal()).isEqualTo(scoringData.getEmployment().getWorkExperienceTotal());
-					assertThat(creditCaptor.getValue().getEmployment().getWorkExperienceCurrent()).isEqualTo(scoringData.getEmployment().getWorkExperienceCurrent());
-					assertThat(creditCaptor.getValue().getAccountNumber()).isEqualTo(scoringData.getAccountNumber());
-					assertThat(creditCaptor.getValue().getIsInsuranceEnabled()).isEqualTo(scoringData.getIsInsuranceEnabled());
-					assertThat(creditCaptor.getValue().getIsSalaryClient()).isEqualTo(scoringData.getIsSalaryClient());
+					assertThat(creditCaptor.getValue().getAmount()).isEqualTo(scoringDataDto.getAmount());
+					assertThat(creditCaptor.getValue().getTerm()).isEqualTo(scoringDataDto.getTerm());
+					assertThat(creditCaptor.getValue().getFirstName()).isEqualTo(scoringDataDto.getFirstName());
+					assertThat(creditCaptor.getValue().getLastName()).isEqualTo(scoringDataDto.getLastName());
+					assertThat(creditCaptor.getValue().getMiddleName()).isEqualTo(scoringDataDto.getMiddleName());
+					assertThat(creditCaptor.getValue().getGender()).isEqualTo(scoringDataDto.getGender());
+					assertThat(creditCaptor.getValue().getBirthdate()).isEqualTo(scoringDataDto.getBirthdate());
+					assertThat(creditCaptor.getValue().getPassportSeries()).isEqualTo(scoringDataDto.getPassportSeries());
+					assertThat(creditCaptor.getValue().getPassportNumber()).isEqualTo(scoringDataDto.getPassportNumber());
+					assertThat(creditCaptor.getValue().getPassportIssueDate()).isEqualTo(scoringDataDto.getPassportIssueDate());
+					assertThat(creditCaptor.getValue().getPassportIssueBranch()).isEqualTo(scoringDataDto.getPassportIssueBranch());
+					assertThat(creditCaptor.getValue().getMaritalStatus()).isEqualTo(scoringDataDto.getMaritalStatus());
+					assertThat(creditCaptor.getValue().getDependentAmount()).isEqualTo(scoringDataDto.getDependentAmount());
+					assertThat(creditCaptor.getValue().getEmployment().getEmploymentStatus()).isEqualTo(scoringDataDto.getEmployment().getEmploymentStatus());
+					assertThat(creditCaptor.getValue().getEmployment().getEmploymentINN()).isEqualTo(scoringDataDto.getEmployment().getEmploymentINN());
+					assertThat(creditCaptor.getValue().getEmployment().getSalary()).isEqualTo(scoringDataDto.getEmployment().getSalary());
+					assertThat(creditCaptor.getValue().getEmployment().getPosition()).isEqualTo(scoringDataDto.getEmployment().getPosition());
+					assertThat(creditCaptor.getValue().getEmployment().getWorkExperienceTotal()).isEqualTo(scoringDataDto.getEmployment().getWorkExperienceTotal());
+					assertThat(creditCaptor.getValue().getEmployment().getWorkExperienceCurrent()).isEqualTo(scoringDataDto.getEmployment().getWorkExperienceCurrent());
+					assertThat(creditCaptor.getValue().getAccountNumber()).isEqualTo(scoringDataDto.getAccountNumber());
+					assertThat(creditCaptor.getValue().getIsInsuranceEnabled()).isEqualTo(scoringDataDto.getIsInsuranceEnabled());
+					assertThat(creditCaptor.getValue().getIsSalaryClient()).isEqualTo(scoringDataDto.getIsSalaryClient());
 				});
 			}
 		}
@@ -384,7 +684,7 @@ public class CalculatorControllerTest {
 				when(calculatorServiceMock.score(any(ScoringDataDto.class))).thenThrow(LoanRefusalException.class);
 				mockMvc.perform(post("/calculator/calc")
 								.contentType("application/json")
-								.content(objectMapper.writeValueAsString(scoringData)))
+								.content(objectMapper.writeValueAsString(scoringDataDto)))
 						.andExpect(status().isNotAcceptable());
 			}
 		}

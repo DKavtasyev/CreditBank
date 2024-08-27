@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import ru.neoflex.neostudy.common.exception.*;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,8 +18,8 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(SignatureVerificationFailedException.class)
 	private ResponseEntity<ExceptionDetails> handleDocumentSigningException(SignatureVerificationFailedException e, WebRequest request) {
-		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exceptionDetails);
+		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDetails);
 	}
 	
 	@ExceptionHandler(StatementNotFoundException.class)
@@ -33,8 +34,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionDetails);
 	}
 	
-	@ExceptionHandler(DocumentSignatureException.class)
-	private ResponseEntity<ExceptionDetails> handleDocumentSignatureException(DocumentSignatureException e, WebRequest request) {
+	@ExceptionHandler(UserDocumentException.class)
+	private ResponseEntity<ExceptionDetails> handleDocumentSignatureException(UserDocumentException e, WebRequest request) {
 		ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), request.getDescription(false));
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionDetails);
 	}

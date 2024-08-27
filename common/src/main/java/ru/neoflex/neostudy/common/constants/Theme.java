@@ -1,9 +1,11 @@
 package ru.neoflex.neostudy.common.constants;
 
 import lombok.Getter;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-
+/**
+ * Значения тем, по которым необходимо направить письмо на почту Клиенту.
+ */
 public enum Theme {
 	FINISH_REGISTRATION(new FinishRegistrationTopic()),
 	CREATE_DOCUMENTS(new CreateDocumentsTopic()),
@@ -19,7 +21,7 @@ public enum Theme {
 	}
 	
 	public String getTopicName() {
-		return topic.getValue();
+		return topic.getTopicName();
 	}
 	public String getSubject() {
 		return topic.getSubject();
@@ -30,188 +32,101 @@ public enum Theme {
 	public String getButtonText() {
 		return topic.getButtonText();
 	}
-	public URI getPath() {
+	public UriComponentsBuilder getPath() {
 		return topic.getPath();
 	}
 	
-	private interface Topic{
-		String getValue();
-		String getSubject();
-		String getMessageText();
-		String getButtonText();
-		URI getPath();
-	}
-	
-	private static class FinishRegistrationTopic implements Topic {
-		private static final String VALUE = "finish-registration";
-		private static final String SUBJECT = "Завершение оформления кредита";
-		private static final String MESSAGE_TEXT = "Закончите ранее начатое оформление кредита.";
-		private static final String BUTTON_TEXT = "Завершить оформление";
-		private static final URI PATH = URI.create("https://ya.ru/search/?text=%D0%B7%D0%B0%D0%B2%D0%B5%D1%80%D1%88%D0%B8%D1%82%D1%8C+%D0%BE%D1%84%D0%BE%D1%80%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5+%D0%BA%D1%80%D0%B5%D0%B4%D0%B8%D1%82%D0%B0");
-		@Override
-		public String getValue() {
-			return VALUE;
+	private abstract static class Topic{
+		protected String topicName;
+		protected String subject;
+		protected String messageText;
+		protected String buttonText;
+		protected UriComponentsBuilder uriComponentsBuilder;
+		
+		String getTopicName(){
+			return topicName;
 		}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
+		String getSubject() {
+			return subject;
 		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
+		String getMessageText() {
+			return messageText;
 		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
+		String getButtonText() {
+			return buttonText;
 		}
-		@Override
-		public URI getPath() {
-			return PATH;
+		UriComponentsBuilder getPath() {
+			return uriComponentsBuilder;
 		}
 	}
 	
-	@Getter
-	private static class CreateDocumentsTopic implements Topic {
-		public static final String VALUE = "create-documents";
-		public static final String SUBJECT = "Оформление документов";
-		public static final String MESSAGE_TEXT = "Перейти к оформлению документов.";
-		public static final String BUTTON_TEXT = "Сформировать документы";
-		public static final URI PATH = URI.create("https://ya.ru/search/?text=%D1%81%D1%84%D0%BE%D1%80%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C+%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B+%D0%BD%D0%B0+%D0%BA%D1%80%D0%B5%D0%B4%D0%B8%D1%82");
-		@Override
-		public String getValue() {
-			return VALUE;
-		}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
-		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
-		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
-		}
-		@Override
-		public URI getPath() {
-			return PATH;
+	private static final String HTTPS = "https";
+	private static final String HOST = "ya.ru";
+	private static final String PATH = "search";
+	
+	
+	private static class FinishRegistrationTopic extends Topic {
+		public FinishRegistrationTopic() {
+			topicName = "finish-registration";
+			subject = "Завершение оформления кредита";
+			messageText = "Закончите ранее начатое оформление кредита.";
+			buttonText = "Завершить оформление";
+			uriComponentsBuilder = UriComponentsBuilder.newInstance().scheme(HTTPS).host(HOST).path(PATH).queryParam("text", "Завершить оформление кредита");
 		}
 	}
 	
 	@Getter
-	private static class SendDocumentsTopic implements Topic {
-		public static final String VALUE = "send-documents";
-		public static final String SUBJECT = "Документы на подпись";
-		public static final String MESSAGE_TEXT = "Ваши документы на кредит.";
-		public static final String BUTTON_TEXT = "Запрос на подписание документов";
-		public static final URI PATH = URI.create("https://ya.ru/search/?text=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%B8%D1%82%D1%8C+%D0%BF%D0%BE%D0%B4%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5+%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2");
-		@Override
-		public String getValue() {
-			return VALUE;
-		}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
-		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
-		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
-		}
-		@Override
-		public URI getPath() {
-			return PATH;
+	private static class CreateDocumentsTopic extends Topic {
+		public CreateDocumentsTopic() {
+			topicName = "create-documents";
+			subject = "Оформление документов";
+			messageText = "Перейти к оформлению документов.";
+			buttonText = "Сформировать документы";
+			uriComponentsBuilder = UriComponentsBuilder.newInstance().scheme(HTTPS).host(HOST).path(PATH).queryParam("text", "Оформить документы на кредит");
 		}
 	}
 	
 	@Getter
-	private static class SendSesTopic implements Topic {
-		public static final String VALUE = "send-ses";
-		public static final String SUBJECT = "Подписание документов";
-		public static final String MESSAGE_TEXT = "Для получения кредита необходимо подписать документы.";
-		public static final String BUTTON_TEXT = "Подписать документы";
-		public static final URI PATH = URI.create("/deal/document/{statementId}/sign");
-		@Override
-		public String getValue() {
-	return VALUE;
-}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
-		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
-		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
-		}
-		@Override
-		public URI getPath() {
-			return PATH;
+	private static class SendDocumentsTopic extends Topic {
+		public SendDocumentsTopic() {
+			topicName = "send-documents";
+			subject = "Документы на подпись";
+			messageText = "Ваши документы на кредит.";
+			buttonText = "Запрос на подписание документов";
+			uriComponentsBuilder = UriComponentsBuilder.newInstance().scheme(HTTPS).host(HOST).path(PATH).queryParam("text", "Запросить подписание документов");
 		}
 	}
 	
 	@Getter
-	private static class CreditIssuedTopic implements Topic {
-		public static final String VALUE = "credit-issued";
-		public static final String SUBJECT = "Кредит оформлен";
-		public static final String MESSAGE_TEXT = "Кредит оформлен.";
-		public static final String BUTTON_TEXT = null;
-		public static final URI PATH = null;
-		@Override
-		public String getValue() {
-			return VALUE;
-		}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
-		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
-		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
-		}
-		@Override
-		public URI getPath() {
-			return PATH;
+	private static class SendSesTopic extends Topic {
+		public SendSesTopic() {
+			topicName = "send-ses";
+			subject = "Подписание документов";
+			messageText = "Для получения кредита необходимо подписать документы.";
+			buttonText = "Подписать документы";
+			uriComponentsBuilder = UriComponentsBuilder.fromPath("/deal/document/{statementId}/sign");
 		}
 	}
 	
 	@Getter
-	private static class StatementDeniedTopic implements Topic {
-		public static final String VALUE = "statement-denied";
-		public static final String SUBJECT = "Заявка отклонена";
-		public static final String MESSAGE_TEXT = "Заявка на получение кредита отклонена.";
-		public static final String BUTTON_TEXT = null;
-		public static final URI PATH = null;
-		@Override
-		public String getValue() {
-			return VALUE;
+	private static class CreditIssuedTopic extends Topic {
+		public CreditIssuedTopic() {
+			topicName = "credit-issued";
+			subject = "Кредит оформлен";
+			messageText = "Кредит оформлен.";
+			buttonText = null;
+			uriComponentsBuilder = null;
 		}
-		@Override
-		public String getSubject() {
-			return SUBJECT;
-		}
-		@Override
-		public String getMessageText() {
-			return MESSAGE_TEXT;
-		}
-		@Override
-		public String getButtonText() {
-			return BUTTON_TEXT;
-		}
-		@Override
-		public URI getPath() {
-			return PATH;
+	}
+	
+	@Getter
+	private static class StatementDeniedTopic extends Topic {
+		public StatementDeniedTopic() {
+			topicName = "statement-denied";
+			subject = "Заявка отклонена";
+			messageText = "Заявка на получение кредита отклонена.";
+			buttonText = null;
+			uriComponentsBuilder = null;
 		}
 	}
 }

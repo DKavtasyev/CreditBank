@@ -44,7 +44,7 @@ public interface StatementRestControllerInterface {
 					
 					Примечание: для отправки запроса через Swagger нужно в поле statementId request body установить
 					значение statementId соответствующей statement из базы данных, или скопировать один из четырёх
-					предложений займа, полученныхв ответе на запрос по адресу: /statement.
+					предложений займа, полученных в ответе на запрос по адресу: /statement.
 					""",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Success"),

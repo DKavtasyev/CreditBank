@@ -12,6 +12,7 @@ import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
 import ru.neoflex.neostudy.common.exception.*;
+import ru.neoflex.neostudy.common.exception.dto.ExceptionDetails;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,11 +21,24 @@ import java.util.Objects;
 
 import static ru.neoflex.neostudy.gateway.requester.Requester.*;
 
+/**
+ * Сервис, осуществляющий перенаправление запросов, которые были направлены для работы с заявкой на кредит.
+ */
 @Service
 @RequiredArgsConstructor
 public class StatementRequestService {
 	private final Requester requester;
 	
+	/**
+	 * Отправляет запрос с пользовательскими данными {@code LoanStatementRequestDto} в микросервис statement.
+	 * Возвращает List, полученный в теле ответа от МС statement, содержащий четыре кредитных предложения.
+	 * @param loanStatementRequestDto данные пользовательского запроса кредита.
+	 * @param uri url-адрес, по которому будет отправлен запрос.
+	 * @return список доступных предложений кредита.
+	 * @throws InvalidUserDataException если данные из пользовательского запроса кредита не прошли прескоринг или
+	 * паспортные данные из LoanStatementRequestDto не совпадают с паспортными данными клиента из базы данных.
+	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
+	 */
 	public List<LoanOfferDto> requestLoanOffers(LoanStatementRequestDto loanStatementRequestDto, URI uri) throws InvalidUserDataException, InternalMicroserviceException {
 		List<LoanOfferDto> offers;
 		try {
@@ -58,6 +72,14 @@ public class StatementRequestService {
 		return offers;
 	}
 	
+	/**
+	 * Отправляет запрос с выбранным пользователем кредитным предложением в микросервис statement.
+	 * @param loanOfferDto выбранное пользователем кредитное предложение.
+	 * @param uri url-адрес, по которому будет отправлен запрос.
+	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
+	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
+	 * не найден в базе данных (ответ от МС statement пришёл с кодом 404 Not found).
+	 */
 	public void sendChosenOffer(LoanOfferDto loanOfferDto, URI uri) throws InternalMicroserviceException, StatementNotFoundException {
 		try {
 			RequestEntity<LoanOfferDto> requestEntity = requester.getRequestEntityWithBody(loanOfferDto, uri);
@@ -101,9 +123,16 @@ public class StatementRequestService {
 		}
 	}
 	
+	/**
+	 * Отправляет запрос с отказом пользователя от кредита в МС deal.
+	 * @param uri url-адрес, по которому будет отправлен запрос.
+	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
+	 * не найден в базе данных.
+	 * @throws InternalMicroserviceException при запросе возникла ошибка или один из микросервисов оказался недоступен.
+	 */
 	public void sendOfferDenial(URI uri) throws StatementNotFoundException, InternalMicroserviceException {
 		try {
-			RequestEntity<Void> requestEntity = requester.getRequestEntity(uri);
+			RequestEntity<Void> requestEntity = requester.getRequestEntityMethodGet(uri);
 			sendRequest(requestEntity);
 		}
 		catch (RestClientException e) {

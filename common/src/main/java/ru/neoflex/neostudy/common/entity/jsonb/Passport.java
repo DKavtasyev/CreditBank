@@ -1,8 +1,10 @@
 package ru.neoflex.neostudy.common.entity.jsonb;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -15,7 +17,9 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATE_PATTERN;
  * Entity class must match the same class in MS deal one-to-one.
  */
 @Data
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Passport implements Serializable {
 	private UUID passportUuid;
 	private String series;

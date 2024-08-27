@@ -14,6 +14,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
+/**
+ * Сервис осуществляет работу с простой электронной подписью (Simple Digital Signature, SDS).
+ */
 @Service("sdsSignatureService")
 @RequiredArgsConstructor
 @Log4j2

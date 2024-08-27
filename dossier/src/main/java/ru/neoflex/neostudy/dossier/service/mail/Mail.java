@@ -1,13 +1,17 @@
 package ru.neoflex.neostudy.dossier.service.mail;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -20,21 +24,20 @@ import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.SendingEmailException;
 import ru.neoflex.neostudy.common.exception.UserDocumentException;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import static jakarta.mail.internet.MimeBodyPart.*;
+import static jakarta.mail.internet.MimeBodyPart.INLINE;
 
 /**
- * Класс для отправки сообщений. Реализован по шаблону проектирования builder, отправка сообщения возможна только после
- * инициализации и построения объекта {@code Mail}.
+ * Класс для отправки пользователю электронных сообщений. Реализован по шаблону проектирования builder, отправка
+ * сообщения возможна только после инициализации и построения объекта {@code Mail}.
  */
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -162,16 +165,21 @@ public class Mail {
 		public MailBuilder addImgPart(String pathToImg, String contentId) throws InternalMicroserviceException {
 			MimeBodyPart imagePart = new MimeBodyPart();
 			ClassLoader loader = Thread.currentThread().getContextClassLoader();
-			URL url = loader.getResource(pathToImg);
-			try {
-				File img = new File(Objects.requireNonNull(url).toURI());
-				imagePart.attachFile(img);
-				imagePart.setContentID(contentId);
-				imagePart.setDisposition(INLINE);
-				multipart.addBodyPart(imagePart);
+			try (InputStream imageStream = loader.getResourceAsStream(pathToImg)) {
+				if(imageStream == null) {
+					throw new InternalMicroserviceException("Img not found");
+				}
+				try (BufferedInputStream bufferedImageStream = new BufferedInputStream(imageStream, 2048)) {
+					byte[] imageBytes = bufferedImageStream.readAllBytes();
+					DataSource dataSource = new ByteArrayDataSource(imageBytes, "image/png");
+					imagePart.setDataHandler(new DataHandler(dataSource));
+					imagePart.setContentID(contentId);
+					imagePart.setDisposition(INLINE);
+					multipart.addBodyPart(imagePart);
+				}
 			}
-			catch (URISyntaxException | IOException | NullPointerException e) {
-				throw new InternalMicroserviceException("Img not found", e);
+			catch (IOException e) {
+				throw new InternalMicroserviceException("Error loading image", e);
 			}
 			catch (MessagingException e) {
 				throw new SendingEmailException(FAILED_TO_SEND_EMAIL, e);

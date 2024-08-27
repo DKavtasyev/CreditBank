@@ -9,6 +9,9 @@ import ru.neoflex.neostudy.deal.entity.Statement;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Интерфейс для работы с сущностью Statement с использованием Java Persistence API.
+ */
 @Repository
 public interface StatementRepository extends JpaRepository<Statement, UUID> {
 	/**

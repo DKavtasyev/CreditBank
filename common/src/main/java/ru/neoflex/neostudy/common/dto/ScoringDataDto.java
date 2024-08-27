@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Пользовательсткие данные для расчёта кредита")
+@Schema(description = "Пользовательские данные для расчёта кредита")
 public class ScoringDataDto {
 	@NotNull
 	@DecimalMin(value = "30000")
@@ -44,7 +44,7 @@ public class ScoringDataDto {
 	@Schema(description = "Отчество", example = "Ivanovich")
 	String middleName;
 	
-	@NotNull
+	@NotNull(message = "Пол должен быть указан")
 	@Schema(description = "Пол", example = "MALE")
 	Gender gender;
 	
@@ -66,28 +66,29 @@ public class ScoringDataDto {
 	@Schema(description = "Номер паспорта", example = "123456")
 	String passportNumber;
 	
-	@NotNull
+	@NotNull(message = "Дата выдачи паспорта должна быть указана")
 	@Schema(description = "Дата выдачи паспорта", example = "2020-05-05")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeFormat.DATE_PATTERN)
 	LocalDate passportIssueDate;
 	
-	@NotBlank
+	@NotBlank(message = "Место выдачи паспорта должно быть указано")
 	@Schema(description = "Место выдачи паспорта", example = "ГУ МВД ПО Г. МОСКВА")
 	String passportIssueBranch;
 	
-	@NotNull
+	@NotNull(message = "Семейное положение должно быть указано")
 	@Schema(description = "Семейное положение", example = "SINGLE")
 	MaritalStatus maritalStatus;
 	
-	@NotNull
+	@NotNull(message = "Число иждивенцев должно быть указано")
 	@Schema(description = "Число иждивенцев", example = "0")
+	@Min(value = 0, message = "Число иждивенцев не может быть меньше нуля")
 	Integer dependentAmount;
 	
-	@NotNull
+	@NotNull(message = "Информация о работе должна быть указана")
 	@Schema(description = "Информация о работе")
 	EmploymentDto employment;
 	
-	@NotBlank
+	@NotBlank(message = "Номер аккаунта должен быть указан")
 	@Pattern(regexp = "^([1-9]\\d*)$")
 	@Schema(description = "Номер пользователя", example = "98723645982394178")
 	String accountNumber;

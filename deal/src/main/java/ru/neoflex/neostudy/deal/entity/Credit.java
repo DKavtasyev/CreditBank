@@ -1,9 +1,7 @@
 package ru.neoflex.neostudy.deal.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -19,8 +17,10 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(schema = "public", name = "credit")
-@Accessors(chain = true)
 public class Credit {
 	@Id
 	@Column(name = "credit_id", nullable = false)
@@ -68,11 +68,11 @@ public class Credit {
 		}
 		return insuranceEnabled == credit.insuranceEnabled
 				&& salaryClient == credit.salaryClient
-				&& amount.compareTo(credit.amount) == 0
+				&& (Objects.equals(amount, credit.amount) || amount.compareTo(credit.amount) == 0)
 				&& term.compareTo(credit.term) == 0
-				&& monthlyPayment.compareTo(credit.monthlyPayment) == 0
-				&& rate.compareTo(credit.rate) == 0
-				&& psk.compareTo(credit.psk) == 0
+				&& (Objects.equals(monthlyPayment, credit.monthlyPayment) || monthlyPayment.compareTo(credit.monthlyPayment) == 0)
+				&& (Objects.equals(rate, credit.rate) || rate.compareTo(credit.rate) == 0)
+				&& (Objects.equals(psk, credit.psk) || psk.compareTo(credit.psk) == 0)
 				&& Objects.equals(paymentSchedule, credit.paymentSchedule)
 				&& creditStatus == credit.creditStatus;
 	}

@@ -1,40 +1,40 @@
 ### Create loan statement
-POST http://localhost:8085/statement
+POST http://localhost:8080/statement
 Content-Type: application/json
 Cache-Control: no-store
 
 {
   "amount": 1000000,
   "term": 24,
-  "firstName": "Дмитрий",
-  "lastName": "Кавтасьев",
-  "middleName": "Владимирович",
+  "firstName": "Семён",
+  "lastName": "Сидоров",
+  "middleName": "Иванович",
   "email": "999DK@mail.ru",
-  "birthDate": "1991-12-20",
+  "birthDate": "2000-12-18",
   "passportSeries": "1234",
-  "passportNumber": "123456"
+  "passportNumber": "515151"
 }
 
 ### Choose one of four offers
 ### В поле statementId установить корректное значение
-POST http://localhost:8085/statement/select
+POST http://localhost:8080/statement/select
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "98748ee9-de3e-4427-b6da-ee5b47e313bd",
+  "statementId": "a121443c-3397-471e-b99a-96add3728a2d",
   "requestedAmount": 1000000,
-  "totalAmount": 1163679.5531268244456968,
+  "totalAmount": 1118588.1167166018933096,
   "term": 24,
-  "monthlyPayment": 48486.6480469510185707,
-  "rate": 0.15,
+  "monthlyPayment": 46607.8381965250788879,
+  "rate": 0.11,
   "isInsuranceEnabled": false,
   "isSalaryClient": true
 }
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8085/statement/registration/2c21d557-2315-4ddb-92eb-801827d43079
+POST http://localhost:8080/statement/registration/a121443c-3397-471e-b99a-96add3728a2d
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -46,40 +46,40 @@ Cache-Control: no-store
   "passportIssueBranch": "ГУ МВД ПО МОСКОВСКОЙ ОБЛАСТИ",
   "employment": {
 	"employmentStatus": "EMPLOYED",
-	"employmentINN": "12341234234",
+	"employmentINN": "123412342345",
 	"salary": 200000,
 	"position": "WORKER",
 	"workExperienceTotal": 96,
-	"workExperienceCurrent": 6
+	"workExperienceCurrent": 3
   },
   "accountNumber": "9238459887345"
 }
 
 ### Denial of a loan
 ### В URL установить корректный statementId
-GET http://localhost:8085/statement/deny/98748ee9-de3e-4427-b6da-ee5b47e313bd
+GET http://localhost:8080/statement/deny/a121443c-3397-471e-b99a-96add3728a2d
 
 
 
 
 ### Create documents request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/98748ee9-de3e-4427-b6da-ee5b47e313bd
+POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d
 
 ### Sign documents request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/93491892-331d-429f-8b83-5d867ba32cdd/sign
+POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d/sign
 
 ### Verify SES code request
 ### В URL установить корректный statementId
-POST http://localhost:8085/document/93491892-331d-429f-8b83-5d867ba32cdd/sign/code
+POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d/sign/code?code=eee7ffaa-783c-4858-9acb-d18c58cc9ad5
 
 
 
 
 ### Set status for certain statement
 ### В URL установить корректный statementId
-PUT http://localhost:8085/admin/statement/db80261b-33e7-4296-9a9a-5907a130ac55/status
+PUT http://localhost:8080/admin/statement/836002d9-bd30-47d2-81bd-c52154b2e7ef/status
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -87,8 +87,8 @@ Cache-Control: no-store
 
 ### Get certain statement
 ### В URL установить корректный statementId
-GET http://localhost:8085/admin/statement/db80261b-33e7-4296-9a9a-5907a130ac55
+GET http://localhost:8080/admin/statement/a121443c-3397-471e-b99a-96add3728a2d
 
 ### Get all statements
 ### В URL установить корректный statementId
-GET http://localhost:8085/admin/statement?page=1
+GET http://localhost:8080/admin/statement?page=1

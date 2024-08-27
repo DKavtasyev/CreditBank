@@ -10,6 +10,9 @@ import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 
 import java.util.List;
 
+/**
+ * Сервис уровня business objects для работы с кредитными предложениями LoanOfferDto.
+ */
 @Service
 @RequiredArgsConstructor
 public class PreScoringService {

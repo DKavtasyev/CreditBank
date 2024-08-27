@@ -1,8 +1,10 @@
 package ru.neoflex.neostudy.deal.entity.jsonb;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
 
@@ -12,7 +14,9 @@ import java.time.LocalDateTime;
 import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTERN;
 
 @Data
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatementStatusHistory implements Serializable {
 	private ApplicationStatus status;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATETIME_PATTERN)

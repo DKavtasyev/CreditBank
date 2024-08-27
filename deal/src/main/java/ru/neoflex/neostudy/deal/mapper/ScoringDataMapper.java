@@ -12,6 +12,9 @@ import ru.neoflex.neostudy.deal.entity.jsonb.Passport;
 
 import java.util.UUID;
 
+/**
+ * Класс, использующийся для сбора данных и создания объекта DTO с данными от клиента для оформления кредита.
+ */
 @Component
 public class ScoringDataMapper {
 	
@@ -22,14 +25,15 @@ public class ScoringDataMapper {
 		LoanOfferDto appliedOffer = statement.getAppliedOffer();
 		Passport passport = client.getPassport();
 		
-		Employment employment = new Employment()
-				.setEmploymentUuid(UUID.randomUUID())
-				.setStatus(employmentDto.getEmploymentStatus())
-				.setEmployerInn(employmentDto.getEmploymentINN())
-				.setSalary(employmentDto.getSalary())
-				.setPosition(employmentDto.getPosition())
-				.setWorkExperienceTotal(employmentDto.getWorkExperienceTotal())
-				.setWorkExperienceCurrent(employmentDto.getWorkExperienceCurrent());
+		Employment employment = Employment.builder()
+				.employmentUuid(UUID.randomUUID())
+				.status(employmentDto.getEmploymentStatus())
+				.employerInn(employmentDto.getEmploymentINN())
+				.salary(employmentDto.getSalary())
+				.position(employmentDto.getPosition())
+				.workExperienceTotal(employmentDto.getWorkExperienceTotal())
+				.workExperienceCurrent(employmentDto.getWorkExperienceCurrent())
+				.build();
 		
 		client.setGender(finishingRegistrationRequestDto.getGender())
 				.setMaritalStatus(finishingRegistrationRequestDto.getMaritalStatus())

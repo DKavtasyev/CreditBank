@@ -1,4 +1,38 @@
-#spring:
-#  config:
-#    activate:
-#      on-profile: test
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.liquibase.LiquibaseEndpointAutoConfiguration
+      - org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration
+      - org.springdoc.webmvc.ui.SwaggerConfig
+      - org.springframework.boot.actuate.autoconfigure.metrics.export.prometheus.PrometheusMetricsExportAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.cloudfoundry.servlet.CloudFoundryActuatorAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.cloudfoundry.reactive.ReactiveCloudFoundryActuatorAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+  config:
+    activate:
+      on-profile: test
+  liquibase:
+    enabled: false
+
+app:
+  rest:
+    deal:
+      prefix: /deal
+    document:
+      prefix: /deal/document
+    admin:
+      prefix: /deal/admin
+    page-size: 10
+    request:
+      calculator:
+        host: ${CALCULATOR_HOST:localhost}
+        port: 8081
+        offers-path: /calculator/offers
+        credit-path: /calculator/calc
+
+server:
+  port: 8082

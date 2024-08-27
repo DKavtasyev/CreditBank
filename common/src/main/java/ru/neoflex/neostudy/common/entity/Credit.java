@@ -1,8 +1,6 @@
 package ru.neoflex.neostudy.common.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.*;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.PaymentScheduleElementDto;
 
@@ -16,7 +14,9 @@ import java.util.UUID;
  */
 @Setter
 @Getter
-@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Credit {
 	private UUID creditId;
 	private BigDecimal amount;
@@ -39,11 +39,11 @@ public class Credit {
 		}
 		return insuranceEnabled == credit.insuranceEnabled
 				&& salaryClient == credit.salaryClient
-				&& amount.compareTo(credit.amount) == 0
+				&& (Objects.equals(amount, credit.amount) || amount.compareTo(credit.amount) == 0)
 				&& term.compareTo(credit.term) == 0
-				&& monthlyPayment.compareTo(credit.monthlyPayment) == 0
-				&& rate.compareTo(credit.rate) == 0
-				&& psk.compareTo(credit.psk) == 0
+				&& (Objects.equals(monthlyPayment, credit.monthlyPayment) || monthlyPayment.compareTo(credit.monthlyPayment) == 0)
+				&& (Objects.equals(rate, credit.rate) || rate.compareTo(credit.rate) == 0)
+				&& (Objects.equals(psk, credit.psk) || psk.compareTo(credit.psk) == 0)
 				&& Objects.equals(paymentSchedule, credit.paymentSchedule)
 				&& creditStatus == credit.creditStatus;
 	}

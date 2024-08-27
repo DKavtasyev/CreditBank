@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
@@ -18,6 +19,8 @@ import ru.neoflex.neostudy.deal.mapper.PreScoreClientPersonalIdentificationInfor
 import ru.neoflex.neostudy.deal.service.entity.ClientEntityService;
 import ru.neoflex.neostudy.deal.service.entity.StatementEntityService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +36,7 @@ class DataServiceTest {
 	@Mock
 	private StatementEntityService statementEntityServiceMock;
 	
+	@Spy
 	@InjectMocks
 	private DataService dataService;
 	
@@ -58,7 +62,6 @@ class DataServiceTest {
 			Optional<Client> optionalClient = Optional.of(client);
 			when(clientEntityServiceMock.findClientByPassport(loanStatementRequestDto)).thenReturn(optionalClient);
 			when(clientEntityServiceMock.checkAndSaveClient(loanStatementRequestDto, optionalClient)).thenReturn(client);
-//			when(statementEntityServiceMock.save(any(Statement.class))).thenReturn(expectedStatement);
 			Statement actualStatement = dataService.prepareData(loanStatementRequestDto);
 			Assertions.assertAll(() -> {
 				verify(clientEntityServiceMock, times(1)).findClientByPassport(loanStatementRequestDto);
@@ -106,6 +109,50 @@ class DataServiceTest {
 				verify(statementEntityServiceMock, times(1)).save(expectedStatement);
 			});
 			
+		}
+	}
+	
+	@Nested
+	@DisplayName("Тестирование метода DataService:denyOffer()")
+	class TestingDenyOfferMethod {
+		@Test
+		void denyOffer() throws Exception {
+			UUID statementId = expectedStatement.getStatementId();
+			doReturn(expectedStatement).when(dataService).findStatement(statementId);
+			Statement actualStatement = dataService.denyOffer(statementId);
+			
+			assertAll(() -> {
+				assertThat(actualStatement).isSameAs(expectedStatement);
+				verify(dataService, times(1)).findStatement(statementId);
+				verify(dataService, times(1)).updateStatement(expectedStatement, ApplicationStatus.CLIENT_DENIED, ChangeType.AUTOMATIC);
+			});
+		}
+	}
+	
+	@Nested
+	@DisplayName("Тестирование метода DataService:findAllStatements()")
+	class TestingFindAllStatementsMethod {
+		
+		@Test
+		void findAllStatements() {
+			List<Statement> expectedStatements = new ArrayList<>();
+			when(statementEntityServiceMock.findAllStatements(5)).thenReturn(expectedStatements);
+			List<Statement> actualStatements = dataService.findAllStatements(5);
+			assertAll(() -> {
+				verify(statementEntityServiceMock, times(1)).findAllStatements(5);
+				assertThat(actualStatements).isSameAs(expectedStatements);
+			});
+		}
+	}
+	
+	@Nested
+	@DisplayName("Тестирование метода DataService:saveStatement()")
+	class TestingSaveStatementMethod {
+		
+		@Test
+		void saveStatement() {
+			dataService.saveStatement(expectedStatement);
+			verify(statementEntityServiceMock, times(1)).save(expectedStatement);
 		}
 	}
 }
