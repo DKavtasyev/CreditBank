@@ -46,7 +46,7 @@ public class LoanStatementRequestDto {
 	
 	@NotNull(message = "Дата рождения не может быть пустой")
 	@CheckAge(value = 18, message = "Клиент не может быть моложе 18 лет")
-	@Schema(description = "Дата рождения", example = "1995-02-15")
+	@Schema(description = "Дата рождения", example = "1995-03-14")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeFormat.DATE_PATTERN)
 	private LocalDate birthDate;
 	

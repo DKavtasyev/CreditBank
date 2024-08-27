@@ -7,10 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
+import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
+import ru.neoflex.neostudy.common.exception.InternalMicroserviceException;
 import ru.neoflex.neostudy.common.exception.LoanRefusalException;
 import ru.neoflex.neostudy.common.util.DtoInitializer;
 import ru.neoflex.neostudy.deal.entity.Credit;
@@ -21,7 +23,7 @@ import ru.neoflex.neostudy.deal.requester.CalculatorRequester;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +38,7 @@ class ScoringServiceTest {
 	CreditMapper creditMapper;
 	
 	@Mock
-	StatementEntityService statementEntityService;
+	DataService dataService;
 	
 	@InjectMocks
 	ScoringService scoringService;
@@ -61,7 +63,7 @@ class ScoringServiceTest {
 	@DisplayName("Тестирование метода ScoringServiceTest:scoreAndSaveCredit()")
 	class TestingSetStatusMethod {
 		@Test
-		void scoreAndSaveCredit() throws JsonProcessingException, LoanRefusalException {
+		void scoreAndSaveCredit() throws JsonProcessingException, LoanRefusalException, InternalMicroserviceException {
 			when(scoringDataMapper.formScoringDataDto(finishingRegistrationRequestDto, statement)).thenReturn(scoringDataDto);
 			when(calculatorRequester.requestCalculatedLoanTerms(scoringDataDto)).thenReturn(creditDto);
 			when(creditMapper.dtoToEntity(creditDto)).thenReturn(credit);
@@ -72,10 +74,8 @@ class ScoringServiceTest {
 				verify(creditMapper, times(1)).dtoToEntity(creditDto);
 				assertThat(credit.getCreditStatus()).isEqualTo(CreditStatus.CALCULATED);
 				assertThat(statement.getCredit()).isSameAs(credit);
-				verify(statementEntityService, times(1)).setStatus(statement, ApplicationStatus.CC_APPROVED);
-				verify(statementEntityService, times(1)).save(statement);
+				verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.CC_APPROVED, ChangeType.AUTOMATIC);
 			});
 		}
 	}
-	
 }

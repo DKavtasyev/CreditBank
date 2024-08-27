@@ -13,7 +13,7 @@ import static ru.neoflex.neostudy.common.constants.DateTimeFormat.DATETIME_PATTE
 
 @Data
 @Accessors(chain = true)
-public class StatusHistory implements Serializable {
+public class StatementStatusHistory implements Serializable {
 	private ApplicationStatus status;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATETIME_PATTERN)
 	private LocalDateTime time;

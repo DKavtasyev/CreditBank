@@ -1,0 +1,31 @@
+POST http://localhost:8083/statement
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "amount": 1000000,
+  "term": 6,
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "middleName": "Ivanovich",
+  "email": "ivan@mail.ru",
+  "birthDate": "1995-03-14",
+  "passportSeries": "1234",
+  "passportNumber": "123456"
+}
+
+### Перед отправкой необходимо указать statementId существующего Statement
+POST http://localhost:8083/statement/offer
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "statementId": "811fa791-6cfb-4741-8be4-74c8af2b485c",
+  "requestedAmount": 1000000,
+  "totalAmount": 0,
+  "term": 6,
+  "monthlyPayment": 0,
+  "rate": 0.16,
+  "isInsuranceEnabled": false,
+  "isSalaryClient": false
+}

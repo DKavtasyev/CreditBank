@@ -45,6 +45,19 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>4.28.0</version>
 		</dependency>
+
+		<!--	Kafka	-->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<!--suppress VulnerableLibrariesLocal -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

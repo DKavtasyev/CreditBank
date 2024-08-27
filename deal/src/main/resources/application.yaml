@@ -15,13 +15,22 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: public
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      auto-offset-reset: earliest
 
 server:
   port: 8082
 
 app:
   rest:
-    prefix: /deal
+    deal:
+      prefix: /deal
+    document:
+      prefix: /deal/document
+    admin:
+      prefix: /deal/admin
 
 logging:
   level:

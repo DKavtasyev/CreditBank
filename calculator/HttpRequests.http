@@ -1,0 +1,47 @@
+POST http://localhost:8081/calculator/offers
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "amount": 1000000,
+  "term": 6,
+  "firstName": "Alex",
+  "lastName": "Ivanov",
+  "middleName": "Vasilievich",
+  "email": "alex@mail.ru",
+  "birthDate": "1995-03-14",
+  "passportSeries": "1234",
+  "passportNumber": "123456"
+}
+
+###
+POST http://localhost:8081/calculator/calc
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "amount": 1000000,
+  "term": 6,
+  "firstName": "Vasya",
+  "lastName": "Vasiliev",
+  "middleName": "Vasilievich",
+  "gender": "MALE",
+  "birthdate": "1995-02-15",
+  "passportSeries": "1234",
+  "passportNumber": "123456",
+  "passportIssueDate": "2020-01-01",
+  "passportIssueBranch": "null",
+  "maritalStatus": "SINGLE",
+  "dependentAmount": 0,
+  "employment": {
+	"employmentStatus": "EMPLOYED",
+	"employmentINN": "12341234",
+	"salary": 130000,
+	"position": "WORKER",
+	"workExperienceTotal": 60,
+	"workExperienceCurrent": 24
+  },
+  "accountNumber": "123456",
+  "isInsuranceEnabled": false,
+  "isSalaryClient": false
+}

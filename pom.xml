@@ -21,6 +21,7 @@
 		<module>deal</module>
 		<module>common</module>
 		<module>statement</module>
+		<module>dossier</module>
 	</modules>
 
 	<properties>

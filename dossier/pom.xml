@@ -4,13 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.6</version>
-		<relativePath/> <!-- lookup parent from repository -->
-		<!--<groupId>ru.neoflex.neostudy</groupId>
+		<groupId>ru.neoflex.neostudy</groupId>
 		<artifactId>CreditBank</artifactId>
-		<version>1.0-SNAPSHOT</version>-->
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>dossier</artifactId>
@@ -19,14 +15,42 @@
 	<description>dossier</description>
 
 	<dependencies>
+
+		<!--	Kafka	-->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
 		</dependency>
+		<!--suppress VulnerableLibrariesLocal -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--	Common module	-->
+		<dependency>
+			<groupId>ru.neoflex.neostudy</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!--	Mail	-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!--	Thymeleaf	-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!--	AspectJ 	-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 	</dependencies>
 
