@@ -14,7 +14,7 @@ public class MonthlyPaymentCalculatorService {
 	/**
 	 * Высчитывает и возвращает сумму ежемесячного платежа в числовом формате {@code BigDecimal}.
 	 * @param amount общая сумма кредита.
-	 * @param term срок кредита.
+	 * @param term срок кредита в месяцах.
 	 * @param rate процентная ставка по кредиту.
 	 * @return сумму ежемесячного платежа в формате {@code BigDecimal}, высчитываемую с точностью 16 знаков после
 	 * запятой по формуле: <br>

@@ -24,6 +24,9 @@ CreditBank — учебное приложение для автоматизир
 - MS gateway
 - common
 
+
+  ![Архитектура КК новый drawio](https://github.com/user-attachments/assets/e7ead87e-84af-473e-8c61-c7522a8e33d0)
+
 ### Calculator
 Рассчитывает параметры кредита. Производит расчёт:
 - Кредитных предложений
