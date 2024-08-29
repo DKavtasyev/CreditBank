@@ -123,6 +123,10 @@ jobs:
 #          name: jacoco-report
 #          path: '**/target/site/jacoco/'
 
+      - name: Convert shallow clone to full clone
+        run: git fetch --unshallow
+
+
       - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
