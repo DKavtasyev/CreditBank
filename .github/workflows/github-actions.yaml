@@ -22,106 +22,106 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-#      - name: Cache Maven packages
-#        uses: actions/cache@v3
-#        with:
-#          path: ~/.m2
-#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: |
-#            ${{ runner.os }}-maven-
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Install dependencies
         run: mvn install -DskipTests
 
       # MS Calculator
 
-#      - name: Test and generate coverage report for MS Calculator
-#        run: mvn test --projects calculator
-#
-#      - name: Code Coverage Report
-#        run: mvn jacoco:report --projects calculator
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v4.5.0
-#        with:
-#          files: ./calculator/target/site/jacoco/jacoco.xml
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          flags: calculator
-#          name: calculator-coverage
-#
-#      - name: Generate JaCoCo Badge for MS Calculator
-#        id: calculator-jacoco
-#        uses: cicirello/jacoco-badge-generator@v2.11.0
-#        with:
-#          jacoco-csv-file: ./calculator/target/site/jacoco/jacoco.csv
-#          workflow-summary-heading: MS Calculator JaCoCo Test Coverage Summary
+      - name: Test and generate coverage report for MS Calculator
+        run: mvn test --projects calculator
+
+      - name: Code Coverage Report
+        run: mvn jacoco:report --projects calculator
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          files: ./calculator/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: calculator
+          name: calculator-coverage
+
+      - name: Generate JaCoCo Badge for MS Calculator
+        id: calculator-jacoco
+        uses: cicirello/jacoco-badge-generator@v2.11.0
+        with:
+          jacoco-csv-file: ./calculator/target/site/jacoco/jacoco.csv
+          workflow-summary-heading: MS Calculator JaCoCo Test Coverage Summary
 
       # MS Deal
 
-#      - name: Test and generate coverage report for MS Deal
-#        run: mvn test --projects deal
-#
-#      - name: Code Coverage Report
-#        run: mvn jacoco:report --projects deal
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v4.5.0
-#        with:
-#          files: ./deal/target/site/jacoco/jacoco.xml
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          flags: deal
-#          name: deal-coverage
-#
-#      - name: Generate JaCoCo Badge for MS Deal
-#        id: deal-jacoco
-#        uses: cicirello/jacoco-badge-generator@v2.11.0
-#        with:
-#          jacoco-csv-file: ./deal/target/site/jacoco/jacoco.csv
-#          workflow-summary-heading: MS Deal JaCoCo Test Coverage Summary
+      - name: Test and generate coverage report for MS Deal
+        run: mvn test --projects deal
+
+      - name: Code Coverage Report
+        run: mvn jacoco:report --projects deal
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          files: ./deal/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: deal
+          name: deal-coverage
+
+      - name: Generate JaCoCo Badge for MS Deal
+        id: deal-jacoco
+        uses: cicirello/jacoco-badge-generator@v2.11.0
+        with:
+          jacoco-csv-file: ./deal/target/site/jacoco/jacoco.csv
+          workflow-summary-heading: MS Deal JaCoCo Test Coverage Summary
 
       # MS Statement
 
-#      - name: Test and generate coverage report for MS Statement
-#        run: mvn test --projects statement
-#
-#      - name: Code Coverage Report
-#        run: mvn jacoco:report --projects statement
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v4.5.0
-#        with:
-#          files: ./statement/target/site/jacoco/jacoco.xml
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          flags: statement
-#          name: statement-coverage
-#
-#      - name: Generate JaCoCo Badge for MS Statement
-#        id: statement-jacoco
-#        uses: cicirello/jacoco-badge-generator@v2.11.0
-#        with:
-#          jacoco-csv-file: ./statement/target/site/jacoco/jacoco.csv
-#          workflow-summary-heading: MS Statement JaCoCo Test Coverage Summary
+      - name: Test and generate coverage report for MS Statement
+        run: mvn test --projects statement
+
+      - name: Code Coverage Report
+        run: mvn jacoco:report --projects statement
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          files: ./statement/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: statement
+          name: statement-coverage
+
+      - name: Generate JaCoCo Badge for MS Statement
+        id: statement-jacoco
+        uses: cicirello/jacoco-badge-generator@v2.11.0
+        with:
+          jacoco-csv-file: ./statement/target/site/jacoco/jacoco.csv
+          workflow-summary-heading: MS Statement JaCoCo Test Coverage Summary
 
       # Common path
 
-#      - name: Log coverage percentage
-#        run: |
-#          echo "calculator coverage = ${{ steps.calculator-jacoco.outputs.coverage }}"
-#          echo "deal coverage = ${{ steps.deal-jacoco.outputs.coverage }}"
-#          echo "statement coverage = ${{ steps.statement-jacoco.outputs.coverage }}"
-#      - name: Add Coverage PR Comment
-#        uses: marocchino/sticky-pull-request-comment@v2.9.0
-#        if: github.event_name == 'pull_request'
-#        with:
-#          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-#          recreate: true
-#          message: "# Modules coverage \n calculator coverage = ${{ steps.calculator-jacoco.outputs.coverage }} \n deal coverage = ${{ steps.deal-jacoco.outputs.coverage }} \n statement coverage = ${{ steps.statement-jacoco.outputs.coverage }}"
+      - name: Log coverage percentage
+        run: |
+          echo "calculator coverage = ${{ steps.calculator-jacoco.outputs.coverage }}"
+          echo "deal coverage = ${{ steps.deal-jacoco.outputs.coverage }}"
+          echo "statement coverage = ${{ steps.statement-jacoco.outputs.coverage }}"
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.9.0
+        if: github.event_name == 'pull_request'
+        with:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          recreate: true
+          message: "# Modules coverage \n calculator coverage = ${{ steps.calculator-jacoco.outputs.coverage }} \n deal coverage = ${{ steps.deal-jacoco.outputs.coverage }} \n statement coverage = ${{ steps.statement-jacoco.outputs.coverage }}"
 
-#      - name: Upload JaCoCo coverage report for all modules
-#        uses: actions/upload-artifact@v4.3.6
-#        with:
-#          name: jacoco-report
-#          path: '**/target/site/jacoco/'
+      - name: Upload JaCoCo coverage report for all modules
+        uses: actions/upload-artifact@v4.3.6
+        with:
+          name: jacoco-report
+          path: '**/target/site/jacoco/'
 
       - name: Analyze with SonarCloud
         env:
