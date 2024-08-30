@@ -92,7 +92,7 @@ CreditBank — учебное приложение для автоматизир
 </tbody>
 </table>
 
-[Подробное описание микросервиса deal](calculator/README.md)
+[Подробное описание микросервиса deal](deal/README.md)
 
 ### Statement
 Выполняет прескоринг кредитной заявки. Отсекает пользователей, чьи данные не соответствуют условиям кредита.
@@ -151,38 +151,78 @@ CreditBank — учебное приложение для автоматизир
 
 [Подробное описание микросервиса gateway](gateway/README.md)
 
-### Сборка приложения
+---
+## Сборка и запуск приложения
 
-Порядок действий:
+### Запуск в Docker
+
 - Установить Docker и docker-compose
-
-[//]: # (- Установите PostgreSQL, создайте базу данных "credit-bank" )
 - Добавить следующие переменные окружения:
   - Пароль от базы данных POSTGRES_PASSWORD, можно задать любой
   - Пароль от почтового ящика EMAIL_PASSWORD - необходимо получить у разработчика
-- Запустить приложение
-  - для этого перейти в корневую директорию проекта
-    ```bash
-    cd $(git rev-parse --show-toplevel)
-    ```
-  - запустить контейнеры Docker с модулями
-    ```bash
-    docker-compose up -d
-    ```
-    Хост приложения:
-    > http://localhost:8080
+- Перейти в корневую директорию проекта
+  ```bash
+  cd $(git rev-parse --show-toplevel)
+  ```
+- запустить контейнеры Docker с модулями
+  ```bash
+  docker-compose up -d
+  ```
+После выполнения команд будут запущены и доступны следующие модули:
+- kafka
+- kafdrop
+- zookeeper
+- prometheus
+- grafana
+- postgres
+- calculator
+- deal
+- statement
+- dossier
+- gateway
 
+### Запуск в Intellij Idea
+- Установить Docker и docker-compose
+- Добавить следующие переменные окружения:
+  - Пароль от базы данных POSTGRES_PASSWORD, можно задать любой
+  - Пароль от почтового ящика EMAIL_PASSWORD - необходимо получить у разработчика
+- Перейти в корневую директорию проекта
+  ```bash
+  cd $(git rev-parse --show-toplevel)
+  ```
+- Запустить контейнеры Docker с MQ Kafka, Kafdrop
+   ```bash
+   docker-compose -f ./deal/docker-compose.yaml up
+   ```
+- Запустить контейнеры Docker с Prometheus, Grafana (необязательно)
+  ```bash
+  docker-compose -f ./scripts/docker-compose.yaml up
+  ```
+- Собрать проект в Maven и запустить все модули
+  ```bash
+  mvn clean install -Dskiptests
+  ```
+  
 ### Документация API
-Для просмотра и тестирования доступных API методов используется Swagger UI, который доступен по следующему адресу:
+Для просмотра и тестирования доступных API методов используется Swagger UI. \
+Адрес доступа к Swagger:
 > http://localhost:8080/swagger-ui/index.html
 
 ### Мониторинг и Визуализация с Grafana
-
-Для мониторинга и визуализации данных используется Grafana. Доступ осуществляется по следующему адресу:
+Для мониторинга и визуализации данных используется Grafana. \
+Адрес доступа к Grafana:
 > http://localhost:3000
 
-При запуске приложения в Docker контейнер с Grafana запустится автоматически.
+#### Настройка Grafana
+1. Убедиться, что контейнер с Grafana запущен (см. "Запуск в Docker", "Запуск в Intellij Idea").
+2. Открыть Grafana в браузере по адресу http://localhost:3000.
+3. Данные для входа по умолчанию:
+   - Логин: admin
+   - Пароль: admin
+4. Создать новый дашборд для мониторинга интересующих метрик.
 
-Настройка Grafana
-- Установить и запустить Docker и Docker-compose
-- Выполнить команду 
+### Визуализация и Управление Apache Kafka с Kafdrop
+Для визуализации и управления кластерами Apache Kafka используется Kafdrop. \
+Адрес доступа к Kafdrop:
+
+> http://localhost:9000
