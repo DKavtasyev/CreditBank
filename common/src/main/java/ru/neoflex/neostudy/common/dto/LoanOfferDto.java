@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Schema(description = "Данные о кредитном предложении")
 public class LoanOfferDto {
-	@Schema(description = "Идентификатор предложения")
+	@Schema(description = "Идентификатор заявки на кредит")
 	private UUID statementId;
 	@Schema(description = "Запрашиваемая сумма", example = "1000000")
 	private BigDecimal requestedAmount;
