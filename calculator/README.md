@@ -75,7 +75,7 @@
 Затем рассчитывается ежемесячный платёж по формуле (1) с точностью до 16 знаков после запятой:
 
 <p style="display: flex; align-items: center; justify-content: center;">
-  <img src="https://latex.codecogs.com/png.image?\inline&nbsp;\dpi{110}{\color{White}X=S\times K}" title="{\color{White}X=S\times K}" style="margin: 0 auto;"  alt="monthlyPayment"/>(1)
+  <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DX=S%5Ctimes%20K%7D" title="{\color{White}X = S \times K}" style="margin: 0 auto;"  alt="monthlyPayment"/>(1)
 </p>
 
 где *X* - аннуитетный платёж;\
@@ -87,7 +87,7 @@
 
 
 <p style="display: flex; align-items: center; justify-content: center;">
-  <img src="https://latex.codecogs.com/png.image?\inline \dpi{110}{\color{White}K=p&plus;\frac{p}{(1&plus;p)^{N}-1}}" title="{\color{White}K=P+\frac{P}{(1+P)^{N}-1}}" style="margin: 0 auto;"  alt="monthlyPayment"/>(2)
+  <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DK=p&plus;%5Cfrac%7Bp%7D%7B(1&plus;p)%5E%7BN%7D-1%7D%7D" title=" {\color{White}K = P + \frac{P}{(1 + P)^{N} - 1}}" style="margin: 0 auto;"  alt="monthlyPayment"/>(2)
 </p>
 
 где *p* - процентная ставка за месяц в виде десятичной дроби;\
@@ -158,18 +158,18 @@
     1. Рассчитываются проценты по формуле, начисленные на момент платежа за период пользования денежными средствами:
     <br><br>
     <p style="display: flex; align-items: center; justify-content: center;">
-        <img src="https://latex.codecogs.com/png.image?\inline \dpi{110}{\color{White}I=S_{n}\times\frac{P}{365}\times t}" title="{\color{White}I=S_{n}\times\frac{P}{365}\times t}" style="margin: 0 auto;" alt="percents"/> (3)
+        <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DI=S_%7Bn%7D%5Ctimes%5Cfrac%7BP%7D%7B365%7D%5Ctimes%20t%7D" title="{\color{White}I=S_{n}\times\frac{P}{365}\times t}" style="margin: 0 auto;" alt="percents"/> (3)
     </p>
     <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где P - процентная ставка в виде десятичной дроби; <br>   
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://latex.codecogs.com/png.image?\inline \dpi{110}{\color{White}S_{n}}" title="{\color{White}S_{n}}"  alt="remainingAmount"/> - остаток тела кредита после каждого ежемесячного платежа;<br>
+    <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DS_%7Bn%7D%7D" title="{\color{White}S_{n}}"  alt="remainingAmount"/> - остаток тела кредита после каждого ежемесячного платежа;<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t - количество дней, в течение которых начислялись проценты.
     
     2. Часть платежа, идущая на погашение основного долга, рассчитывается по формуле (4):
     <br><br>
     <p style="display: flex; align-items: center; justify-content: center;">
-        <img src="https://latex.codecogs.com/png.image?\inline \dpi{110}{\color{White}D=X-I}" title="{\color{White}D=X-I}" style="margin: 0 auto;" alt="percents"/> (4)
+        <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DD=X-I%7D" title="{\color{White}D=X-I}" style="margin: 0 auto;" alt="percents"/> (4)
     </p>
     <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где X - сумма ежемесячного платежа; <br>   
@@ -178,7 +178,7 @@
     3. Остаток тела кредита после проведения платежа вычисляется по формуле (5):
     <br><br>
     <p style="display: flex; align-items: center; justify-content: center;">
-        <img src="https://latex.codecogs.com/png.image?\inline \dpi{110}{\color{White}S_{n&plus;1}=S_{n}-D}" title="{\color{White}S_{n+1}=S_{n}-D}" style="margin: 0 auto;" alt="newRemainingDebt"/> (5)
+        <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DS_%7Bn&plus;1%7D=S_%7Bn%7D-D%7D" title="{\color{White}S_{n+1}=S_{n}-D}" style="margin: 0 auto;" alt="newRemainingDebt"/> (5)
     </p>
     <br>
 
