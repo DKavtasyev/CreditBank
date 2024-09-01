@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: dossier
+  profiles:
+    active: default
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: "creditBankDossier"
+      bootstrap-servers: ${KAFKA_HOST:localhost}:9092
+  mail:
+    host: smtp.mail.ru
+    port: 587
+    username: creditbank.noreply@internet.ru
+    password: ${EMAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    test-connection: true
+
+app:
+  rest:
+    request:
+      deal:
+        host: ${DEAL_HOST:localhost}
+        port: 8082
+        status-path: /deal/admin/statement/{statementId}/status
+  bank:
+    host: localhost
+    port: 8080
+    official-name: CreditBank
+
+server:
+  port: 8084
+
+logging:
+  level:
+    root: info
+    # noinspection SpellCheckingInspection
+    ru.neoflex.neostudy.dossier: info
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="${subject}"></title>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+	<style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "Open Sans", sans-serif
+        }
+		.w3-container:after, .w3-container:before {
+            content: "";
+            display: table;
+            clear: both
+		}
+		.w3-clear:after, .w3-clear:before {
+			content: "";
+    		display: table;
+    		clear: both
+    	}
+    	.w3-button:hover {
+            color: #fff !important;
+            background-color: #2196F3 !important
+		}
+	</style>
+</head>
+<body style="color: #000 !important;background-color: #f5f7f8 !important">
+<div style="padding: 0.01em 16px;
+box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+color: #000 !important;
+background-color: #fff !important;
+border-radius: 4px;
+margin: 16px !important;" class="w3-container"><br>
+	<img src="cid:logo@dossier" alt="logo" style="width:60px;
+float: left !important;
+border-radius: 50%;
+margin-right: 16px !important">
+	<span style="float: right !important;
+opacity: 0.60" th:text="${currentDate}">date</span>
+	<h4>CreditBank</h4><br>
+	<hr style="" class="w3-clear">
+	<div th:utext="${messageText}">text</div>
+	<div th:if="${buttonText != null}">
+		<a style="-webkit-touch-callout: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+border: none;
+display: inline-block;
+padding: 8px 16px;
+vertical-align: middle;
+overflow: hidden;
+text-decoration: none;
+text-align: center;
+cursor: pointer;
+white-space: nowrap;
+color: #fff !important;
+background-color: #57707d !important;
+margin-bottom: 16px !important" class="w3-button" th:href="@{${url}}"
+		   th:text="${buttonText}">href</a>
+	</div>
+</div>
+</body>
+</html>

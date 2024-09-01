@@ -1,6 +1,8 @@
 spring:
   application:
     name: calculator
+  profiles:
+    active: default
 
 server:
   port: 8081
@@ -9,9 +11,61 @@ app:
   rest:
     prefix: /calculator
 
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 logging:
   level:
-    root: warn
-    ru.neostudy.neoflex.calculator: debug
+    root: info
+    # noinspection SpellCheckingInspection
+    ru.neoflex.neostudy.calculator: debug
 
-base_rate: 0.12
+credit:
+  insurance-percent: 1.05
+
+rate:
+  base-rate: 0.12
+  insurance-enabled: -0.03
+  salary-client: -0.01
+  employment-status:
+    self-employed: 0.01
+    business-owner: 0.02
+  position:
+    middle-manager: -0.02
+    top-manager: -0.03
+  marital-status:
+    married: -0.03
+    divorced: 0.01
+  woman:
+    age-from: 32
+    age-to: 60
+    rate: -0.03
+  man:
+    age-from: 30
+    age-to: 55
+    rate: -0.03
+  non-binary:
+    rate: 0.07
+
+refusal:
+  ratio-of-amount-to-salary: 25
+  min-age: 20
+  max-age: 65
+  work-experience:
+    min-total: 18
+    min-current: 3

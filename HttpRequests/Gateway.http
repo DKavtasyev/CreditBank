@@ -1,0 +1,94 @@
+### Create loan statement
+POST http://localhost:8080/statement
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "amount": 1000000,
+  "term": 24,
+  "firstName": "Иван",
+  "lastName": "Иванов",
+  "middleName": "Иванович",
+  "email": "999DK@mail.ru",
+  "birthDate": "2000-12-18",
+  "passportSeries": "5353",
+  "passportNumber": "345666"
+}
+
+### Choose one of four offers
+### В поле statementId установить корректное значение
+POST http://localhost:8080/statement/select
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "statementId": "3a05282f-5833-4c02-80e1-bd8e80a73540",
+  "requestedAmount": 1000000,
+  "totalAmount": 1118588.1167166018933096,
+  "term": 24,
+  "monthlyPayment": 46607.8381965250788879,
+  "rate": 0.11,
+  "isInsuranceEnabled": false,
+  "isSalaryClient": true
+}
+
+### Finish registration
+### В URL установить корректный statementId
+POST http://localhost:8080/statement/registration/3a05282f-5833-4c02-80e1-bd8e80a73540
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "gender": "MALE",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 0,
+  "passportIssueDate": "2012-06-11",
+  "passportIssueBranch": "ГУ МВД ПО МОСКОВСКОЙ ОБЛАСТИ",
+  "employment": {
+	"employmentStatus": "EMPLOYED",
+	"employmentINN": "123412342345",
+	"salary": 200000,
+	"position": "WORKER",
+	"workExperienceTotal": 96,
+	"workExperienceCurrent": 3
+  },
+  "accountNumber": "9238459887345"
+}
+
+### Denial of a loan
+### В URL установить корректный statementId
+GET http://localhost:8080/statement/deny/3a05282f-5833-4c02-80e1-bd8e80a73540
+
+
+
+
+### Create documents request
+### В URL установить корректный statementId
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540
+
+### Sign documents request
+### В URL установить корректный statementId
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign
+
+### Verify SES code request
+### В URL установить корректный statementId
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign/code?code=a69930b1-e176-4355-90ce-afdf5e0414b8
+
+
+
+
+### Set status for certain statement
+### В URL установить корректный statementId
+PUT http://localhost:8080/admin/statement/f29fc274-9c76-4278-843f-7c7f447ad04f/status
+Content-Type: application/json
+Cache-Control: no-store
+
+"CC_APPROVED"
+
+### Get certain statement
+### В URL установить корректный statementId
+GET http://localhost:8080/admin/statement/a121443c-3397-471e-b99a-96add3728a2d
+
+### Get all statements
+### В URL установить корректный statementId
+GET http://localhost:8080/admin/statement?page=1
