@@ -6,13 +6,13 @@ Cache-Control: no-store
 {
   "amount": 1000000,
   "term": 24,
-  "firstName": "Семён",
-  "lastName": "Сидоров",
+  "firstName": "Иван",
+  "lastName": "Иванов",
   "middleName": "Иванович",
   "email": "999DK@mail.ru",
   "birthDate": "2000-12-18",
-  "passportSeries": "1234",
-  "passportNumber": "515151"
+  "passportSeries": "5353",
+  "passportNumber": "345666"
 }
 
 ### Choose one of four offers
@@ -22,7 +22,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "a121443c-3397-471e-b99a-96add3728a2d",
+  "statementId": "3a05282f-5833-4c02-80e1-bd8e80a73540",
   "requestedAmount": 1000000,
   "totalAmount": 1118588.1167166018933096,
   "term": 24,
@@ -34,7 +34,7 @@ Cache-Control: no-store
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8080/statement/registration/a121443c-3397-471e-b99a-96add3728a2d
+POST http://localhost:8080/statement/registration/3a05282f-5833-4c02-80e1-bd8e80a73540
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -57,29 +57,29 @@ Cache-Control: no-store
 
 ### Denial of a loan
 ### В URL установить корректный statementId
-GET http://localhost:8080/statement/deny/a121443c-3397-471e-b99a-96add3728a2d
+GET http://localhost:8080/statement/deny/3a05282f-5833-4c02-80e1-bd8e80a73540
 
 
 
 
 ### Create documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540
 
 ### Sign documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d/sign
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign
 
 ### Verify SES code request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/a121443c-3397-471e-b99a-96add3728a2d/sign/code?code=eee7ffaa-783c-4858-9acb-d18c58cc9ad5
+POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign/code?code=a69930b1-e176-4355-90ce-afdf5e0414b8
 
 
 
 
 ### Set status for certain statement
 ### В URL установить корректный statementId
-PUT http://localhost:8080/admin/statement/836002d9-bd30-47d2-81bd-c52154b2e7ef/status
+PUT http://localhost:8080/admin/statement/f29fc274-9c76-4278-843f-7c7f447ad04f/status
 Content-Type: application/json
 Cache-Control: no-store
 

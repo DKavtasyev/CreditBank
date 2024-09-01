@@ -38,8 +38,7 @@ margin-right: 16px !important">
 opacity: 0.60" th:text="${currentDate}">date</span>
 	<h4>CreditBank</h4><br>
 	<hr style="" class="w3-clear">
-	<p>Добрый день!</p>
-	<p th:text="${messageText}">text</p>
+	<div th:utext="${messageText}">text</div>
 	<div th:if="${buttonText != null}">
 		<a style="-webkit-touch-callout: none;
 -webkit-user-select: none;

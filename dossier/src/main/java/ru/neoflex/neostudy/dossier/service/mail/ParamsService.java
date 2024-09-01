@@ -47,10 +47,12 @@ public class ParamsService {
 			url = builder.build(false).toString();
 		}
 		
+		String messageText = String.format(theme.getMessageText(), emailMessage.getFirstAndMiddleName());
+		
 		Map<String, Object> params = new HashMap<>();
 		params.put(KEY_SUBJECT, theme.getSubject());
 		params.put(KEY_CURRENT_DATE, LocalDate.now());
-		params.put(KEY_MESSAGE_TEXT, theme.getMessageText());
+		params.put(KEY_MESSAGE_TEXT, messageText);
 		params.put(KEY_BUTTON_TEXT, theme.getButtonText());
 		params.put(KEY_URL, url);
 		return params;

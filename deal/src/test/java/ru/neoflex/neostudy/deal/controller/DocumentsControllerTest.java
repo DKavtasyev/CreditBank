@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
+import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.exception.*;
 import ru.neoflex.neostudy.deal.entity.Statement;
 import ru.neoflex.neostudy.deal.service.DataService;
@@ -97,7 +98,7 @@ class DocumentsControllerTest {
 					verify(dataService, times(1)).findStatement(statementId);
 					verify(pdfDocumentCreator, times(1)).createDocument(statement);
 					verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.PREPARE_DOCUMENTS, ChangeType.AUTOMATIC);
-					verify(kafkaService, times(1)).sendDocumentSigningRequest(statement, documentAsString);
+					verify(kafkaService, times(1)).sendKafkaMessage(statement, Theme.SEND_DOCUMENTS, documentAsString);
 					assertThat(statement.getPdfFile()).isEqualTo(documentAsBytes);
 				});
 			}
@@ -177,7 +178,7 @@ class DocumentsControllerTest {
 					verify(uuidSignatureService, times(1)).createSignature();
 					verify(uuidSignatureService, times(1)).signDocument(statementArgumentCaptor.capture(), keyPairCaptor.capture());
 					verify(dataService, times(1)).saveStatement(statementArgumentCaptor.capture());
-					verify(kafkaService, times(1)).sendSignature(statementId, expectedSessionCode);
+					verify(kafkaService, times(1)).sendKafkaMessage(statement, Theme.SEND_SES, expectedSessionCode);
 				});
 			}
 		}
@@ -258,6 +259,7 @@ class DocumentsControllerTest {
 				ArgumentCaptor<String> signatureCaptor = ArgumentCaptor.forClass(String.class);
 				ArgumentCaptor<ApplicationStatus> statusCaptor = ArgumentCaptor.forClass(ApplicationStatus.class);
 				ArgumentCaptor<ChangeType> changeTypeCaptor = ArgumentCaptor.forClass(ChangeType.class);
+				ArgumentCaptor<Theme> themeCaptor = ArgumentCaptor.forClass(Theme.class);
 				
 				mockMvc.perform(post("/deal/document/{statementId}/code", statementId)
 								.param("code", "1234"))
@@ -267,12 +269,13 @@ class DocumentsControllerTest {
 					verify(dataService, times(1)).findStatement(statementId);
 					verify(uuidSignatureService, times(1)).verifySignature(statementArgumentCaptor.capture(), signatureCaptor.capture());
 					verify(dataService, times(2)).updateStatement(statementArgumentCaptor.capture(), statusCaptor.capture(), changeTypeCaptor.capture());
-					verify(kafkaService, times(1)).sendCreditIssuedMessage(statementArgumentCaptor.capture());
+					verify(kafkaService, times(1)).sendKafkaMessage(statementArgumentCaptor.capture(), themeCaptor.capture(), isNull());
 					assertThat(statusCaptor.getAllValues().get(0)).isEqualTo(ApplicationStatus.DOCUMENT_SIGNED);
 					assertThat(statusCaptor.getAllValues().get(1)).isEqualTo(ApplicationStatus.CREDIT_ISSUED);
 					assertThat(changeTypeCaptor.getAllValues().get(0)).isEqualTo(ChangeType.AUTOMATIC);
 					assertThat(changeTypeCaptor.getAllValues().get(1)).isEqualTo(ChangeType.AUTOMATIC);
 					assertThat(signatureCaptor.getValue()).isEqualTo("1234");
+					assertThat(themeCaptor.getValue()).isEqualTo(Theme.CREDIT_ISSUED);
 				});
 			}
 		}

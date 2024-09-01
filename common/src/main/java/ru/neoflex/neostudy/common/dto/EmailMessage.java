@@ -20,4 +20,6 @@ public class EmailMessage {
 	private UUID statementId;
 	@Schema(description = "Сообщение")
 	private String message;
+	@Schema(description = "Имя отчество")
+	private String firstAndMiddleName;
 }

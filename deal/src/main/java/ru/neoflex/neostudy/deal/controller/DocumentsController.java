@@ -18,6 +18,8 @@ import ru.neoflex.neostudy.deal.service.signature.SignatureService;
 import java.util.Base64;
 import java.util.UUID;
 
+import static ru.neoflex.neostudy.common.constants.Theme.*;
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -34,17 +36,17 @@ public class DocumentsController implements DocumentsControllerInterface {
 		statement.setPdfFile(documentAsBytes);
 		dataService.updateStatement(statement, ApplicationStatus.PREPARE_DOCUMENTS, ChangeType.AUTOMATIC);
 		String documentAsStringBase64 = Base64.getEncoder().encodeToString(documentAsBytes);
-		kafkaService.sendDocumentSigningRequest(statement, documentAsStringBase64);
+		kafkaService.sendKafkaMessage(statement, SEND_DOCUMENTS, documentAsStringBase64);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@Override
 	public ResponseEntity<Void> signDocuments(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException, DocumentSignatureException {
 		Statement statement = dataService.findStatement(statementId);
-		String keyPair = uuidSignatureService.createSignature();
-		uuidSignatureService.signDocument(statement, keyPair);
+		String signature = uuidSignatureService.createSignature();
+		uuidSignatureService.signDocument(statement, signature);
 		dataService.saveStatement(statement);
-		kafkaService.sendSignature(statementId, statement.getSessionCode());
+		kafkaService.sendKafkaMessage(statement, SEND_SES, statement.getSessionCode());
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
@@ -54,7 +56,7 @@ public class DocumentsController implements DocumentsControllerInterface {
 		uuidSignatureService.verifySignature(statement, signature);
 		dataService.updateStatement(statement, ApplicationStatus.DOCUMENT_SIGNED, ChangeType.AUTOMATIC);
 		dataService.updateStatement(statement, ApplicationStatus.CREDIT_ISSUED, ChangeType.AUTOMATIC);
-		kafkaService.sendCreditIssuedMessage(statement);
+		kafkaService.sendKafkaMessage(statement, CREDIT_ISSUED, null);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

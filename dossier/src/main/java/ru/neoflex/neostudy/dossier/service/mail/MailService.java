@@ -27,93 +27,56 @@ public class MailService {
 	private final ParamsService paramsService;
 	
 	/**
-	 * Формирует и отправляет пользователю email сообщение с предложением закончить начатое оформление кредита.
+	 * Формирует и осуществляет отправку email-сообщения.
 	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
+	 * @throws InternalMicroserviceException возникла ошибка при формировании или отправке email-сообщения.
 	 */
-	public void sendFinishRegistrationEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
-		sendEmail(emailMessage);
+	public void sendEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
+		var params = paramsService.getParams(emailMessage);
+		
+		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)
+				.addHtmlPart(MAIL_TEMPLATE, params)
+				.addImgPart(IMG_PATH, CONTENT_ID).build();
+		mail.sendMessage();
 	}
 	
 	/**
-	 * Формирует и отправляет пользователю email сообщение с предложением создать документы на кредит.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
+	 * Формирует и отправляет email-сообщение с прикреплённым документом. Документ должен быть представлен в виде
+	 * строки, зашифрованной в Base64, и передан через поле message объекта emailMessage.
+	 * @param emailMessage объект с данными для email сообщения, включая зашифрованный документ.
+	 * @param fileName     имя прикладываемого файла.
+	 * @throws InternalMicroserviceException возникла ошибка при формировании или отправке email-сообщения.
+	 * @throws UserDocumentException         если произошла ошибка при загрузке документа.
 	 */
-	public void sendCreateDocumentsEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
-		sendEmail(emailMessage);
-	}
-	
-	/**
-	 * Формирует и отправляет пользователю email сообщение с документами на кредит.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
-	 * @throws UserDocumentException если произошла ошибка при добавлении вложения к email-сообщению.
-	 */
-	public void sendDocumentsEmail(EmailMessage emailMessage) throws InternalMicroserviceException, UserDocumentException {
+	public void sendEmail(EmailMessage emailMessage, String fileName) throws InternalMicroserviceException, UserDocumentException {
 		var params = paramsService.getParams(emailMessage);
 		
 		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)
 				.addHtmlPart(MAIL_TEMPLATE, params)
 				.addImgPart(IMG_PATH, CONTENT_ID)
-				.addAttachmentPart(emailMessage.getMessage(), "document.pdf").build();
+				.addAttachmentPart(emailMessage.getMessage(), fileName).build();
 		mail.sendMessage();
 	}
 	
 	/**
-	 * Формирует и отправляет пользователю email сообщение с кодом подписания документов.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
+	 * Формирует и отправляет email-сообщение, добавляя к URL-пути в поле theme объекта emailMessage указанный параметр
+	 * запроса.
+	 * @param emailMessage    объект с данными для email сообщения.
+	 * @param queryParamName  имя параметра запроса, который необходимо добавить к URL.
+	 * @param queryParamValue значение параметра запроса.
+	 * @throws InternalMicroserviceException возникла ошибка при формировании или отправке email-сообщения.
 	 */
-	public void sendSesCodeEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
+	public void sendEmail(EmailMessage emailMessage, String queryParamName, String queryParamValue) throws InternalMicroserviceException {
 		var params = paramsService.getParams(emailMessage);
 		
 		UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString((String) params.get(ParamsService.KEY_URL));
 		componentsBuilder.uriVariables(Map.of("statementId", emailMessage.getStatementId().toString()));
 		URI uri = UrlBuilder.builder()
 				.init(componentsBuilder)
-				.addQueryParameter("code", emailMessage.getMessage())
+				.addQueryParameter(queryParamName, queryParamValue)
 				.build();
 		
 		paramsService.updateUrl(params, uri.toString());
-		
-		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)
-				.addHtmlPart(MAIL_TEMPLATE, params)
-				.addImgPart(IMG_PATH, CONTENT_ID).build();
-		mail.sendMessage();
-	}
-	
-	/**
-	 * Формирует и отправляет пользователю email сообщение с уведомлением о выпущенном кредите.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
-	 */
-	public void sendCreditIssuedEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
-		sendEmail(emailMessage);
-	}
-	
-	/**
-	 * Формирует и отправляет пользователю email сообщение об отмене кредита по какой-либо причине.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
-	 */
-	public void sendRejectionOfStatementEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
-		var params = paramsService.getParams(emailMessage);
-		params.put(ParamsService.KEY_MESSAGE_TEXT, emailMessage.getMessage());
-		
-		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)
-				.addHtmlPart(MAIL_TEMPLATE, params)
-				.addImgPart(IMG_PATH, CONTENT_ID).build();
-		mail.sendMessage();
-	}
-	
-	/**
-	 * Формирует и осуществляет отправку email-сообщения.
-	 * @param emailMessage объект с данными для email сообщения.
-	 * @throws InternalMicroserviceException если произошла ошибка при отправке или формировании email-сообщения.
-	 */
-	private void sendEmail(EmailMessage emailMessage) throws InternalMicroserviceException {
-		var params = paramsService.getParams(emailMessage);
 		
 		Mail mail = mailBuilder.initializeMail(emailMessage.getAddress(), params)
 				.addHtmlPart(MAIL_TEMPLATE, params)

@@ -21,6 +21,8 @@ import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.neoflex.neostudy.common.constants.Theme.*;
+
 @RestController
 @RequiredArgsConstructor
 public class DealController implements DealControllerInterface {
@@ -42,9 +44,8 @@ public class DealController implements DealControllerInterface {
 	
 	@Override
 	public ResponseEntity<Void> applyOffer(LoanOfferDto loanOffer) throws StatementNotFoundException, InternalMicroserviceException {
-		
-		dataService.applyOfferAndSave(loanOffer);
-		kafkaService.sendFinishRegistrationRequest(loanOffer.getStatementId());
+		Statement statement = dataService.applyOfferAndSave(loanOffer);
+		kafkaService.sendKafkaMessage(statement, FINISH_REGISTRATION, null);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
@@ -52,14 +53,14 @@ public class DealController implements DealControllerInterface {
 	public ResponseEntity<Void> calculateCredit(FinishingRegistrationRequestDto finishingRegistrationRequestDto, UUID statementId, BindingResult bindingResult) throws StatementNotFoundException, LoanRefusalException, InternalMicroserviceException, InvalidPreApproveException {
 		Statement statement = dataService.findStatement(statementId);
 		scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement);
-		kafkaService.sendCreatingDocumentsRequest(statement);
+		kafkaService.sendKafkaMessage(statement, CREATE_DOCUMENTS, null);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	@Override
 	public ResponseEntity<Void> denyOffer(UUID statementId) throws StatementNotFoundException, InternalMicroserviceException {
 		Statement statement = dataService.denyOffer(statementId);
-		kafkaService.sendDenial(statement, "Вы отказались от кредита.");
+		kafkaService.sendKafkaMessage(statement, CLIENT_REJECTION, null);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	

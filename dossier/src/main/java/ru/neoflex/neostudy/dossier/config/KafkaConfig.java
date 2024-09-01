@@ -80,6 +80,11 @@ public class KafkaConfig {
 		return buildTopicBuilder(STATEMENT_DENIED);
 	}
 	
+	@Bean
+	public NewTopic clientRejectionTopic() {
+		return buildTopicBuilder(CLIENT_REJECTION);
+	}
+	
 	private NewTopic buildTopicBuilder(Theme theme) {
 		return TopicBuilder
 				.name(theme.getTopicName())

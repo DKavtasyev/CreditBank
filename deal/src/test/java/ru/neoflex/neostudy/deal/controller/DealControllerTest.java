@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
+import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.LoanOfferDto;
 import ru.neoflex.neostudy.common.dto.LoanStatementRequestDto;
@@ -395,9 +396,11 @@ public class DealControllerTest {
 						.content(objectMapper.writeValueAsString(loanOfferDto)));
 				
 				ArgumentCaptor<LoanOfferDto> loanOfferDtoCaptor = ArgumentCaptor.forClass(LoanOfferDto.class);
+				ArgumentCaptor<Statement> statementCaptor = ArgumentCaptor.forClass(Statement.class);
+				ArgumentCaptor<Theme> themeCaptor = ArgumentCaptor.forClass(Theme.class);
 				assertAll(() -> {
 					verify(dataService, times(1)).applyOfferAndSave(loanOfferDtoCaptor.capture());
-					verify(kafkaService, times(1)).sendFinishRegistrationRequest(loanOfferDto.getStatementId());
+					verify(kafkaService, times(1)).sendKafkaMessage(statementCaptor.capture(), themeCaptor.capture(), isNull());
 					assertThat(loanOfferDtoCaptor.getValue().getStatementId()).isEqualTo(loanOfferDto.getStatementId());
 					assertThat(loanOfferDtoCaptor.getValue().getRequestedAmount()).isEqualByComparingTo(loanOfferDto.getRequestedAmount());
 					assertThat(loanOfferDtoCaptor.getValue().getTotalAmount()).isEqualByComparingTo(loanOfferDto.getTotalAmount());
@@ -406,6 +409,7 @@ public class DealControllerTest {
 					assertThat(loanOfferDtoCaptor.getValue().getRate()).isEqualByComparingTo(loanOfferDto.getRate());
 					assertThat(loanOfferDtoCaptor.getValue().getIsInsuranceEnabled()).isEqualTo(loanOfferDto.getIsInsuranceEnabled());
 					assertThat(loanOfferDtoCaptor.getValue().getIsSalaryClient()).isEqualTo(loanOfferDto.getIsSalaryClient());
+					assertThat(themeCaptor.getValue()).isEqualTo(Theme.FINISH_REGISTRATION);
 				});
 			}
 		}
@@ -424,7 +428,9 @@ public class DealControllerTest {
 			
 			@Test
 			void applyOffer_whenMessageSendingError_thenThrowInternalMicroserviceException() throws Exception {
-				doThrow(InternalMicroserviceException.class).when(kafkaService).sendFinishRegistrationRequest(loanOfferDto.getStatementId());
+				Statement statement = new Statement();
+				when(dataService.applyOfferAndSave(loanOfferDto)).thenReturn(statement);
+				doThrow(InternalMicroserviceException.class).when(kafkaService).sendKafkaMessage(statement, Theme.FINISH_REGISTRATION, null);
 				mockMvc.perform(post("/deal/offer/select")
 								.contentType("application/json")
 								.content(objectMapper.writeValueAsString(loanOfferDto)))
@@ -812,10 +818,11 @@ public class DealControllerTest {
 				
 				ArgumentCaptor<UUID> statementIdCaptor = ArgumentCaptor.forClass(UUID.class);
 				ArgumentCaptor<Statement> statementCaptor = ArgumentCaptor.forClass(Statement.class);
-				ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+				ArgumentCaptor<Theme> themeCaptor = ArgumentCaptor.forClass(Theme.class);
 				assertAll(() -> {
 					verify(dataService, times(1)).denyOffer(statementIdCaptor.capture());
-					verify(kafkaService, times(1)).sendDenial(statementCaptor.capture(), messageCaptor.capture());
+					verify(kafkaService, times(1)).sendKafkaMessage(statementCaptor.capture(), themeCaptor.capture(), isNull());
+					assertThat(themeCaptor.getValue()).isEqualTo(Theme.CLIENT_REJECTION);
 				});
 			}
 		}
@@ -833,7 +840,7 @@ public class DealControllerTest {
 			@Test
 			void createStatement_whenRequestSendingError_thenReturn500() throws Exception {
 				when(dataService.denyOffer(statementId)).thenReturn(new Statement());
-				doThrow(InternalMicroserviceException.class).when(kafkaService).sendDenial(any(Statement.class), anyString());
+				doThrow(InternalMicroserviceException.class).when(kafkaService).sendKafkaMessage(any(Statement.class), any(Theme.class), any());
 				mockMvc.perform(get("/deal/offer/deny/{statementId}", statementId))
 						.andExpect(status().isInternalServerError());
 			}

@@ -74,6 +74,8 @@
 Для каждого случая корректируется процентная ставка. При включении страховки к общей сумме кредита прибавляется 5 %.
 Затем рассчитывается ежемесячный платёж по формуле (1) с точностью до 16 знаков после запятой:
 
+<!-- https://editor.codecogs.com/ -->
+
 <p style="display: flex; align-items: center; justify-content: center;">
   <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DX=S%5Ctimes%20K%7D" title="{\color{White}X = S \times K}" style="margin: 0 auto;"  alt="monthlyPayment"/>(1)
 </p>
@@ -148,7 +150,7 @@
 
 Возможные коды ответа:
 - 200 OK - успешный расчёт графика платежей.
-- 406 Not acceptable - неудовлетворительные данные пользователя для получения кредита (неудачный скоринг).
+- 406 Not acceptable - данные пользователя не соответствуют требованиям для получения кредита (неудачный скоринг).
 - 500 Internal server error - ошибка валидации входных данных LoanStatementDto.
 
 #### 2.2 Сведения о методике расчёта
@@ -161,10 +163,10 @@
          <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DI=S_%7Bn%7D%5Ctimes%5Cfrac%7BP%7D%7B365%7D%5Ctimes%20t%7D" title="{\color{White}I=S_{n}\times\frac{P}{365}\times t}" style="margin: 0 auto;" alt="percents"/> (3)
        </p>
        <br>
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где P - процентная ставка в виде десятичной дроби; <br>   
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где <i>P</i> - процентная ставка в виде десятичной дроби; <br>   
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
        <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DS_%7Bn%7D%7D" title="{\color{White}S_{n}}"  alt="remainingAmount"/> - остаток тела кредита после каждого ежемесячного платежа;<br>
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t - количество дней, в течение которых начислялись проценты.      
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i> - количество дней, в течение которых начислялись проценты.
     
     2. Часть платежа, идущая на погашение основного долга, рассчитывается по формуле (4):
        <br><br>
@@ -172,8 +174,8 @@
          <img src="https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B110%7D%7B%5Ccolor%7BWhite%7DD=X-I%7D" title="{\color{White}D=X-I}" style="margin: 0 auto;" alt="percents"/> (4)
        </p>
        <br>
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где X - сумма ежемесячного платежа; <br>   
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - часть платежа в счёт погашения процентов.
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;где <i>X</i> - сумма ежемесячного платежа; <br>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>I</i> - часть платежа в счёт погашения процентов.
        
     3. Остаток тела кредита после проведения платежа вычисляется по формуле (5):
        <br><br>

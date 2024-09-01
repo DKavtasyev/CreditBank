@@ -77,10 +77,11 @@ public class DataService {
 	 * @throws StatementNotFoundException выбрасывается, если {@code Statement} с указанным идентификатором statementId
 	 * не найден в базе данных.
 	 */
-	public void applyOfferAndSave(LoanOfferDto loanOffer) throws StatementNotFoundException {
+	public Statement applyOfferAndSave(LoanOfferDto loanOffer) throws StatementNotFoundException {
 		Statement statement = findStatement(loanOffer.getStatementId());
 		statement.setAppliedOffer(loanOffer);
 		updateStatement(statement, ApplicationStatus.APPROVED, ChangeType.AUTOMATIC);
+		return statement;
 	}
 	
 	/**

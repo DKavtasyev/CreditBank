@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
+import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
@@ -53,7 +54,7 @@ public class ScoringService {
 		}
 		catch (LoanRefusalException e) {
 			dataService.updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
-			kafkaService.sendDenial(statement, "Вам отказано в получении кредита");
+			kafkaService.sendKafkaMessage(statement, Theme.STATEMENT_DENIED, null);
 			throw e;
 		}
 		catch (NullPointerException e) {

@@ -1,6 +1,9 @@
 package ru.neoflex.neostudy.deal.service;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -8,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.neoflex.neostudy.common.constants.ApplicationStatus;
 import ru.neoflex.neostudy.common.constants.ChangeType;
 import ru.neoflex.neostudy.common.constants.CreditStatus;
+import ru.neoflex.neostudy.common.constants.Theme;
 import ru.neoflex.neostudy.common.dto.CreditDto;
 import ru.neoflex.neostudy.common.dto.FinishingRegistrationRequestDto;
 import ru.neoflex.neostudy.common.dto.ScoringDataDto;
@@ -25,7 +29,8 @@ import ru.neoflex.neostudy.deal.service.kafka.KafkaService;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,7 +95,7 @@ class ScoringServiceTest {
 			assertAll(() -> {
 				assertThrows(LoanRefusalException.class, () -> scoringService.scoreAndSaveCredit(finishingRegistrationRequestDto, statement));
 				verify(dataService, times(1)).updateStatement(statement, ApplicationStatus.CC_DENIED, ChangeType.AUTOMATIC);
-				verify(kafkaService, times(1)).sendDenial(statement, "Вам отказано в получении кредита");
+				verify(kafkaService, times(1)).sendKafkaMessage(statement, Theme.STATEMENT_DENIED, null);
 			});
 		}
 		
