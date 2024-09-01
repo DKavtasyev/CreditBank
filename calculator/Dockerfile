@@ -45,7 +45,7 @@ ENV TZ=Europe/Samara
 COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"
 
 WORKDIR /app
-COPY --from=maven_builder /build/calculator/target/calculator-0.0.1-SNAPSHOT.jar /app/
+COPY --from=maven_builder /build/calculator/target/calculator-1.0.0.jar /app/
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "calculator-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "calculator-1.0.0.jar"]
 
