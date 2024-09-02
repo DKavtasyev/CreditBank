@@ -8,8 +8,11 @@
 # <img src="dossier/src/main/resources/static/img/logo.png" style="height: 30px; width: 30px"/> CreditBank
 
 CreditBank — учебное приложение для автоматизированной обработки заявок на кредит и принятия решений на основе анализа
-данных заемщика. Разработано на Java с использованием Spring Boot 3.2.6, Docker, PostgreSQL. Обладает
-микросервисной архитектурой с синхронным взаимодействием по REST API и асинхронным через Kafka MQ.
+данных заемщика. Разработано на [Java&nbsp;21](https://jdk.java.net/java-se-ri/21) с использованием
+[Spring&nbsp;Boot](https://spring.io/projects/spring-boot)&nbsp;3.2.6, [Docker](https://www.docker.com/),
+[PostgreSQL](https://www.postgresql.org/), [Maven](https://maven.apache.org/). Обладает микросервисной архитектурой 
+[[1]](https://microservices.io/)[[2]](https://martinfowler.com/articles/microservices.html) с синхронным
+взаимодействием по REST API и асинхронным через [Kafka MQ](https://kafka.apache.org/).
 
 Диаграмма покрытия тестами:
 
@@ -156,7 +159,7 @@ CreditBank — учебное приложение для автоматизир
 
 ### Запуск в Docker
 
-- Установить Docker и docker-compose
+- Установить [Docker и docker-compose](https://www.docker.com/)
 - Добавить следующие переменные окружения:
   - Пароль от базы данных POSTGRES_PASSWORD, можно задать любой
   - Пароль от почтового ящика EMAIL_PASSWORD - необходимо получить у разработчика
@@ -168,7 +171,7 @@ CreditBank — учебное приложение для автоматизир
   ```bash
   docker-compose up -d
   ```
-После выполнения команд будут запущены и доступны следующие модули:
+После выполнения команд будут запущены и доступны следующие Docker-контейнеры:
 - kafka
 - kafdrop
 - zookeeper
@@ -182,21 +185,26 @@ CreditBank — учебное приложение для автоматизир
 - gateway
 
 ### Запуск в Intellij Idea
-- Установить Docker и docker-compose
+- Установить [Docker и docker-compose](https://www.docker.com/)
 - Добавить следующие переменные окружения:
   - Пароль от базы данных POSTGRES_PASSWORD, можно задать любой
   - Пароль от почтового ящика EMAIL_PASSWORD - необходимо получить у разработчика
+- Установить и настроить [PostgreSQL](https://www.postgresql.org/)
+  - Создать базу данных "credit_bank". Создание таблиц происходит при первом запуске приложения с помощью liquibase
+  - Создать пользователя с паролем, заданным в POSTGRES_PASSWORD
+- Создать базу данных
+  
 - Перейти в корневую директорию проекта
   ```bash
   cd $(git rev-parse --show-toplevel)
   ```
 - Запустить контейнеры Docker с MQ Kafka, Kafdrop
    ```bash
-   docker-compose -f ./deal/docker-compose.yaml up
+   docker-compose -f ./deal/docker-compose.yaml up -d
    ```
 - Запустить контейнеры Docker с Prometheus, Grafana (необязательно)
   ```bash
-  docker-compose -f ./scripts/docker-compose.yaml up
+  docker-compose -f ./scripts/docker-compose.yaml up -d
   ```
 - Собрать проект в Maven и запустить все модули
   ```bash
@@ -204,12 +212,18 @@ CreditBank — учебное приложение для автоматизир
   ```
   
 ### Документация API
-Для просмотра и тестирования доступных API методов используется Swagger UI. \
+Для просмотра и тестирования доступных API методов используется [Swagger UI](https://swagger.io/). \
 Адрес доступа к Swagger:
 > http://localhost:8080/swagger-ui/index.html
 
+### Интеграция Liquibase
+В проекте для управления базой данных используется [Liquibase](https://www.liquibase.com/community) - инструмент с
+открытым исходным кодом для управления изменениями в схеме базы данных. Нет необходимости создавать структуру базы
+данных самостоятельно - она будет создана при первом запуске приложения. При запуске из Intellij Idea может
+потребоваться создать пустую базу данных с названием credit_bank.
+
 ### Мониторинг и Визуализация с Grafana
-Для мониторинга и визуализации данных используется Grafana. \
+Для мониторинга и визуализации данных используется [Grafana](https://grafana.com/community/). \
 Адрес доступа к Grafana:
 > http://localhost:3000
 
@@ -222,7 +236,7 @@ CreditBank — учебное приложение для автоматизир
 4. Создать новый дашборд для мониторинга интересующих метрик.
 
 ### Визуализация и Управление Apache Kafka с Kafdrop
-Для визуализации и управления кластерами Apache Kafka используется Kafdrop. \
+Для визуализации и управления кластерами Apache Kafka используется [Kafdrop](https://github.com/obsidiandynamics/kafdrop). \
 Адрес доступа к Kafdrop:
 
 > http://localhost:9000
