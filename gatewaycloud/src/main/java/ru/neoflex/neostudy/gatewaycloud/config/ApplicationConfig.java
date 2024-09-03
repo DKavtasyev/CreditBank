@@ -86,7 +86,7 @@ public class ApplicationConfig {
 						.uri(deal.getHost()))
 				.route("deal-swagger", p -> p
 						.path("/deal/v3/api-docs")
-//						.filters(f -> f.rewritePath("/deal/v3/api-docs", "/v3/api-docs"))
+						.filters(f -> f.rewritePath("/deal/v3/api-docs", "/v3/api-docs"))
 						.uri(deal.getHost()))
 				.route("statement-swagger", p -> p
 						.path("/statement/v3/api-docs")

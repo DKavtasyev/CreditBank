@@ -18,8 +18,8 @@ import java.util.UUID;
 
 @RequestMapping("${app.rest.deal.prefix}")
 @Tag(
-		name = "Сделка",
-		description = "Управление данными сделки")
+		name = "Заявка",
+		description = "Оформление заявки на кредит")
 public interface DealControllerInterface {
 	
 	@PostMapping("/statement")

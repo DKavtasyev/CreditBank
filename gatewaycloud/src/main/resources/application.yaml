@@ -5,6 +5,15 @@ spring:
     name: gatewaycloud
   profiles:
     active: default
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          /**:
+            allowed-origins:
+              - http://localhost:8080
+              - http://localhost:8082
+              - http://localhost:8083
 
 springdoc:
   api-docs:
