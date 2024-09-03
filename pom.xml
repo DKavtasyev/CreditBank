@@ -23,7 +23,6 @@
 		<module>statement</module>
 		<module>dossier</module>
 		<module>gateway</module>
-		<module>gatewaycloud</module>
 	</modules>
 
 	<properties>
