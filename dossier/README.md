@@ -48,6 +48,7 @@
 
 #### 6. Отказ в получении кредита
 > Kafka topic: statement-denied
+> 
 ![6](https://github.com/user-attachments/assets/34d184ff-9514-4532-b210-a6a8ed44d122)
 
 При получении сообщения на данный топик модуль Dossier отсылает пользователю электронное письмо с уведомлением об отказе
@@ -55,9 +56,27 @@
 
 #### 7. Отказ клиента от кредита
 > Kafka topic: client-rejection
+> 
 ![7](https://github.com/user-attachments/assets/eab21c77-647c-4655-b7c9-c9c80fe2bae5)
 
 При получении сообщения на данный топик модуль Dossier отсылает пользователю электронное письмо с уведомлением об отказе
 пользователя от кредита.
+
+<br>
+
+### Создание Docker-образа
+- Установить [Docker и docker-compose](https://www.docker.com/)
+- Перейти в корневую директорию проекта
+  ```bash
+  cd $(git rev-parse --show-toplevel)
+  ```
+- Собрать Docker-образ с использованием Dockerfile:
+  ```bash
+  docker build -t dossier -f ./dossier/Dockerfile .
+  ```
+
+Сборка проекта до создания контейнера не требуется — она выполнится в процессе сборки контейнера.
+
+<br>
 
 [К основному README](./../README.md)

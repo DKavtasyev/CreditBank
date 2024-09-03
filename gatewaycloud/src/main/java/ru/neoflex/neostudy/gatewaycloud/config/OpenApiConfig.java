@@ -1,9 +1,11 @@
-package ru.neoflex.neostudy.gateway.config;
+package ru.neoflex.neostudy.gatewaycloud.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
@@ -19,8 +21,23 @@ import org.springframework.context.annotation.Configuration;
 		),
 		servers = {
 				@Server(url = "http://localhost:8080")
-		}
-)
+		})
 @Configuration
 public class OpenApiConfig {
+
+	@Bean
+	public GroupedOpenApi dealApi() {
+		return GroupedOpenApi.builder()
+				.group("Deal")
+				.pathsToMatch("/deal/admin/**", "/deal/document/**", "/deal/calculate/**")
+				.build();
+	}
+	
+	@Bean
+	public GroupedOpenApi statementApi() {
+		return GroupedOpenApi.builder()
+				.group("Statement")
+				.pathsToMatch("/statement/**", "/statement")
+				.build();
+	}
 }

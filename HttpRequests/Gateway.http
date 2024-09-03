@@ -22,7 +22,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "statementId": "3a05282f-5833-4c02-80e1-bd8e80a73540",
+  "statementId": "4d7d985c-f292-4074-979b-917f3470df41",
   "requestedAmount": 1000000,
   "totalAmount": 1118588.1167166018933096,
   "term": 24,
@@ -34,7 +34,7 @@ Cache-Control: no-store
 
 ### Finish registration
 ### В URL установить корректный statementId
-POST http://localhost:8080/statement/registration/3a05282f-5833-4c02-80e1-bd8e80a73540
+POST http://localhost:8080/statement/registration/4d7d985c-f292-4074-979b-917f3470df41
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -57,29 +57,29 @@ Cache-Control: no-store
 
 ### Denial of a loan
 ### В URL установить корректный statementId
-GET http://localhost:8080/statement/deny/3a05282f-5833-4c02-80e1-bd8e80a73540
+GET http://localhost:8080/statement/deny/4d7d985c-f292-4074-979b-917f3470df41
 
 
 
 
 ### Create documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540
+POST http://localhost:8080/document/4d7d985c-f292-4074-979b-917f3470df41
 
 ### Sign documents request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign
+POST http://localhost:8080/document/4d7d985c-f292-4074-979b-917f3470df41/sign
 
 ### Verify SES code request
 ### В URL установить корректный statementId
-POST http://localhost:8080/document/3a05282f-5833-4c02-80e1-bd8e80a73540/sign/code?code=a69930b1-e176-4355-90ce-afdf5e0414b8
+POST http://localhost:8080/document/4d7d985c-f292-4074-979b-917f3470df41/sign/code?code=6be57899-e9a6-460b-a0c3-ba6666150ac1
 
 
 
 
 ### Set status for certain statement
 ### В URL установить корректный statementId
-PUT http://localhost:8080/admin/statement/f29fc274-9c76-4278-843f-7c7f447ad04f/status
+PUT http://localhost:8080/admin/statement/4d7d985c-f292-4074-979b-917f3470df41/status
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -87,7 +87,7 @@ Cache-Control: no-store
 
 ### Get certain statement
 ### В URL установить корректный statementId
-GET http://localhost:8080/admin/statement/a121443c-3397-471e-b99a-96add3728a2d
+GET http://localhost:8080/admin/statement/4d7d985c-f292-4074-979b-917f3470df41
 
 ### Get all statements
 ### В URL установить корректный statementId
