@@ -44,4 +44,21 @@
 - 404 Not found - заявка c указанным идентификатором statementId не найдена.
 - 500 Internal server error - ошибка ошибка при взаимодействии с модулем Deal.
 
+<br>
+
+### Создание Docker-образа
+- Установить [Docker и docker-compose](https://www.docker.com/)
+- Перейти в корневую директорию проекта
+  ```bash
+  cd $(git rev-parse --show-toplevel)
+  ```
+- Собрать Docker-образ с использованием Dockerfile:
+  ```bash
+  docker build -t statement -f ./statement/Dockerfile .
+  ```
+
+Сборка проекта до создания контейнера не требуется — она выполнится в процессе сборки контейнера.
+
+<br>
+
 [К основному README](./../README.md)
