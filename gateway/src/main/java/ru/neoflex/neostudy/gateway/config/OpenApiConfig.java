@@ -9,10 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
 		info = @Info(
 				title = "REST API MS gateway",
-				version = "0.0.1",
+				version = "1.0.0",
 				description = """
-						Модуль, выполняющий функции фасада для всех остальных модулей. Позволяет инкапсулировать логику
-						внутренней системы, предоставив клиенту простой и понятный API.
+						Модуль реализует паттерн API gateway. Является единой точкой входа для API, предоставляемого
+						другими микросервисами. Позволяет инкапсулировать логику внутренней системы, предоставив клиенту
+						простой и понятный API.
 						""",
 				contact = @Contact(url = "https://t.me/dkavtasyev", email = "dkavtasyev@gmail.com")
 		),
